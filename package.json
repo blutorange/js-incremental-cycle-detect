@@ -1,0 +1,49 @@
+{
+  "name": "incremental-topsort",
+  "version": "1.2.0",
+  "description": "Keeps a directed acyclic graph topologically sorted each time you add an edge or vertex.",
+  "main": "main.js",
+  "scripts": {
+    "test": "npx nyc --reporter html --reporter text npx mocha --reporter spec",
+    "doc": "npm run doc-create && npm run doc-coverage",
+    "doc-create": "npx typedoc --mode file --name js-incremental-topsort --readme README.md --out docs --excludeExternals --excludePrivate --excludeNotExported --excludeProtected --theme minimal main.ts",
+    "doc-coverage": "npx nyc --reporter html --report-dir docs/coverage npx mocha --reporter spec",
+    "clean": "rm -rf main.js main.d.ts docs/* coverage/* build/* dist.js dist.min.js",
+    "transpile": "npx tsc -p tsconfig.json",
+    "lint": "npx tslint -c tslint.json main.ts",
+    "browserify": "npx browserify build/main.js --standalone IncrementalTopsort -o dist.js",
+    "minify": "npx minify dist.js --out-file dist.min.js",
+    "prebuild": "npm run clean && npm run lint",
+    "build": "npm run transpile && npm run browserify && npm run minify && npm run doc",
+    "postbuild": "npm run test"
+  },
+  "types": "./main.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blutorange/js-kagura.git"
+  },
+  "keywords": [
+    "comparator"
+  ],
+  "author": "Andre Wachsmuth",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/blutorange/js-kagura/issues"
+  },
+  "devDependencies": {
+    "andross": "^0.3.1",
+    "babel-minify": "^0.4.3",
+    "chai": "^4.1.2",
+    "js-graph-algorithms": "^1.0.18",
+    "mocha": "^5.2.0",
+    "nyc": "^11.8.0",
+    "sorted-set": "^0.3.0",
+    "ts-node": "^6.0.5",
+    "tslib": "^1.9.1",
+    "tslint": "^5.10.0",
+    "typedoc": "^0.11.1",
+    "typescript": "^2.8.3"
+  },
+  "homepage": "https://github.com/blutorange/js-incremental-topsort#readme",
+  "dependencies": {}
+}
