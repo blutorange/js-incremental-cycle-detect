@@ -1,6 +1,6 @@
 {
   "name": "incremental-topsort",
-  "version": "1.2.0",
+  "version": "0.1.0",
   "description": "Keeps a directed acyclic graph topologically sorted each time you add an edge or vertex.",
   "main": "main.js",
   "scripts": {
