@@ -1,4 +1,4 @@
-import { PkOptions, PkVertexData } from './PkHeader';
+import { PkOptions, PkVertexData } from "./PkHeader";
 
 export enum IncrementalTopologicalSortAlgorithm {
     PK,
@@ -13,6 +13,7 @@ export interface Algo<TVertex, TVertexData extends VertexData> {
     deleteVertex(adapter: GraphAdapter<TVertex, TVertexData>, vertex: TVertex): void;
 }
 
+// tslint:disable-next-line:no-empty-interface
 export interface VertexData {}
 
 export interface AssociatableGraph<TVertex, TVertexData extends VertexData> {
@@ -23,7 +24,7 @@ export interface AssociatableGraph<TVertex, TVertexData extends VertexData> {
 
 export interface ManipulableGraph<TVertex> {
     addEdge(from: TVertex, to: TVertex): void;
-    addVertex(vertex: TVertex): void;    
+    addVertex(vertex: TVertex): void;
     deleteEdge(from: TVertex, to: TVertex): void;
     deleteVertex(vertex: TVertex): void;
     getSuccessorsOf(vertex: TVertex): Iterator<TVertex>;
@@ -39,7 +40,6 @@ export interface IncrementalTopSortHook<TVertex, TVertexData extends VertexData>
     deleteVertex(vertex: TVertex): void;
     addEdge(from: TVertex, to: TVertex): boolean;
     deleteEdge(from: TVertex, to: TVertex): void;
-    unwrap(): GraphAdapter<TVertex, TVertexData>;
 }
 
 export type FactoryOptions<TVertex> = {
@@ -49,4 +49,4 @@ export type FactoryOptions<TVertex> = {
         adapter?: GraphAdapter<TVertex, PkVertexData>;
         algorithm?: IncrementalTopologicalSortAlgorithm.PK,
     }
-)
+);

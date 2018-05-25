@@ -1,12 +1,11 @@
-import { KeyValueEntry } from 'andross';
-import { PkVertexData } from './PkHeader';
-import { GraphAdapter, Algo, ArrayFrom } from './Header';
+import { Algo, GraphAdapter } from "./Header";
+import { PkVertexData } from "./PkHeader";
 
 /**
  * Performs a merge sort of two arrays, with the actual array value stored
  * in the key property of the array item.
  */
-function tkMerge(arr1: KeyValueEntry<number, any>[], arr2: KeyValueEntry<number, any>[]): number[] {
+function tkMerge<TVertex>(adapter: GraphAdapter<TVertex, PkVertexData>, arr1: TVertex[], arr2: TVertex[]): number[] {
     const res: number[] = [];
     const len1 = arr1.length;
     const len2 = arr2.length;
@@ -16,21 +15,43 @@ function tkMerge(arr1: KeyValueEntry<number, any>[], arr2: KeyValueEntry<number,
     // as long as there remains at least one element in one
     // array.
     while (i1 < len1 && i2 < len2) {
-        if (arr1[i1] < arr2[i2]) res.push(arr1[i1++].key);
-        else res.push(arr2[i2++].key);
+        const o1 = adapter.getData(arr1[i1]);
+        const o2 = adapter.getData(arr2[i2]);
+        if (o1 < o2) {
+            i1 += 1;
+            res.push(o1.order);
+        }
+        else {
+            i2 += 1;
+            res.push(o2.order);
+        }
     }
     // Push the remaining elements, if any, to the result.
-    while (i1 < len1) res.push(arr1[i1++].key);
-    while (i2 < len2) res.push(arr2[i2++].key);
+    while (i1 < len1) {
+        const o1 = adapter.getData(arr1[i1]);
+        i1 += 1;
+        res.push(o1.order);
+    }
+    while (i2 < len2) {
+        const o2 = adapter.getData(arr2[i2]);
+        i2 += 1;
+        res.push(o2.order);
+    }
     // Return sorted array.
     return res;
 }
 
 export class PkImpl<TVertex> implements Algo<TVertex, PkVertexData> {
     private id: number;
+    private stack: TVertex[];
+    private deltaXyF: TVertex[];
+    private deltaXyB: TVertex[];
 
-    constructor(private setConstructor: SetConstructor, private arrayFrom: ArrayFrom) {
+    constructor() {
         this.id = 0;
+        this.stack = [];
+        this.deltaXyB = [];
+        this.deltaXyF = [];
     }
 
     createVertex(adapter: GraphAdapter<TVertex, PkVertexData>, vertex: TVertex): PkVertexData {
@@ -44,7 +65,7 @@ export class PkImpl<TVertex> implements Algo<TVertex, PkVertexData> {
     deleteEdge(from: TVertex, to: TVertex): void {
         // no-op
     }
-    
+
     deleteVertex(adapter: GraphAdapter<TVertex, PkVertexData>, vertex: TVertex) {
         // no-op
     }
@@ -52,86 +73,75 @@ export class PkImpl<TVertex> implements Algo<TVertex, PkVertexData> {
     addEdge(adapter: GraphAdapter<TVertex, PkVertexData>, x: TVertex, y: TVertex): boolean {
         const lb = adapter.getData(y).order;
         const ub = adapter.getData(x).order;
-        const delta_xy_b: Set<TVertex> = new this.setConstructor();
-        const delta_xy_f: Set<TVertex> = new this.setConstructor();
+        this.deltaXyB = [];
+        this.deltaXyF = [];
         if (lb < ub) {
             // Discovery
-            if (!this.dfs_f(y, adapter, ub, delta_xy_f)) return false;
-            this.dfs_b(x, adapter, lb, delta_xy_b);
+            if (!this.dfs_f(y, adapter, ub)) {
+                return false;
+            }
+            this.dfs_b(x, adapter, lb);
             // Reassignment
-            this.reorder(delta_xy_f, delta_xy_b, adapter);
+            this.reorder(adapter);
         }
         return true;
     }
 
-    private dfs_f(first: TVertex, adapter: GraphAdapter<TVertex, PkVertexData>, ub: number, delta_xy_f: Set<TVertex>): boolean {
-        const stack = [first];
-        while (stack.length > 0) {
-            const n = stack.pop() as TVertex;
+    private dfs_f(first: TVertex, adapter: GraphAdapter<TVertex, PkVertexData>, ub: number): boolean {
+        this.stack.push(first);
+        while (this.stack.length > 0) {
+            const n = this.stack.pop() as TVertex;
             adapter.getData(n).visited = true;
-            delta_xy_f.add(n);
+            this.deltaXyF.push(n);
             for (let it = adapter.getSuccessorsOf(n), res = it.next(); !res.done; res = it.next()) {
-                const w_data = adapter.getData(res.value);
-                if (w_data.order === ub) {
+                const wData = adapter.getData(res.value);
+                if (wData.order === ub) {
                     // cycle
                     return false;
                 }
                 // is w unvisited and in affected region?
-                if (!w_data.visited && w_data.order < ub) {
-                    stack.push(res.value);
+                if (!wData.visited && wData.order < ub) {
+                    this.stack.push(res.value);
                 }
-            };
+            }
         }
         return true;
     }
 
-    private dfs_b(first: TVertex, adapter: GraphAdapter<TVertex, PkVertexData>, lb: number, delta_xy_b: Set<TVertex>): void {
-        const stack = [first];
-        while (stack.length > 0) {
-            const n = stack.pop() as TVertex;
+    private dfs_b(first: TVertex, adapter: GraphAdapter<TVertex, PkVertexData>, lb: number): void {
+        this.stack.push(first);
+        while (this.stack.length > 0) {
+            const n = this.stack.pop() as TVertex;
             adapter.getData(n).visited = true;
-            delta_xy_b.add(n);
+            this.deltaXyB.push(n);
             for (let it = adapter.getPredecessorsOf(n), res = it.next(); !res.done; res = it.next()) {
                 // is w unvisited and in affected region?
-                const w_data = adapter.getData(res.value);
-                if (!w_data.visited && lb < w_data.order) {
-                    stack.push(res.value);
+                const wData = adapter.getData(res.value);
+                if (!wData.visited && lb < wData.order) {
+                    this.stack.push(res.value);
                 }
-            };
+            }
         }
     }
 
-    private sort(adapter: GraphAdapter<TVertex, PkVertexData>, set: Set<TVertex>): KeyValueEntry<any, TVertex>[] {
+    private sort(adapter: GraphAdapter<TVertex, PkVertexData>, vertices: TVertex[]): TVertex[] {
         // Sort by topological order.
-        return this.arrayFrom(set, vertex => ({
-            key: adapter.getData(vertex).order,
-            value: vertex,
-        })).sort((v1, v2) => v1.key - v2.key);
+        return vertices.map(v => ({key: adapter.getData(v).order,  val: v})).sort((v1, v2) => v1.key - v2.key).map(v => v.val);
     }
 
-    private load(adapter: GraphAdapter<TVertex, PkVertexData>, array: KeyValueEntry<number, TVertex>[], L: TVertex[]): void {
-        for (let i = 0, j = array.length; i < j; ++i) {
-            const w = array[i].value;
-            const w_data = adapter.getData(w);
-            // abuse the key property to store new data
-            array[i].key = w_data.order;
-            w_data.visited = false;
-            L.push(w);
-        }
-    }
-
-    private reorder(delta_xy_f: Set<TVertex>, delta_xy_b: Set<TVertex>, adapter: GraphAdapter<TVertex, PkVertexData>) {
+    private reorder(adapter: GraphAdapter<TVertex, PkVertexData>) {
         // sort sets to preserve original order of elements
-        const array_delta_xy_f = this.sort(adapter, delta_xy_f);
-        const array_delta_xy_b = this.sort(adapter, delta_xy_b);
+        this.deltaXyB = this.sort(adapter, this.deltaXyB);
+        this.deltaXyF = this.sort(adapter, this.deltaXyF);
 
-        const L: TVertex[] = [];
         // Load delta_xy_b onto array L first
-        this.load(adapter, array_delta_xy_b, L);
         // Now load delta_xy_f onto array L
-        this.load(adapter, array_delta_xy_f, L);
+        const L: TVertex[] = this.deltaXyB.concat(this.deltaXyF);
+        for (const w of L) {
+            adapter.getData(w).visited = false;
+        }
 
-        const R: number[] = tkMerge(array_delta_xy_b, array_delta_xy_f);
+        const R: number[] = tkMerge(adapter, this.deltaXyB, this.deltaXyF);
 
         // allocate vertices in L starting from lowest
         for (let i = 0, j = L.length; i < j; ++i) {

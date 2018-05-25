@@ -1,4 +1,4 @@
-import { ArrayFrom, VertexData } from './Header';
+import { ArrayFrom, VertexData } from "./Header";
 
 export interface PkVertexData extends VertexData {
     order: number;

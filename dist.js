@@ -2,10 +2,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
+var GraphAdapterBuilder_1 = require("./src/GraphAdapterBuilder");
 var Header_1 = require("./src/Header");
-var Pk_1 = require("./src/Pk");
 var Hook_1 = require("./src/Hook");
-var main_1 = require("./main");
+var Pk_1 = require("./src/Pk");
 tslib_1.__exportStar(require("./src/GraphAdapterBuilder"), exports);
 function create(opts) {
     if (opts === void 0) { opts = {}; }
@@ -13,8 +13,8 @@ function create(opts) {
     switch (opts.algorithm) {
         case Header_1.IncrementalTopologicalSortAlgorithm.PK:
         default: {
-            var pkImpl = new Pk_1.PkImpl(opts.Set || Set, opts.ArrayFrom || Array.from);
-            var adapter = opts.adapter || new main_1.GraphAdapterBuilder().build();
+            var pkImpl = new Pk_1.PkImpl();
+            var adapter = opts.adapter || new GraphAdapterBuilder_1.GraphAdapterBuilder().build();
             var hook = new Hook_1.HookImpl(adapter, pkImpl);
             return hook;
         }
@@ -22,7 +22,7 @@ function create(opts) {
 }
 exports.create = create;
 
-},{"./main":1,"./src/GraphAdapterBuilder":2,"./src/Header":3,"./src/Hook":4,"./src/Pk":5,"tslib":6}],2:[function(require,module,exports){
+},{"./src/GraphAdapterBuilder":2,"./src/Header":3,"./src/Hook":4,"./src/Pk":5,"tslib":6}],2:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var DoneIteratorResult = {
@@ -60,10 +60,12 @@ var GenericManipulable = (function () {
     GenericManipulable.prototype.addEdge = function (from, to) {
         var f = this.forward.get(from);
         var b = this.backward.get(to);
-        if (!f)
+        if (!f) {
             this.forward.set(from, f = new this.setConstructor());
-        if (!b)
+        }
+        if (!b) {
             this.backward.set(to, b = new this.setConstructor());
+        }
         f.add(to);
         b.add(from);
     };
@@ -88,10 +90,12 @@ var GenericManipulable = (function () {
     GenericManipulable.prototype.deleteEdge = function (from, to) {
         var f = this.forward.get(from);
         var b = this.backward.get(to);
-        if (f)
+        if (f) {
             f.delete(to);
-        if (b)
+        }
+        if (b) {
             b.delete(from);
+        }
     };
     GenericManipulable.prototype.deleteVertex = function (vertex) {
         this.vertices.delete(vertex);
@@ -181,14 +185,18 @@ var HookImpl = (function () {
         this.adapter.setData(vertex, data);
     };
     HookImpl.prototype.addEdge = function (from, to) {
-        if (!this.adapter.hasVertex(from))
+        if (!this.adapter.hasVertex(from)) {
             this.addVertex(from);
-        if (!this.adapter.hasVertex(to))
+        }
+        if (!this.adapter.hasVertex(to)) {
             this.addVertex(to);
-        if (this.adapter.hasEdge(from, to))
+        }
+        if (this.adapter.hasEdge(from, to)) {
             return true;
-        if (!this.algo.addEdge(this.adapter, from, to))
+        }
+        if (!this.algo.addEdge(this.adapter, from, to)) {
             return false;
+        }
         this.adapter.addEdge(from, to);
         return true;
     };
@@ -201,9 +209,6 @@ var HookImpl = (function () {
         this.algo.deleteVertex(this.adapter, vertex);
         this.adapter.deleteVertex(vertex);
     };
-    HookImpl.prototype.unwrap = function () {
-        return this.adapter;
-    };
     return HookImpl;
 }());
 exports.HookImpl = HookImpl;
@@ -211,29 +216,42 @@ exports.HookImpl = HookImpl;
 },{}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function tkMerge(arr1, arr2) {
+function tkMerge(adapter, arr1, arr2) {
     var res = [];
     var len1 = arr1.length;
     var len2 = arr2.length;
     var i1 = 0;
     var i2 = 0;
     while (i1 < len1 && i2 < len2) {
-        if (arr1[i1] < arr2[i2])
-            res.push(arr1[i1++].key);
-        else
-            res.push(arr2[i2++].key);
+        var o1 = adapter.getData(arr1[i1]);
+        var o2 = adapter.getData(arr2[i2]);
+        if (o1 < o2) {
+            i1 += 1;
+            res.push(o1.order);
+        }
+        else {
+            i2 += 1;
+            res.push(o2.order);
+        }
     }
-    while (i1 < len1)
-        res.push(arr1[i1++].key);
-    while (i2 < len2)
-        res.push(arr2[i2++].key);
+    while (i1 < len1) {
+        var o1 = adapter.getData(arr1[i1]);
+        i1 += 1;
+        res.push(o1.order);
+    }
+    while (i2 < len2) {
+        var o2 = adapter.getData(arr2[i2]);
+        i2 += 1;
+        res.push(o2.order);
+    }
     return res;
 }
 var PkImpl = (function () {
-    function PkImpl(setConstructor, arrayFrom) {
-        this.setConstructor = setConstructor;
-        this.arrayFrom = arrayFrom;
+    function PkImpl() {
         this.id = 0;
+        this.stack = [];
+        this.deltaXyB = [];
+        this.deltaXyF = [];
     }
     PkImpl.prototype.createVertex = function (adapter, vertex) {
         var id = this.id++;
@@ -249,72 +267,67 @@ var PkImpl = (function () {
     PkImpl.prototype.addEdge = function (adapter, x, y) {
         var lb = adapter.getData(y).order;
         var ub = adapter.getData(x).order;
-        var delta_xy_b = new this.setConstructor();
-        var delta_xy_f = new this.setConstructor();
+        this.deltaXyB = [];
+        this.deltaXyF = [];
         if (lb < ub) {
-            if (!this.dfs_f(y, adapter, ub, delta_xy_f))
+            if (!this.dfs_f(y, adapter, ub)) {
                 return false;
-            this.dfs_b(x, adapter, lb, delta_xy_b);
-            this.reorder(delta_xy_f, delta_xy_b, adapter);
+            }
+            this.dfs_b(x, adapter, lb);
+            this.reorder(adapter);
         }
         return true;
     };
-    PkImpl.prototype.dfs_f = function (first, adapter, ub, delta_xy_f) {
-        var stack = [first];
-        while (stack.length > 0) {
-            var n = stack.pop();
+    PkImpl.prototype.dfs_f = function (first, adapter, ub) {
+        this.stack.push(first);
+        while (this.stack.length > 0) {
+            var n = this.stack.pop();
             adapter.getData(n).visited = true;
-            delta_xy_f.add(n);
+            this.deltaXyF.push(n);
             for (var it = adapter.getSuccessorsOf(n), res = it.next(); !res.done; res = it.next()) {
-                var w_data = adapter.getData(res.value);
-                if (w_data.order === ub) {
+                var wData = adapter.getData(res.value);
+                if (wData.order === ub) {
                     return false;
                 }
-                if (!w_data.visited && w_data.order < ub) {
-                    stack.push(res.value);
+                if (!wData.visited && wData.order < ub) {
+                    this.stack.push(res.value);
                 }
             }
-            ;
         }
         return true;
     };
-    PkImpl.prototype.dfs_b = function (first, adapter, lb, delta_xy_b) {
-        var stack = [first];
-        while (stack.length > 0) {
-            var n = stack.pop();
+    PkImpl.prototype.dfs_b = function (first, adapter, lb) {
+        this.stack.push(first);
+        while (this.stack.length > 0) {
+            var n = this.stack.pop();
             adapter.getData(n).visited = true;
-            delta_xy_b.add(n);
+            this.deltaXyB.push(n);
             for (var it = adapter.getPredecessorsOf(n), res = it.next(); !res.done; res = it.next()) {
-                var w_data = adapter.getData(res.value);
-                if (!w_data.visited && lb < w_data.order) {
-                    stack.push(res.value);
+                var wData = adapter.getData(res.value);
+                if (!wData.visited && lb < wData.order) {
+                    this.stack.push(res.value);
                 }
             }
-            ;
         }
     };
-    PkImpl.prototype.sort = function (adapter, set) {
-        return this.arrayFrom(set, function (vertex) { return ({
-            key: adapter.getData(vertex).order,
-            value: vertex,
-        }); }).sort(function (v1, v2) { return v1.key - v2.key; });
-    };
-    PkImpl.prototype.load = function (adapter, array, L) {
-        for (var i = 0, j = array.length; i < j; ++i) {
-            var w = array[i].value;
-            var w_data = adapter.getData(w);
-            array[i].key = w_data.order;
-            w_data.visited = false;
-            L.push(w);
+    PkImpl.prototype.sort = function (adapter, vertices) {
+        for (var i = 0, j = vertices.length; i < j; ++i) {
+            vertices[i] = { key: adapter.getData(vertices[i]).order, val: vertices[i] };
+        }
+        vertices.sort(function (v1, v2) { return v1.key - v2.key; });
+        for (var i = 0, j = vertices.length; i < j; ++i) {
+            vertices[i] = vertices[i].val;
         }
     };
-    PkImpl.prototype.reorder = function (delta_xy_f, delta_xy_b, adapter) {
-        var array_delta_xy_f = this.sort(adapter, delta_xy_f);
-        var array_delta_xy_b = this.sort(adapter, delta_xy_b);
-        var L = [];
-        this.load(adapter, array_delta_xy_b, L);
-        this.load(adapter, array_delta_xy_f, L);
-        var R = tkMerge(array_delta_xy_b, array_delta_xy_f);
+    PkImpl.prototype.reorder = function (adapter) {
+        this.sort(adapter, this.deltaXyB);
+        this.sort(adapter, this.deltaXyF);
+        var L = this.deltaXyB.concat(this.deltaXyF);
+        for (var _i = 0, L_1 = L; _i < L_1.length; _i++) {
+            var w = L_1[_i];
+            adapter.getData(w).visited = false;
+        }
+        var R = tkMerge(adapter, this.deltaXyB, this.deltaXyF);
         for (var i = 0, j = L.length; i < j; ++i) {
             adapter.getData(L[i]).order = R[i];
         }

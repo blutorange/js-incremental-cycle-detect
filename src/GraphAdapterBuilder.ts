@@ -1,5 +1,5 @@
-import { GraphAdapter, AssociatableGraph,  ManipulableGraph, VertexData } from './Header';
-import { Builder } from "andross"
+import { Builder } from "andross";
+import { AssociatableGraph, GraphAdapter, ManipulableGraph, VertexData } from "./Header";
 
 const DoneIteratorResult: IteratorResult<any> = {
     done: true,
@@ -10,13 +10,13 @@ const EmptyIterator: Iterator<any> = {
     next() {
         return DoneIteratorResult;
     }
-}
+};
 
 export class MapAssociator<TVertex, TVertexData extends VertexData> implements AssociatableGraph<TVertex, TVertexData> {
     private map: Map<TVertex, TVertexData>;
 
     constructor(mapConstructor?: MapConstructor) {
-        this.map = new (mapConstructor||Map)();
+        this.map = new (mapConstructor || Map)();
     }
 
     deleteData(key: TVertex): void {
@@ -47,8 +47,12 @@ export class GenericManipulable<TVertex> implements ManipulableGraph<TVertex> {
     addEdge(from: TVertex, to: TVertex): void {
         let f = this.forward.get(from);
         let b = this.backward.get(to);
-        if (!f) this.forward.set(from, f = new this.setConstructor<TVertex>());
-        if (!b) this.backward.set(to, b = new this.setConstructor<TVertex>());
+        if (!f) {
+            this.forward.set(from, f = new this.setConstructor<TVertex>());
+        }
+        if (!b) {
+            this.backward.set(to, b = new this.setConstructor<TVertex>());
+        }
         f.add(to);
         b.add(from);
     }
@@ -77,10 +81,14 @@ export class GenericManipulable<TVertex> implements ManipulableGraph<TVertex> {
     }
 
     deleteEdge(from: TVertex, to: TVertex): void {
-        let f = this.forward.get(from);
-        let b = this.backward.get(to);
-        if (f) f.delete(to);
-        if (b) b.delete(from);
+        const f = this.forward.get(from);
+        const b = this.backward.get(to);
+        if (f) {
+            f.delete(to);
+        }
+        if (b) {
+            b.delete(from);
+        }
     }
     deleteVertex(vertex: TVertex): void {
         this.vertices.delete(vertex);
@@ -132,9 +140,6 @@ export class GraphAdapterBuilder<TVertex, TVertexData extends VertexData> implem
     private associatable?: AssociatableGraph<TVertex, TVertexData>;
     private manipulable?: ManipulableGraph<TVertex>;
 
-    constructor() {
-    }
-
     data(dataStructure: ManipulableGraph<TVertex>): this {
         this.manipulable = dataStructure;
         return this;
@@ -144,7 +149,7 @@ export class GraphAdapterBuilder<TVertex, TVertexData extends VertexData> implem
         this.associatable = associatable;
         return this;
     }
-    
+
     build(): GraphAdapter<TVertex, TVertexData> {
         const associatable = this.associatable || new MapAssociator();
         const manipulable = this.manipulable || new GenericManipulable() ;

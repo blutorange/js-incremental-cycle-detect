@@ -16,6 +16,17 @@
         "interface-name": {
             "options": "never-prefix"
         },
+        "member-access": {
+            "options": "no-public"
+        },
+        "ordered-imports": {
+            "options": {
+                "import-sources-order": "lowercase-last",
+                "named-imports-order": "lowercase-last"
+            }
+        },
+        "max-classes-per-file": false,
+        "max-line-length": false,
         "strictNullChecks": true,
         "one-line": false,
         "forin": false,
@@ -26,7 +37,7 @@
         "no-void-expression": true,
         "no-unsafe-any": true,
         "quotemark": {
-            "options": "double",
+            "options": "double"
         },
         "no-unused-variable": true,
         "no-unsafe-finally": true,
