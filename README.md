@@ -2,7 +2,7 @@ Keeps a directed acyclic graph topologically sorted each time you add an edge or
 
 # Documenation
 
-[Documentation for all methods with examples.](https://blutorange.github.io/js-kagura/)
+[Documentation for all methods with examples.](https://blutorange.github.io/js-incremental-topsort/)
 
 # Install
 

@@ -1,11 +1,8 @@
-.vscode
 .nyc_output
-build
+dist
 coverage
 sandbox.ts
 
-dist.js
-dist.min.js
 main.js
 main.d.ts
 

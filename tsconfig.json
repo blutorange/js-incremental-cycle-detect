@@ -10,6 +10,7 @@
         "sourceMap": false,
         "watch": false,
         "allowUnreachableCode": false,
+        "experimentalDecorators": true,
         "removeComments": true,
         "allowUnusedLabels": false,
         "declaration": true,
@@ -25,10 +26,11 @@
         "strictPropertyInitialization": true,
         "strictFunctionTypes": true,
         "strictNullChecks": true,
-        "outDir": "build"
+        "outDir": "dist"
     },   
     "include": [
         "src/**/*",
+        "test/**/*",
         "main.ts"
     ],
     "exclude": [

@@ -1,25 +1,19 @@
-import { PkOptions, PkVertexData } from "./PkHeader";
-
-export enum IncrementalTopologicalSortAlgorithm {
-    PK,
-}
+import { PkVertexData } from "./PkHeader";
 
 export type ArrayFrom = <T, U>(iterable: Iterable<T> | ArrayLike<T>, mapfn: (v: T, k: number) => U, thisArg?: any) => U[];
 
-export interface Algo<TVertex, TVertexData extends VertexData> {
-    addEdge(adapter: GraphAdapter<TVertex, TVertexData>, from: TVertex, to: TVertex): boolean;
-    createVertex(adapter: GraphAdapter<TVertex, TVertexData>, vertex: TVertex): TVertexData;
+export interface Algo<TVertex> {
+    addEdge(adapter: GraphAdapter<TVertex>, from: TVertex, to: TVertex): boolean;
+    createVertex(adapter: GraphAdapter<TVertex>, vertex: TVertex): PkVertexData;
     deleteEdge(from: TVertex, to: TVertex): void;
-    deleteVertex(adapter: GraphAdapter<TVertex, TVertexData>, vertex: TVertex): void;
+    deleteVertex(adapter: GraphAdapter<TVertex>, vertex: TVertex): void;
+    isReachable(source: TVertex, target: TVertex, adapter: GraphAdapter<TVertex>): boolean;
 }
 
-// tslint:disable-next-line:no-empty-interface
-export interface VertexData {}
-
-export interface AssociatableGraph<TVertex, TVertexData extends VertexData> {
+export interface AssociatableGraph<TVertex> {
     deleteData(key: TVertex): void;
-    getData(key: TVertex): TVertexData;
-    setData(key: TVertex, data: TVertexData): void;
+    getData(key: TVertex): PkVertexData;
+    setData(key: TVertex, data: PkVertexData): void;
 }
 
 export interface ManipulableGraph<TVertex> {
@@ -33,20 +27,16 @@ export interface ManipulableGraph<TVertex> {
     hasVertex(vertex: TVertex): boolean;
 }
 
-export type GraphAdapter<TVertex, TVertexData extends VertexData> = AssociatableGraph<TVertex, TVertexData> & ManipulableGraph<TVertex>;
+export type GraphAdapter<TVertex> = AssociatableGraph<TVertex> & ManipulableGraph<TVertex>;
 
-export interface IncrementalTopSortHook<TVertex, TVertexData extends VertexData> {
+export interface IncrementalTopSortHook<TVertex> {
     addVertex(vertex: TVertex): void;
     deleteVertex(vertex: TVertex): void;
     addEdge(from: TVertex, to: TVertex): boolean;
     deleteEdge(from: TVertex, to: TVertex): void;
+    contractEdge(from: TVertex, to: TVertex): boolean;
 }
 
-export type FactoryOptions<TVertex> = {
-} &
-(
-    PkOptions & {
-        adapter?: GraphAdapter<TVertex, PkVertexData>;
-        algorithm?: IncrementalTopologicalSortAlgorithm.PK,
-    }
-);
+export interface FactoryOptions<TVertex> {
+    adapter?: GraphAdapter<TVertex>;
+}

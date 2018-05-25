@@ -25,6 +25,7 @@
                 "named-imports-order": "lowercase-last"
             }
         },
+        "typeof-compare": true,
         "max-classes-per-file": false,
         "max-line-length": false,
         "strictNullChecks": true,
