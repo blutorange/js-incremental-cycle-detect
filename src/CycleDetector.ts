@@ -1,7 +1,8 @@
-import { Algo, GraphAdapter, IncrementalTopSortHook } from "./Header";
+import { CycleDetector, GraphAdapter } from "./Header";
+import { Algo } from "./InternalHeader";
 
-export class HookImpl<TVertex> implements IncrementalTopSortHook<TVertex> {
-    constructor(private adapter: GraphAdapter<TVertex>, private algo: Algo<TVertex>) {}
+export class CycleDetectorImpl<TVertex, TGraphAdapter extends GraphAdapter<TVertex> = GraphAdapter<TVertex>> implements CycleDetector<TVertex, TGraphAdapter> {
+    constructor(private adapter: TGraphAdapter, private algo: Algo<TVertex>) {}
 
     addVertex(vertex: TVertex): void {
         const data = this.algo.createVertex(this.adapter, vertex);
@@ -9,7 +10,7 @@ export class HookImpl<TVertex> implements IncrementalTopSortHook<TVertex> {
         this.adapter.setData(vertex, data);
     }
 
-    addEdge(from: TVertex, to: TVertex): boolean {
+    addEdge(from: TVertex, to: TVertex, id?: number): boolean {
         // self cycle
         if (from === to) {
             return false;
@@ -26,13 +27,13 @@ export class HookImpl<TVertex> implements IncrementalTopSortHook<TVertex> {
                 return false;
             }
         }
-        this.adapter.addEdge(from, to);
+        this.adapter.addEdge(from, to, id);
         return true;
     }
 
-    deleteEdge(from: TVertex, to: TVertex): void {
+    deleteEdge(from: TVertex, to: TVertex, id?: number): void {
         this.algo.deleteEdge(from, to);
-        this.adapter.deleteEdge(from, to);
+        this.adapter.deleteEdge(from, to, id);
     }
 
     deleteVertex(vertex: TVertex): void {
@@ -41,6 +42,15 @@ export class HookImpl<TVertex> implements IncrementalTopSortHook<TVertex> {
         this.adapter.deleteVertex(vertex);
     }
 
+    isReachable(from: TVertex, to: TVertex): boolean {
+        return this.algo.isReachable(from, to, this.adapter);
+    }
+
+    unwrap(): TGraphAdapter {
+        return this.adapter;
+    }
+
+    /*
     contractEdge(from: TVertex, to: TVertex): boolean {
         if (!this.adapter.hasEdge(from, to)) {
             return false;
@@ -53,5 +63,5 @@ export class HookImpl<TVertex> implements IncrementalTopSortHook<TVertex> {
         this.adapter.getSuccessorsOf(to) {
             this.deleteEdge(to);
         }
-    }
+    }*/
 }

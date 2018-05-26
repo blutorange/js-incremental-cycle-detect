@@ -1,7 +1,7 @@
+import { Omit, Pair, RemoveFrom, TypedFunction } from "andross";
+import { Graph, GraphOptions } from "graphlib";
 import { AssociatableGraph, GraphAdapter, ManipulableGraph } from "./Header";
-import { PkVertexData } from "./PkHeader";
-
-export type Without<T, K> = Pick<T, Exclude<keyof T, keyof K>>;
+import { VertexData } from "./InternalHeader";
 
 const DoneIteratorResult: IteratorResult<any> = {
     done: true,
@@ -42,32 +42,30 @@ function createArrayIterator<T>(arr: (T|undefined)[]): Iterator<T> {
     };
 }
 
+function createMappedArrayIterator<T, V>(arr: (T|undefined)[], mapFn: TypedFunction<T, V>): Iterator<V> {
+    let i = 0;
+    return {
+        next(): IteratorResult<V> {
+            while (arr[i] === undefined) {
+                if (i > arr.length) {
+                    return DoneIteratorResult;
+                }
+                i +=  1;
+            }
+            return {
+                done: false,
+                value: mapFn(arr[i++] as T),
+            };
+        }
+    };
+}
+
 function createUndefinedArray(len: number): undefined[] {
     const arr = [];
     while (len -- > 0) {
         arr.push(undefined);
     }
     return arr;
-}
-
-export class MapAssociator<TVertex> implements AssociatableGraph<TVertex> {
-    private map: Map<TVertex, PkVertexData>;
-
-    constructor(mapConstructor?: MapConstructor) {
-        this.map = new (mapConstructor || Map)();
-    }
-
-    deleteData(key: TVertex): void {
-        this.map.delete(key);
-    }
-
-    getData(key: TVertex): PkVertexData {
-        return this.map.get(key) as PkVertexData;
-    }
-
-    setData(key: TVertex, data: PkVertexData): void {
-        this.map.set(key, data);
-    }
 }
 
 export interface IdVertex<TVertex extends IdVertex<TVertex> = IdVertex<TVertex>> {
@@ -77,7 +75,7 @@ export interface IdVertex<TVertex extends IdVertex<TVertex> = IdVertex<TVertex>>
     next: (TVertex|undefined)[];
     /** Set of immediate predecessors of this vertex. */
     prev: (TVertex|undefined)[];
-    data?: PkVertexData;
+    data?: VertexData;
 }
 
 /**
@@ -116,19 +114,23 @@ export class IdGraphAdapter<TVertex extends IdVertex<TVertex>> implements Manipu
         this.id = 0;
     }
 
+    get multiEdgeSupported(): boolean {
+        return false;
+    }
+
     deleteData(key: TVertex): void {
         key.data = undefined;
     }
 
-    getData(key: TVertex): PkVertexData {
-        return key.data as PkVertexData;
+    getData(key: TVertex): VertexData {
+        return key.data as VertexData;
     }
 
-    setData(key: TVertex, data: PkVertexData): void {
+    setData(key: TVertex, data: VertexData): void {
         key.data = data;
     }
 
-    createVertex(additionalData: Without<TVertex, IdVertex<TVertex>>): TVertex {
+    createVertex(additionalData: RemoveFrom<TVertex, IdVertex<TVertex>>): TVertex {
         const base = {
             id: this.id++,
             next: createUndefinedArray(this.vertices.length),
@@ -168,6 +170,12 @@ export class IdGraphAdapter<TVertex extends IdVertex<TVertex>> implements Manipu
     }
 
     deleteVertex(vertex: TVertex): void {
+        for (let it = this.getSuccessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(vertex, res.value);
+        }
+        for (let it = this.getPredecessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(res.value, vertex);
+        }
         this.vertices[vertex.id] = undefined;
     }
 
@@ -197,7 +205,8 @@ export interface ObjectVertex<TVertex extends ObjectVertex<TVertex>> {
     next: Set<TVertex>;
     /** Set of immediate predecessors of this vertex. */
     prev: Set<TVertex>;
-    data?: PkVertexData;
+    /** Custom data for the algorithm. */
+    data?: VertexData;
 }
 
 /**
@@ -213,7 +222,7 @@ export interface ObjectVertex<TVertex extends ObjectVertex<TVertex>> {
  * >
  * ```
  */
-export class ObjectGraphAdapter<TVertex extends ObjectVertex<TVertex>> implements ManipulableGraph<TVertex>, AssociatableGraph<TVertex> {
+export class ObjectGraphAdapter<TVertex extends ObjectVertex<TVertex> = ObjectVertex<TVertex>> implements GraphAdapter<TVertex> {
     private setConstructor: SetConstructor;
     private vertices: Set<TVertex>;
 
@@ -222,15 +231,19 @@ export class ObjectGraphAdapter<TVertex extends ObjectVertex<TVertex>> implement
         this.vertices = new this.setConstructor();
     }
 
+    get multiEdgeSupported(): boolean {
+        return false;
+    }
+
     deleteData(key: TVertex): void {
         key.data = undefined;
     }
 
-    getData(key: TVertex): PkVertexData {
-        return key.data as PkVertexData;
+    getData(key: TVertex): VertexData {
+        return key.data as VertexData;
     }
 
-    setData(key: TVertex, data: PkVertexData): void {
+    setData(key: TVertex, data: VertexData): void {
         key.data = data;
     }
 
@@ -239,7 +252,7 @@ export class ObjectGraphAdapter<TVertex extends ObjectVertex<TVertex>> implement
         to.prev.add(from);
     }
 
-    createVertex(additionalData: Without<TVertex, ObjectVertex<TVertex>>): TVertex {
+    createVertex(additionalData: RemoveFrom<TVertex, ObjectVertex<TVertex>>): TVertex {
         const base = {
             next: new this.setConstructor<TVertex>(),
             prev: new this.setConstructor<TVertex>(),
@@ -252,11 +265,17 @@ export class ObjectGraphAdapter<TVertex extends ObjectVertex<TVertex>> implement
     }
 
     deleteEdge(from: TVertex, to: TVertex): void {
-        from.next.delete(from);
+        from.next.delete(to);
         to.prev.delete(from);
     }
 
     deleteVertex(vertex: TVertex): void {
+        for (let it = this.getSuccessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(vertex, res.value);
+        }
+        for (let it = this.getPredecessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(res.value, vertex);
+        }
         this.vertices.delete(vertex);
     }
 
@@ -276,17 +295,108 @@ export class ObjectGraphAdapter<TVertex extends ObjectVertex<TVertex>> implement
         return this.vertices.has(vertex);
     }
 }
+/**
+ * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency to use this class.
+ */
+export class GraphlibAdapter<TData extends VertexData = VertexData> implements GraphAdapter<string> {
+    private g: Graph;
 
-export class GenericManipulable<TVertex> implements ManipulableGraph<TVertex> {
+    constructor(graphOptions: Partial<Omit<GraphOptions, "directed">> = {}, mapConstructor?: MapConstructor) {
+        this.g = new Graph(Object.assign({directed: true}, graphOptions));
+    }
+
+    get multiEdgeSupported(): boolean {
+        return true;
+    }
+
+    deleteData(key: string): void {
+        this.g.setNode(key, undefined);
+    }
+
+    getData(key: string): TData {
+        return this.g.node(key) as TData;
+    }
+
+    setData(key: string, data: TData): void {
+        this.g.setNode(key, data);
+    }
+
+    addEdge(from: string, to: string, id?: number): void {
+        this.g.setEdge(from, to, undefined, id ? String(id) : undefined);
+    }
+
+    addVertex(vertex: string): void {
+        this.g.setNode(vertex, undefined);
+    }
+
+    deleteEdge(from: string, to: string, id?: number): void {
+        this.g.removeEdge(from, to, id ? String(id) : undefined);
+    }
+
+    deleteVertex(vertex: string): void {
+        this.g.removeNode(vertex);
+    }
+
+    getSuccessorsOf(vertex: string): Iterator<string> {
+        const edges = this.g.outEdges(vertex);
+        if (!edges) {
+            return EmptyIterator;
+        }
+        return createMappedArrayIterator(edges, edge => edge.w);
+    }
+
+    getPredecessorsOf(vertex: string): Iterator<string> {
+        const edges = this.g.inEdges(vertex);
+        if (!edges) {
+            return EmptyIterator;
+        }
+        return createMappedArrayIterator(edges, edge => edge.w);
+    }
+
+    hasEdge(from: string, to: string, id?: number): boolean {
+        return this.g.hasEdge(from, to, id ? String(id) : undefined);
+    }
+
+    hasVertex(vertex: string): boolean {
+        return this.g.hasNode(vertex);
+    }
+
+    /**
+     * Allows access to the graphlib graph. Do not use this
+     * to modify the graph, or the cycle detection may not work anymore.
+     */
+    get graph() {
+        return this.g;
+    }
+}
+
+export class GenericGraphAdapter<TVertex> implements GraphAdapter<TVertex> {
     private forward: Map<TVertex, Set<TVertex>>;
     private backward: Map<TVertex, Set<TVertex>>;
-    private vertices: Set<TVertex>;
+    private map: Map<TVertex, VertexData>;
     private setConstructor: SetConstructor;
+
     constructor(setConstructor?: SetConstructor, mapConstructor?: MapConstructor) {
         this.forward = new (mapConstructor || Map)();
         this.backward = new (mapConstructor || Map)();
-        this.vertices = new (setConstructor || Set)();
         this.setConstructor = setConstructor || Set;
+        this.map = new (mapConstructor || Map)();
+    }
+
+    get multiEdgeSupported(): boolean {
+        return false;
+    }
+
+    deleteData(key: TVertex): void {
+        this.map.delete(key);
+    }
+
+    getData(key: TVertex): VertexData {
+        return this.map.get(key) as VertexData;
+    }
+
+    setData(key: TVertex, data: VertexData): void {
+        this.map.set(key, data);
     }
 
     addEdge(from: TVertex, to: TVertex): void {
@@ -303,7 +413,14 @@ export class GenericManipulable<TVertex> implements ManipulableGraph<TVertex> {
     }
 
     addVertex(vertex: TVertex): void {
-        this.vertices.add(vertex);
+        const f = this.forward.get(vertex);
+        const b = this.backward.get(vertex);
+        if (!f) {
+            this.forward.set(vertex, new this.setConstructor<TVertex>());
+        }
+        if (!b) {
+            this.backward.set(vertex, new this.setConstructor<TVertex>());
+        }
     }
 
     getSuccessorsOf(vertex: TVertex): Iterator<TVertex> {
@@ -322,7 +439,7 @@ export class GenericManipulable<TVertex> implements ManipulableGraph<TVertex> {
     }
 
     hasVertex(vertex: TVertex): boolean {
-        return this.vertices.has(vertex);
+        return this.forward.get(vertex) !== undefined;
     }
 
     deleteEdge(from: TVertex, to: TVertex): void {
@@ -335,54 +452,35 @@ export class GenericManipulable<TVertex> implements ManipulableGraph<TVertex> {
             b.delete(from);
         }
     }
+
     deleteVertex(vertex: TVertex): void {
-        this.vertices.delete(vertex);
+        for (let it = this.getSuccessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(vertex, res.value);
+        }
+        for (let it = this.getPredecessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(res.value, vertex);
+        }
+        this.forward.delete(vertex);
+        this.backward.delete(vertex);
     }
-}
 
-export class SimpleGraphAdapter<TVertex> implements GraphAdapter<TVertex> {
-    static create<TVertex>(dataStructure?: ManipulableGraph<TVertex>, associatable?: AssociatableGraph<TVertex>) {
-        associatable = associatable || new MapAssociator();
-        dataStructure = dataStructure || new GenericManipulable() ;
-        return new SimpleGraphAdapter(dataStructure, associatable);
+    /**
+     * @return All vertices in this graph.
+     */
+    getVertices(): Iterator<TVertex> {
+        return this.forward.keys();
     }
 
-    private constructor(
-        private manipulable: ManipulableGraph<TVertex>,
-        private associatable: AssociatableGraph<TVertex>,
-    ) {}
-
-    hasEdge(from: TVertex, to: TVertex): boolean {
-        return this.manipulable.hasEdge(from, to);
-    }
-    hasVertex(vertex: TVertex): boolean {
-        return this.manipulable.hasVertex(vertex);
-    }
-    deleteData(key: TVertex): void {
-        this.associatable.deleteData(key);
-    }
-    getData(key: TVertex): PkVertexData {
-        return this.associatable.getData(key);
-    }
-    setData(key: TVertex, data: PkVertexData): void {
-        this.associatable.setData(key, data);
-    }
-    addEdge(from: TVertex, to: TVertex): void {
-        this.manipulable.addEdge(from, to);
-    }
-    addVertex(vertex: TVertex): void {
-        this.manipulable.addVertex(vertex);
-    }
-    deleteEdge(from: TVertex, to: TVertex): void {
-        this.manipulable.deleteEdge(from, to);
-    }
-    deleteVertex(vertex: TVertex): void {
-        this.manipulable.deleteVertex(vertex);
-    }
-    getSuccessorsOf(vertex: TVertex): Iterator<TVertex> {
-        return this.manipulable.getSuccessorsOf(vertex);
-    }
-    getPredecessorsOf(vertex: TVertex): Iterator<TVertex> {
-        return this.manipulable.getPredecessorsOf(vertex);
+    /**
+     * @return All edges of this graph. For performance, prefer `getVertices` and `getSuccessorsOf`.
+     */
+    getEdges(): Iterator<Pair<TVertex>> {
+        const edges: Pair<TVertex>[] = [];
+        for (let it = this.forward.entries(), res = it.next(); !res.done; res = it.next()) {
+            for (let it2 = res.value[1].values(), res2 = it2.next(); !res2.done; res2 = it2.next()) {
+                edges.push([res.value[0], res2.value]);
+            }
+        }
+        return createArrayIterator(edges);
     }
 }

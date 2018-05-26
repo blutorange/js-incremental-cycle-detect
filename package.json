@@ -1,18 +1,18 @@
 {
-  "name": "incremental-topsort",
+  "name": "incremental-cycle-detect",
   "version": "0.1.0",
-  "description": "Keeps a directed acyclic graph topologically sorted each time you add an edge or vertex.",
+  "description": "Keeps a directed acyclic graph topologically sorted each time you add an edge or vertex to check for cycles.",
   "main": "dist/main.js",
   "scripts": {
     "test": "npm run transpile && npm run test-run",
     "test-run": "npx nyc --reporter=html --reporter=text npx mocha --reporter spec dist/test",
     "doc": "npm run doc-create && npm run doc-coverage",
-    "doc-create": "npx typedoc --mode file --name js-incremental-topsort --readme README.md --out docs --excludeExternals --excludePrivate --excludeNotExported --excludeProtected --ignoreCompilerErrors --theme minimal main.ts",
+    "doc-create": "npx typedoc --mode file --name js-incremental-cycle-detect --readme README.md --out docs --excludeExternals --excludePrivate --excludeNotExported --excludeProtected --ignoreCompilerErrors --theme minimal main.ts",
     "doc-coverage": "npx nyc --reporter html --report-dir docs/coverage npx mocha --reporter spec",
     "clean": "rm -rf main.js main.d.ts docs coverage dist",
     "transpile": "npx tsc -p tsconfig.json",
     "lint": "npx tslint -c tslint.json main.ts",
-    "browserify": "npx browserify dist/main.js --standalone IncrementalTopsort -o dist/browser.js",
+    "browserify": "npx browserify dist/main.js --standalone IncrementalCycleDetect -o dist/browser.js",
     "minify": "npx minify dist/browser.js --out-file dist/browser.min.js",
     "prebuild": "npm run clean && npm run lint",
     "build": "npm run transpile && npm run browserify && npm run minify && npm run doc",
@@ -35,7 +35,7 @@
     "@types/chai": "^4.1.3",
     "@types/graphlib": "^2.1.4",
     "@types/random-js": "^1.0.30",
-    "andross": "^0.3.1",
+    "andross": "^0.3.2",
     "babel-minify": "^0.4.3",
     "chai": "^4.1.2",
     "graphlib": "^2.1.5",
@@ -55,6 +55,6 @@
     "typedoc": "^0.11.1",
     "typescript": "^2.8.3"
   },
-  "homepage": "https://github.com/blutorange/js-incremental-topsort#readme",
+  "homepage": "https://github.com/blutorange/js-incremental-cycle-detect#readme",
   "dependencies": {}
 }

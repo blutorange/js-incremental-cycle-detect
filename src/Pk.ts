@@ -1,5 +1,5 @@
-import { Algo, GraphAdapter } from "./Header";
-import { PkVertexData } from "./PkHeader";
+import { GraphAdapter } from "./Header";
+import { Algo, VertexData } from "./InternalHeader";
 
 /*
  * Based on the paper
@@ -63,7 +63,7 @@ export class PkImpl<TVertex> implements Algo<TVertex> {
         this.deltaXyF = [];
     }
 
-    createVertex(adapter: GraphAdapter<TVertex>, vertex: TVertex): PkVertexData {
+    createVertex(adapter: GraphAdapter<TVertex>, vertex: TVertex): VertexData {
         const id = this.id++;
         return {
             order: id,
