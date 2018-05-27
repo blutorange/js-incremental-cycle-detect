@@ -1,65 +1,21 @@
-import { Pair } from "andross";
+import { Omit } from "andross";
+import { Graph, GraphOptions } from "graphlib";
 import { VertexData } from "./InternalHeader";
 
-/**
- * The interface for the entry point of this library. For each edge
- * that is added to the graph, it reports whether adding that edge
- * creates a cycle in the directed graph, and disallows the insertion
- * if it does.
- */
-export interface CycleDetector<TVertex, TData = any> {
-    /**
-     * Adds the given vertex, if it does not exist, and it is allowed.
-     * @param vertex Vertex to be added.
-     * @return `true` iff the vertex was added.
-     */
-    addVertex(vertex: TVertex): boolean;
+export interface GenericGraphAdapterOptions<TVertex> {
+    cycleDetector: CycleDetector<TVertex>;
+    mapConstructor: MapConstructor;
+}
 
-    /**
-     * Deletes the given vertex, if it does exist, and it is allowed.
-     * @param vertex Vertex to be deleted.
-     * @return `true` iff the vertex was deleted.
-     */
-    deleteVertex(vertex: TVertex): boolean;
+export interface GraphlibAdapterOptions<TVertex> {
+    cycleDetector: CycleDetector<TVertex>;
+    graphlib: GraphlibConstructor;
+    graphOptions: Partial<Omit<GraphOptions, "directed" | "multigraph">>;
+}
 
-    /**
-     * Adds the given edge, if it does not exist, and it is allowed.
-     * May not be allowed eg if adding the edge creates a cycle.
-     * @param from Source vertex of the edge.
-     * @param to Target vertex of the edge.
-     * @return `true` iff the edge was added.
-     */
-    addEdge(from: TVertex, to: TVertex): boolean;
+export type GraphlibConstructor = (options?: GraphOptions) => Graph;
 
-    /**
-     * Delete the given edge, if it exists and it is allowed.
-     * @param from Source vertex of the edge.
-     * @param to Target vertex of the edge.
-     * @return `true` iff the edge was deleted.
-     */
-    deleteEdge(from: TVertex, to: TVertex): boolean;
-
-    /**
-     * The number of vertices in this graph.
-     */
-    getEdgeCount(): number;
-
-    /**
-     * The number of vertices in this graph.
-     */
-    getVertexCount(): number;
-
-    /**
-     * For performance, prefer `getVertices` and `getSuccessorsOf`.
-     * @return All edges of this graph.
-     */
-    getEdges(): Iterator<Pair<TVertex>>;
-
-    /**
-     * @return All vertices in this graph.
-     */
-    getVertices(): Iterator<TVertex>;
-
+export interface GraphAdapter<TVertex> {
     /**
      * @param vertex The vertex whose successors are to be found.
      * @return All immediate successors of the given vertex. None if the vertex does not exist.
@@ -73,37 +29,22 @@ export interface CycleDetector<TVertex, TData = any> {
     getPredecessorsOf(vertex: TVertex): Iterator<TVertex>;
 
     /**
-     * @param from Source vertex of the edge.
-     * @param to Target vertex of the edge.
-     * @return `true` iff this graph contains the given edge.
-     */
-    hasEdge(from: TVertex, to: TVertex): boolean;
-
-    /**
-     * @param from Vertex to be checked.
-     * @return `true` iff this graph contains the given vertex.
-     */
-    hasVertex(vertex: TVertex): boolean;
-
-    /**
      * @param key Vertex whose data to get.
      * @return The data associated with the vertex.
      */
-    getData(vertex: TVertex): Readonly<VertexData<TData>>;
+    getData(vertex: TVertex): VertexData;
+}
 
-    /**
-     * Associated arbitrary data with the vertex.
-     * @param key Vertex whose data to set
-     * @param data Data to be set on the vertex.
-     */
-    setData(vertex: TVertex, data: TData): void;
+/**
+ * The interface for the entry point of this library. For each edge
+ * that is added to the graph, it reports whether adding that edge
+ * creates a cycle in the directed graph, and disallows the insertion
+ * if it does.
+ */
+export interface CycleDetector<TVertex, TData = any> {
+    createVertexData(g: GraphAdapter<TVertex>, vertex: TVertex): VertexData;
 
-    /**
-     * @param from Source vertex.
-     * @param to Target vertex.
-     * @return `true` iff the target vertex can be reached from the source vertex, eg. there is a path of edges connecting the source with the target.
-     */
-    isReachable(from: TVertex, to: TVertex): boolean;
+    canAddEdge(g: GraphAdapter<TVertex>, from: TVertex, to: TVertex): boolean;
 
     /**
      * Contracts the given edge, ie. delete the vertex `to` and
@@ -113,7 +54,7 @@ export interface CycleDetector<TVertex, TData = any> {
      * @param to Target vertex of the edge.
      * @return `true` iff the edge was contracted.
      */
-    contractEdge(from: TVertex, to: TVertex): boolean;
+    canContractEdge(g: GraphAdapter<TVertex>, from: TVertex, to: TVertex): boolean;
 }
 
 /**

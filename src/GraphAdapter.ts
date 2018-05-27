@@ -1,9 +1,8 @@
-import { Omit, Pair, TypedFunction } from "andross";
-import { Graph, GraphOptions } from "graphlib";
-import { CycleDetectorImpl } from "./CycleDetector";
-import { CycleDetector, ObjectVertex } from "./Header";
+import { Pair, PartialExcept, TypedFunction } from "andross";
+import { Graph } from "graphlib";
+import { CycleDetector, GenericGraphAdapterOptions, GraphAdapter, GraphlibAdapterOptions, ObjectVertex } from "./Header";
 import { VertexData } from "./InternalHeader";
-import { PearceKellyImpl } from "./PearceKelly";
+import { PearceKellyDetector, PearceKellyImpl } from "./PearceKelly";
 
 const DoneIteratorResult: IteratorResult<any> = {
     done: true,
@@ -16,19 +15,6 @@ const EmptyIterator: Iterator<any> = {
     }
 };
 
-/**
- * Deletes all incoming and outgoing edges of the vertex.
- * @param adapter The graph data structure.
- * @param vertex The vertex whose in/out edges are to be deleted.
- */
-function deleteInOut<TVertex>(adapter: CycleDetector<TVertex>, vertex: TVertex) {
-    for (let it = adapter.getSuccessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
-        adapter.deleteEdge(vertex, res.value);
-    }
-    for (let it = adapter.getPredecessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
-        adapter.deleteEdge(res.value, vertex);
-    }
-}
 
 function createArrayIterator<T>(arr: (T|undefined)[]): Iterator<T> {
     let i = 0;
@@ -172,16 +158,16 @@ export class ObjectGraphAdapter<TData = any> extends CycleDetectorImpl<ObjectVer
     }
 }
 
+
 /**
- * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency to use this class.
- * See {@link CycleDetector}.
+ * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency and
+ * pass a reference to the graphlib Graph constructor to the constructor of this class.
  */
-export class GraphlibAdapter<TData = any> extends CycleDetectorImpl<string, TData> {
+export class GraphlibAdapter<TData = any> {
     private g: Graph;
 
-    constructor(graphOptions: Partial<Omit<GraphOptions, "directed" | "multigraph">> = {}, mapConstructor?: MapConstructor) {
-        super(new PearceKellyImpl());
-        this.g = new Graph(Object.assign({directed: true}, graphOptions));
+    constructor(options: PartialExcept<GraphlibAdapterOptions<string>, "graphlib">) {
+        this.g = new options.graphlib(Object.assign({directed: true}, options.graphOptions));
     }
 
     _getData(key: string): Readonly<VertexData<TData>> {
@@ -263,29 +249,30 @@ export class GraphlibAdapter<TData = any> extends CycleDetectorImpl<string, TDat
 
 /**
  * Generic graph data structure that supports all types of vertex objects by using
- * maps/sets.
- *
- * See {@link CycleDetector}.
+ * `Map`s.
  */
-export class GenericGraphAdapter<TVertex, TData = any> extends CycleDetectorImpl<TVertex, TData> {
-    private forward: Map<TVertex, Set<TVertex>>;
-    private backward: Map<TVertex, Set<TVertex>>;
+export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTargetData = any> {
+    private detector: CycleDetector<TVertex>;
+    private adapter: GraphAdapter<TVertex>;
+    private forward: Map<TVertex, Map<TVertex, TEdgeTargetData | undefined>>;
+    private backward: Map<TVertex, Map<TVertex, TEdgeSourceData | undefined>>;
     private data: Map<TVertex, VertexData>;
     private edgeCount: number;
-    private setConstructor: SetConstructor;
+    private mapConstructor: MapConstructor;
 
-    constructor(setConstructor?: SetConstructor, mapConstructor?: MapConstructor) {
-        super(new PearceKellyImpl());
-        mapConstructor = mapConstructor || Map;
+    constructor(options: Partial<GenericGraphAdapterOptions<TVertex>> = {}) {
+        const mapConstructor = options.mapConstructor || Map;
+        this.detector= options.cycleDetector || new PearceKellyDetector(); 
         this.forward = new mapConstructor();
         this.backward = new mapConstructor();
-        this.setConstructor = setConstructor || Set;
         this.data = new mapConstructor();
+        this.mapConstructor = mapConstructor;
         this.edgeCount = 0;
-    }
-
-    _getData(key: TVertex): Readonly<VertexData<TData>> {
-        return this.data.get(key) as VertexData;
+        this.adapter = {
+            getSuccessorsOf: this.getSuccessorsOf.bind(this),
+            getPredecessorsOf: this.getPredecessorsOf.bind(this),
+            getData: this.getData.bind(this),
+        }
     }
 
     getSuccessorsOf(vertex: TVertex): Iterator<TVertex> {
@@ -298,17 +285,24 @@ export class GenericGraphAdapter<TVertex, TData = any> extends CycleDetectorImpl
         return b ? b.values() : EmptyIterator;
     }
 
-    hasEdge(from: TVertex, to: TVertex): boolean {
-        const f = this.forward.get(from);
-        return f ? f.has(to) : false;
-    }
-
-    hasVertex(vertex: TVertex): boolean {
-        return this.forward.get(vertex) !== undefined;
-    }
-
     getVertices(): Iterator<TVertex> {
         return this.forward.keys();
+    }
+
+    getEdgeSourceData(from: TVertex, to: TVertex): TEdgeSourceData | undefined {
+        const map = this.backward.get(from);
+        if (!map) {
+            return undefined;
+        }
+        return map.get(to);
+    }
+
+    getEdgeTargetData(from: TVertex, to: TVertex): TEdgeTargetData | undefined {
+        const map = this.forward.get(from);
+        if (!map) {
+            return undefined;
+        }
+        return map.get(to);
     }
 
     getEdges(): Iterator<Pair<TVertex>> {
@@ -329,34 +323,92 @@ export class GenericGraphAdapter<TVertex, TData = any> extends CycleDetectorImpl
         return this.forward.size;
     }
 
-    protected _deleteData(key: TVertex): void {
-        this.data.delete(key);
+    hasEdge(from: TVertex, to: TVertex): boolean {
+        const f = this.forward.get(from);
+        return f ? f.has(to) : false;
     }
 
-    protected _setData(key: TVertex, data: VertexData): void {
+    hasVertex(vertex: TVertex): boolean {
+        return this.forward.get(vertex) !== undefined;
+    }
+
+    addEdge(from: TVertex, to: TVertex, edgeSourceData?: TEdgeSourceData, edgeTargetData?: TEdgeTargetData): boolean {
+        // check if this edge creates a cycle
+        if (!this.detector.canAddEdge(this.adapter, from, to)) {
+            return false;
+        }
+        // check if vertices exists, if not add it
+        let f = this.forward.get(from);
+        let b = this.backward.get(to);
+        if (!f || !b) {
+            this.setData(from, this.detector.createVertexData(this.adapter, from));
+            this.forward.set(from, f = new this.mapConstructor());
+            this.setData(to, this.detector.createVertexData(this.adapter, to));
+            this.backward.set(to, b = new this.mapConstructor());
+        }
+        // check if the edge exists, if not, add it
+        const sizeBefore = f.size;
+        f.set(to, edgeTargetData);
+        b.set(from, edgeSourceData);
+        if (sizeBefore === f.size) {
+            // edge exists already
+            return false;
+        }
+        this.edgeCount += 1;
+        return true;
+    }
+
+    addVertex(vertex: TVertex): boolean {
+        if (this.hasVertex(vertex)) {
+            return false;
+        }
+        this.setData(vertex, this.detector.createVertexData(this.adapter, vertex));
+        this.forward.set(vertex, new this.mapConstructor<TVertex, TEdgeTargetData>());
+        this.backward.set(vertex, new this.mapConstructor<TVertex, TEdgeSourceData>());
+        return true;
+    }
+
+    deleteEdge(from: TVertex, to: TVertex): boolean {
+        const f = this.forward.get(from);
+        const b = this.backward.get(to);
+        if (!f || !b) {
+            // vertices do not exist
+            return false;
+        }
+        if (!f.delete(to) || !b.delete(from)) {
+            // edge does not exist
+            return false;
+        }
+        this.edgeCount -= 1;
+        return true;
+    }
+
+    deleteVertex(vertex: TVertex): boolean {
+        if (!this.deleteData(vertex)) {
+            // vertex does not exist
+            return false;
+        }
+        // delete all inbound/outbound edges
+        for (let it = this.getSuccessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(vertex, res.value);
+        }
+        for (let it = this.getPredecessorsOf(vertex), res = it.next(); !res.done; res = it.next()) {
+            this.deleteEdge(res.value, vertex);
+        }
+        this.forward.delete(vertex);
+        this.backward.delete(vertex);
+        return true;
+    }
+
+    private getData(key: TVertex): VertexData {
+        return this.data.get(key) as VertexData;
+    }
+
+    private setData(key: TVertex, data: VertexData): void {
         this.data.set(key, data);
     }
 
-    protected _addEdge(from: TVertex, to: TVertex): void {
-        this.edgeCount += 1;
-        (this.forward.get(from) as Set<TVertex>).add(to);
-        (this.backward.get(to) as Set<TVertex>).add(from);
-    }
-
-    protected _addVertex(vertex: TVertex): void {
-        this.forward.set(vertex, new this.setConstructor<TVertex>());
-        this.backward.set(vertex, new this.setConstructor<TVertex>());
-    }
-
-    protected _deleteEdge(from: TVertex, to: TVertex): void {
-        this.edgeCount -= 1;
-        (this.forward.get(from) as Set<TVertex>).delete(to);
-        (this.backward.get(to) as Set<TVertex>).delete(from);
-    }
-
-    protected _deleteVertex(vertex: TVertex): void {
-        deleteInOut(this, vertex);
-        this.forward.delete(vertex);
-        this.backward.delete(vertex);
+    private deleteData(key: TVertex): boolean {
+        return this.data.delete(key);
     }
 }
