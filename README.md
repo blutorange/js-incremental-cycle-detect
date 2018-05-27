@@ -4,7 +4,7 @@ an acyclic graph.
 
 Based on [the paper](https://dl.acm.org/citation.cfm?id=1210590):
 
-```
+```text
 A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
    DAVID J. PEARCE / PAUL H. J. KELLY
    Journal of Experimental Algorithmics (JEA)
@@ -14,7 +14,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 
 # Documenation
 
-[Documentation for all methods with examples.](https://blutorange.github.io/js-incremental-topsort/)
+[Documentation for all methods with examples.](https://blutorange.github.io/js-incremental-cycle-detect/)
 
 # Install
 
@@ -34,49 +34,49 @@ Exposes a [global object](https://softwareengineering.stackexchange.com/question
 import * as IncrementalCycleDetect from "incremental-cycle-detect";
 ```
 
+# Usage
+
+The main purpose of this library is to add edges to a directed acyclic graph and be told when
+that make the graph cyclic.
+
+```javascript
+const graph = new GenericGraphAdapter();
+graph.addEdge(0, 1) // => true
+graph.addEdge(1, 2) // => true
+graph.addEdge(2, 3) // => true
+graph.addEdge(3, 0) // => false because this edge introduces a cycle
+// The edge (3,0) was not added.
+
+graph.deleteEdge(2, 3);
+graph.addEdge(3, 0) // => true, no cycle because we deleted edge (2,3)
+```
+
+The main algorithm is implemented by `CycleDetectorImpl`. To allow for this lib to work with different graph
+data structures, it is subclassed. The subclass is called `...Adapter` responsible for storing the vertex and edge data.
+The following adapters are part of this library:
+
+- GenericGraphAdapter: Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well. 
+- GraphlibAdapter: For the npm module `graphlib`. Vertices are strings.
+- ObjectGraphAdatpter: Uses plain `objects` instead of `Map`s. Slightly less performant, use if `Map` is not available.
+
+You can add vertices explicitly, but it is not required. They are added if they do not exist.
+
+See the documentation linked above for all methods available.
+
 # Performance
 
-This is faster if many edges need to be added. Tests done with `benchmark`.
-compared with running a full topological sort with `js-graph-algorithms`.
-Measured times is the time that was needed for creating an new graph and addng `n`, checking
+Better than checking for cycles from scratch every time you add an edge. Tests done with [benchmark](https://www.npmjs.com/package/benchmark).
+Compared with running a full topological sort with `js-graph-algorithms` (via `alg.isAcyclic(graph)`) each time a vertex is added.
+Measured time is the time that was needed for creating a new graph and adding `n` vertices, checking
 for a cycle after each edge insertion.
 
 ```
-    incremental-cycle-detection#insert_20_RandomSource x 14,420 ops/sec ±8.23% (66 runs sampled)
-    graphlib#insert_20_RandomSource x 1,560 ops/sec ±0.58% (95 runs sampled)
-    Fastest is incremental-cycle-detection#insert_20_RandomSource
-
-    incremental-cycle-detection#insert_100_RandomSource x 3,702 ops/sec ±7.57% (58 runs sampled)
-    graphlib#insert_100_RandomSource x 91.95 ops/sec ±1.97% (78 runs sampled)
-    Fastest is incremental-cycle-detection#insert_100_RandomSource
-
-    incremental-cycle-detection#insert_500_RandomSource x 819 ops/sec ±5.45% (83 runs sampled)
-    graphlib#insert_500_RandomSource x 19.61 ops/sec ±3.52% (37 runs sampled)
-    Fastest is incremental-cycle-detection#insert_500_RandomSource
-
-    incremental-cycle-detection#insert_20_ForwardSource x 16,564 ops/sec ±7.22% (56 runs sampled)
-    graphlib#insert_20_ForwardSource x 1,444 ops/sec ±0.64% (92 runs sampled)
-    Fastest is incremental-cycle-detection#insert_20_ForwardSource
-
-    incremental-cycle-detection#insert_100_ForwardSource x 4,107 ops/sec ±7.31% (55 runs sampled)
-    graphlib#insert_100_ForwardSource x 127 ops/sec ±0.28% (81 runs sampled)
-    Fastest is incremental-cycle-detection#insert_100_ForwardSource
-
-    incremental-cycle-detection#insert_500_ForwardSource x 1,924 ops/sec ±6.87% (59 runs sampled)
-    graphlib#insert_500_ForwardSource x 30.86 ops/sec ±3.55% (54 runs sampled)
-    Fastest is incremental-cycle-detection#insert_500_ForwardSource
-
-    incremental-cycle-detection#insert_20_BackwardSource x 18,044 ops/sec ±7.65% (64 runs sampled)
-    graphlib#insert_20BackwardSource x 1,480 ops/sec ±1.02% (92 runs sampled)
-    Fastest is incremental-cycle-detection#insert_20_BackwardSource
-
-    incremental-cycle-detection#insert_100_BackwardSource x 5,226 ops/sec ±7.41% (53 runs sampled)
-    graphlib#insert_100BackwardSource x 133 ops/sec ±0.59% (83 runs sampled)
-    Fastest is incremental-cycle-detection#insert_100_BackwardSource
-
-    incremental-cycle-detection#insert_500_BackwardSource x 1,926 ops/sec ±6.66% (58 runs sampled)
-    graphlib#insert_500BackwardSource x 29.80 ops/sec ±0.48% (52 runs sampled)
-    Fastest is incremental-cycle-detection#insert_500_BackwardSource
+// 200 vertices, 15000 random (same for each algorithm) edges added
+incremental-cycle-detection(insert 15000, RandomSource) x 43.87 ops/sec ±4.39% (55 runs sampled)
+incremental-cycle-detection-objectgraph(insert 15000, RandomSource) x 50.73 ops/sec ±4.17% (61 runs sampled)
+incremental-cycle-detection-idgraph(insert 15000, RandomSource) x 11.74 ops/sec ±4.17% (33 runs sampled)
+incremental-cycle-detection-graphlib(insert 15000, RandomSource) x 7.41 ops/sec ±2.14% (22 runs sampled)
+graphlib(insert15000, RandomSource) x 0.19 ops/sec ±2.25% (5 runs sampled)
 ```
 
 # JavaScript environment
@@ -84,12 +84,8 @@ for a cycle after each edge insertion.
 Some parts need `Map` and `Set`. You can either
 
 - use this lib in an enviroment that [supports these](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
-- [polyfill](https://en.wikipedia.org/wiki/Polyfill_(programming)) Map/Set
+- [polyfill](https://en.wikipedia.org/wiki/Polyfill_%28programming%29) Map/Set
 - pass an implementation of Map/Set to the constructor or factory method. This way you don't have to [monkey patch](https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad).
-
-# Usage
-
-TODO
 
 # Build
 

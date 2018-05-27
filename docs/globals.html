@@ -916,13 +916,14 @@ img { max-width: 100%; }
 				introduces a <a href="https://en.wikipedia.org/wiki/Cycle_(graph_theory">cycle</a>). If it would, it is not added. Useful when trying to build
 			an acyclic graph.</p>
 			<p>Based on <a href="https://dl.acm.org/citation.cfm?id=1210590">the paper</a>:</p>
-			<pre><code>A <span class="hljs-keyword">Dynamic</span> Topological Sort Algorithm <span class="hljs-keyword">for</span> Directed Acyclic Graphs
+			<pre><code class="lang-text">A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
    DAVID J. PEARCE / PAUL H. J. KELLY
-   Journal <span class="hljs-keyword">of</span> <span class="hljs-keyword">Experimental</span> Algorithmics (JEA)
-   Volume <span class="hljs-number">11</span>, <span class="hljs-number">2006</span>, Article No. <span class="hljs-number">1.7</span>
+   Journal of Experimental Algorithmics (JEA)
+   Volume 11, 2006, Article No. 1.7
    ACM New York, NY, USA
-</code></pre><h1 id="documenation">Documenation</h1>
-			<p><a href="https://blutorange.github.io/js-incremental-topsort/">Documentation for all methods with examples.</a></p>
+</code></pre>
+			<h1 id="documenation">Documenation</h1>
+			<p><a href="https://blutorange.github.io/js-incremental-cycle-detect/">Documentation for all methods with examples.</a></p>
 			<h1 id="install">Install</h1>
 			<p>The <a href="https://docs.npmjs.com/getting-started/installing-npm-packages-locally">drill</a>:</p>
 			<pre><code class="lang-sh">npm install --save incremental-cycle-detect
@@ -932,55 +933,47 @@ img { max-width: 100%; }
 			<p>Exposes a <a href="https://softwareengineering.stackexchange.com/questions/277279/why-are-globals-bad-in-javascript">global object</a> <code>window.IncrementalCycleDetect</code> with the same methods you can when importing this lib:</p>
 			<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> IncrementalCycleDetect <span class="hljs-keyword">from</span> <span class="hljs-string">"incremental-cycle-detect"</span>;
 </code></pre>
+			<h1 id="usage">Usage</h1>
+			<p>The main purpose of this library is to add edges to a directed acyclic graph and be told when
+			that make the graph cyclic.</p>
+			<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> graph = <span class="hljs-keyword">new</span> GenericGraphAdapter();
+graph.addEdge(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) <span class="hljs-comment">// =&gt; true</span>
+graph.addEdge(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>) <span class="hljs-comment">// =&gt; true</span>
+graph.addEdge(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>) <span class="hljs-comment">// =&gt; true</span>
+graph.addEdge(<span class="hljs-number">3</span>, <span class="hljs-number">0</span>) <span class="hljs-comment">// =&gt; false because this edge introduces a cycle</span>
+<span class="hljs-comment">// The edge (3,0) was not added.</span>
+
+graph.deleteEdge(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
+graph.addEdge(<span class="hljs-number">3</span>, <span class="hljs-number">0</span>) <span class="hljs-comment">// =&gt; true, no cycle because we deleted edge (2,3)</span>
+</code></pre>
+			<p>The main algorithm is implemented by <code>CycleDetectorImpl</code>. To allow for this lib to work with different graph
+				data structures, it is subclassed. The subclass is called <code>...Adapter</code> responsible for storing the vertex and edge data.
+			The following adapters are part of this library:</p>
+			<ul>
+				<li>GenericGraphAdapter: Uses <code>Map</code>s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well. </li>
+				<li>GraphlibAdapter: For the npm module <code>graphlib</code>. Vertices are strings.</li>
+				<li>ObjectGraphAdatpter: Uses plain <code>objects</code> instead of <code>Map</code>s. Slightly less performant, use if <code>Map</code> is not available.</li>
+			</ul>
+			<p>You can add vertices explicitly, but it is not required. They are added if they do not exist.</p>
+			<p>See the documentation linked above for all methods available.</p>
 			<h1 id="performance">Performance</h1>
-			<p>This is faster if many edges need to be added. Tests done with <code>benchmark</code>.
-				compared with running a full topological sort with <code>js-graph-algorithms</code>.
-				Measured times is the time that was needed for creating an new graph and addng <code>n</code>, checking
+			<p>Better than checking for cycles from scratch every time you add an edge. Tests done with <a href="https://www.npmjs.com/package/benchmark">benchmark</a>.
+				Compared with running a full topological sort with <code>js-graph-algorithms</code> (via <code>alg.isAcyclic(graph)</code>) each time a vertex is added.
+				Measured time is the time that was needed for creating a new graph and adding <code>n</code> vertices, checking
 			for a cycle after each edge insertion.</p>
-			<pre><code>    incremental-cycle-detection#insert_20_RandomSource x <span class="hljs-number">14</span>,<span class="hljs-number">420</span> ops/sec ±<span class="hljs-number">8.23</span>% (<span class="hljs-number">66</span> runs sampled)
-    graphlib#insert_20_RandomSource x <span class="hljs-number">1</span>,<span class="hljs-number">560</span> ops/sec ±<span class="hljs-number">0.58</span>% (<span class="hljs-number">95</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_20_RandomSource
-
-    incremental-cycle-detection#insert_100_RandomSource x <span class="hljs-number">3</span>,<span class="hljs-number">702</span> ops/sec ±<span class="hljs-number">7.57</span>% (<span class="hljs-number">58</span> runs sampled)
-    graphlib#insert_100_RandomSource x <span class="hljs-number">91.95</span> ops/sec ±<span class="hljs-number">1.97</span>% (<span class="hljs-number">78</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_100_RandomSource
-
-    incremental-cycle-detection#insert_500_RandomSource x <span class="hljs-number">819</span> ops/sec ±<span class="hljs-number">5.45</span>% (<span class="hljs-number">83</span> runs sampled)
-    graphlib#insert_500_RandomSource x <span class="hljs-number">19.61</span> ops/sec ±<span class="hljs-number">3.52</span>% (<span class="hljs-number">37</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_500_RandomSource
-
-    incremental-cycle-detection#insert_20_ForwardSource x <span class="hljs-number">16</span>,<span class="hljs-number">564</span> ops/sec ±<span class="hljs-number">7.22</span>% (<span class="hljs-number">56</span> runs sampled)
-    graphlib#insert_20_ForwardSource x <span class="hljs-number">1</span>,<span class="hljs-number">444</span> ops/sec ±<span class="hljs-number">0.64</span>% (<span class="hljs-number">92</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_20_ForwardSource
-
-    incremental-cycle-detection#insert_100_ForwardSource x <span class="hljs-number">4</span>,<span class="hljs-number">107</span> ops/sec ±<span class="hljs-number">7.31</span>% (<span class="hljs-number">55</span> runs sampled)
-    graphlib#insert_100_ForwardSource x <span class="hljs-number">127</span> ops/sec ±<span class="hljs-number">0.28</span>% (<span class="hljs-number">81</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_100_ForwardSource
-
-    incremental-cycle-detection#insert_500_ForwardSource x <span class="hljs-number">1</span>,<span class="hljs-number">924</span> ops/sec ±<span class="hljs-number">6.87</span>% (<span class="hljs-number">59</span> runs sampled)
-    graphlib#insert_500_ForwardSource x <span class="hljs-number">30.86</span> ops/sec ±<span class="hljs-number">3.55</span>% (<span class="hljs-number">54</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_500_ForwardSource
-
-    incremental-cycle-detection#insert_20_BackwardSource x <span class="hljs-number">18</span>,<span class="hljs-number">044</span> ops/sec ±<span class="hljs-number">7.65</span>% (<span class="hljs-number">64</span> runs sampled)
-    graphlib#insert_20BackwardSource x <span class="hljs-number">1</span>,<span class="hljs-number">480</span> ops/sec ±<span class="hljs-number">1.02</span>% (<span class="hljs-number">92</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_20_BackwardSource
-
-    incremental-cycle-detection#insert_100_BackwardSource x <span class="hljs-number">5</span>,<span class="hljs-number">226</span> ops/sec ±<span class="hljs-number">7.41</span>% (<span class="hljs-number">53</span> runs sampled)
-    graphlib#insert_100BackwardSource x <span class="hljs-number">133</span> ops/sec ±<span class="hljs-number">0.59</span>% (<span class="hljs-number">83</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_100_BackwardSource
-
-    incremental-cycle-detection#insert_500_BackwardSource x <span class="hljs-number">1</span>,<span class="hljs-number">926</span> ops/sec ±<span class="hljs-number">6.66</span>% (<span class="hljs-number">58</span> runs sampled)
-    graphlib#insert_500BackwardSource x <span class="hljs-number">29.80</span> ops/sec ±<span class="hljs-number">0.48</span>% (<span class="hljs-number">52</span> runs sampled)
-    Fastest is incremental-cycle-detection#insert_500_BackwardSource
+			<pre><code><span class="hljs-comment">// 200 vertices, 15000 random (same for each algorithm) edges added</span>
+incremental-cycle-detection(insert <span class="hljs-number">15000</span>, RandomSource) x <span class="hljs-number">43.87</span> ops/sec ±<span class="hljs-number">4.39</span>% (<span class="hljs-number">55</span> runs sampled)
+incremental-cycle-detection-objectgraph(insert <span class="hljs-number">15000</span>, RandomSource) x <span class="hljs-number">50.73</span> ops/sec ±<span class="hljs-number">4.17</span>% (<span class="hljs-number">61</span> runs sampled)
+incremental-cycle-detection-idgraph(insert <span class="hljs-number">15000</span>, RandomSource) x <span class="hljs-number">11.74</span> ops/sec ±<span class="hljs-number">4.17</span>% (<span class="hljs-number">33</span> runs sampled)
+incremental-cycle-detection-graphlib(insert <span class="hljs-number">15000</span>, RandomSource) x <span class="hljs-number">7.41</span> ops/sec ±<span class="hljs-number">2.14</span>% (<span class="hljs-number">22</span> runs sampled)
+graphlib(insert15000, RandomSource) x <span class="hljs-number">0.19</span> ops/sec ±<span class="hljs-number">2.25</span>% (<span class="hljs-number">5</span> runs sampled)
 </code></pre><h1 id="javascript-environment">JavaScript environment</h1>
 			<p>Some parts need <code>Map</code> and <code>Set</code>. You can either</p>
 			<ul>
 				<li>use this lib in an enviroment that <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map">supports these</a></li>
-				<li><a href="https://en.wikipedia.org/wiki/Polyfill_(programming">polyfill</a>) Map/Set</li>
+				<li><a href="https://en.wikipedia.org/wiki/Polyfill_%28programming%29">polyfill</a> Map/Set</li>
 				<li>pass an implementation of Map/Set to the constructor or factory method. This way you don&#39;t have to <a href="https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad">monkey patch</a>.</li>
 			</ul>
-			<h1 id="usage">Usage</h1>
-			<p>TODO</p>
 			<h1 id="build">Build</h1>
 			<p>May not to work on <a href="https://xkcd.com/196/">Windows</a>.</p>
 			<pre><code class="lang-sh">git <span class="hljs-built_in">clone</span> https://github.com/blutorange/js-incremental-cycle-detect

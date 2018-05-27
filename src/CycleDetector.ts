@@ -1,5 +1,6 @@
-import { CycleDetector, PartialExcept } from "./Header";
-import { GraphListener, VertexData } from "./InternalHeader";
+import { Pair } from "andross";
+import { CycleDetector } from "./Header";
+import { GraphListener, PartialExcept, VertexData } from "./InternalHeader";
 
 /**
  * Base class for the cycle detector. Handles the interaction with the cycle detection
@@ -8,7 +9,7 @@ import { GraphListener, VertexData } from "./InternalHeader";
  * and removing vertices and edges, and querying the graph. Do not overwrite any methods
  * other than those marked `abstract`.
  */
-export abstract class CycleDetectorImpl<TVertex> implements CycleDetector<TVertex> {
+export abstract class CycleDetectorImpl<TVertex, TData = any> implements CycleDetector<TVertex, TData> {
     private listener: GraphListener<TVertex>;
 
     constructor(listener: PartialExcept<GraphListener<TVertex>, "isReachable" | "createVertexData">) {
@@ -24,6 +25,9 @@ export abstract class CycleDetectorImpl<TVertex> implements CycleDetector<TVerte
     }
 
     addVertex(vertex: TVertex): boolean {
+        if (this.hasVertex(vertex)) {
+            return false;
+        }
         if (!this.listener.beforeAddVertex(this, vertex)) {
             return false;
         }
@@ -39,16 +43,13 @@ export abstract class CycleDetectorImpl<TVertex> implements CycleDetector<TVerte
             return false;
         }
         // check sanity, do vertices exist?
-        if (!this.hasVertex(from)) {
-            this.addVertex(from);
+        this.addVertex(from);
+        this.addVertex(to);
+        if (this.hasEdge(from, to)) {
+            return false;
         }
-        if (!this.hasVertex(to)) {
-            this.addVertex(to);
-        }
-        if (!this.hasEdge(from, to)) {
-            if (!this.listener.beforeAddEdge(this, from, to)) {
-                return false;
-            }
+        if (!this.listener.beforeAddEdge(this, from, to)) {
+            return false;
         }
         this._addEdge(from, to);
         this.listener.afterAddEdge(this, from, to);
@@ -56,15 +57,21 @@ export abstract class CycleDetectorImpl<TVertex> implements CycleDetector<TVerte
     }
 
     deleteEdge(from: TVertex, to: TVertex): boolean {
+        if (!this.hasEdge(from, to)) {
+            return false;
+        }
         if (!this.listener.beforeDeleteEdge(this, from, to)) {
             return false;
         }
-        const res = this._deleteEdge(from, to);
+        this._deleteEdge(from, to);
         this.listener.afterDeleteEdge(this, from, to);
-        return res;
+        return true;
     }
 
     deleteVertex(vertex: TVertex): boolean {
+        if (!this.hasVertex(vertex)) {
+            return false;
+        }
         if (!this.listener.beforeDeleteVertex(this, vertex)) {
             return false;
         }
@@ -76,6 +83,16 @@ export abstract class CycleDetectorImpl<TVertex> implements CycleDetector<TVerte
 
     isReachable(from: TVertex, to: TVertex): boolean {
         return this.listener.isReachable(this, from, to);
+    }
+
+    getData(vertex: TVertex): VertexData<TData> {
+        this.addVertex(vertex);
+        return this._getData(vertex);
+    }
+
+    setData(vertex: TVertex, data: TData): void {
+        this.addVertex(vertex);
+        (this._getData(vertex).custom as TData) = data;
     }
 
     contractEdge(from: TVertex, to: TVertex): boolean {
@@ -124,13 +141,60 @@ export abstract class CycleDetectorImpl<TVertex> implements CycleDetector<TVerte
     abstract getPredecessorsOf(vertex: TVertex): Iterator<TVertex>;
     abstract hasEdge(from: TVertex, to: TVertex): boolean;
     abstract hasVertex(vertex: TVertex): boolean;
-    abstract getData(key: TVertex): VertexData;
+    abstract getEdgeCount(): number;
+    abstract getVertexCount(): number;
+    abstract getEdges(): Iterator<Pair<TVertex>>;
+    abstract getVertices(): Iterator<TVertex>;
 
-    protected abstract _deleteData(key: TVertex): void;
-    protected abstract _setData(key: TVertex, data: VertexData): void;
+    /**
+     * Removes the data associated with the vertex.
+     * @param vertex Vertex whose data to delete.
+     */
+    protected abstract _deleteData(vertex: TVertex): void;
+
+    /**
+     * Associated arbitrary data with the vertex. Called after it
+     * was ascertained the vertex exists.
+     * @param vertex Vertex with which to associate data.
+     * @param data Data to be set on the vertex
+     */
+    protected abstract _setData(vertex: TVertex, data: VertexData): void;
+
+    /**
+     * Get the arbitrary data associated with the vertex. Called after it
+     * was ascertained the vertex exists.
+     * @param vertex Vertex whose data to get.
+     * @return The vertex's data.
+     */
+    protected abstract _getData(vertex: TVertex): Readonly<VertexData<TData>>;
+
+    /**
+     * Called in order to add an edge, after it was ascertained the edge may be added,
+     * that the vertices exists and that the edge does not exist already.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     */
     protected abstract _addEdge(from: TVertex, to: TVertex): void;
+
+    /**
+     * Add a vertex. Called after it was ascertained that the vertex does not
+     * exist yet and may be added.
+     * @param vertex Vertex to be added.
+     */
     protected abstract _addVertex(vertex: TVertex): void;
-    /** Deletes all edges between from and to. */
-    protected abstract _deleteEdge(from: TVertex, to: TVertex): boolean;
+
+    /**
+     * Deletes an edge. Called after it was ascertained the edge exists and
+     * that it may be deleted.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     */
+    protected abstract _deleteEdge(from: TVertex, to: TVertex): void;
+
+    /**
+     * Deletes a vertex. Called after it was ascertained that the vertex does exists
+     * and may be deleted.
+     * @param vertex Vertex to be deleted.
+     */
     protected abstract _deleteVertex(vertex: TVertex): void;
 }

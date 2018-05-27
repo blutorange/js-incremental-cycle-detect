@@ -113,7 +113,7 @@ export class PearceKellyImpl<TVertex> implements Partial<GraphListener<TVertex>>
     private cleanAfterCycle(adapter: CycleDetector<TVertex>) {
         this.stack = [];
         for (let n = this.deltaXyF.pop(); n !== undefined; n = this.deltaXyF.pop()) {
-            adapter.getData(n).visited = false;
+            (adapter.getData(n) as VertexData).visited = false;
         }
     }
 
@@ -121,7 +121,7 @@ export class PearceKellyImpl<TVertex> implements Partial<GraphListener<TVertex>>
         this.stack.push(first);
         while (this.stack.length > 0) {
             const n = this.stack.pop() as TVertex;
-            const nData = adapter.getData(n);
+            const nData = adapter.getData(n) as VertexData;
             if (nData.visited) {
                 continue;
             }
@@ -150,7 +150,7 @@ export class PearceKellyImpl<TVertex> implements Partial<GraphListener<TVertex>>
             if (nData.visited) {
                 continue;
             }
-            nData.visited = true;
+            (nData as VertexData).visited = true;
             this.deltaXyB.push(n);
             for (let it = adapter.getPredecessorsOf(n), res = it.next(); !res.done; res = it.next()) {
                 // is w unvisited and in affected region?
@@ -176,14 +176,14 @@ export class PearceKellyImpl<TVertex> implements Partial<GraphListener<TVertex>>
         // Now load delta_xy_f onto array L
         const L: TVertex[] = this.deltaXyB.concat(this.deltaXyF);
         for (const w of L) {
-            adapter.getData(w).visited = false;
+            (adapter.getData(w) as VertexData).visited = false;
         }
 
         const R: number[] = merge(adapter, this.deltaXyB, this.deltaXyF);
 
         // allocate vertices in L starting from lowest
         for (let i = 0, j = L.length; i < j; ++i) {
-            adapter.getData(L[i]).order = R[i];
+            (adapter.getData(L[i]) as VertexData).order = R[i];
         }
     }
 }

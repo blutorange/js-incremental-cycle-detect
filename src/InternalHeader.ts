@@ -1,16 +1,19 @@
 import { CycleDetector } from "./Header";
 
+/** @internal */
+export type PartialExcept<T, K extends keyof T> = Partial<T> & Pick<T, K>;
+
 /**
  * The data the algorithm needs to assoicate with each vertex.
  * @internal
  */
-export interface VertexData {
+export interface VertexData<T = any> {
     /** Topological order of the vertex. It is updated each time an edge is added. */
     order: number;
     /** Used by the breadth-first search. */
     visited: boolean;
     /** Custom user-defined data. */
-    custom: any;
+    custom: T | undefined;
 }
 
 /** @internal */
