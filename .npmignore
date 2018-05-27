@@ -1,6 +1,8 @@
 .vscode
 .nyc_output
 dist/test
+test
+perf
 coverage
 
 sandbox.ts

@@ -1,5 +1,5 @@
-import { GraphAdapter } from "./Header";
-import { Algo, VertexData } from "./InternalHeader";
+import { CycleDetector } from "./Header";
+import { GraphListener, VertexData } from "./InternalHeader";
 
 /*
  * Based on the paper
@@ -11,10 +11,10 @@ import { Algo, VertexData } from "./InternalHeader";
  */
 
 /**
- * Performs a merge sort of two arrays, with the actual array value stored
+ * Performs a merge sort step of two arrays, with the actual array value stored
  * in the key property of the array item.
  */
-function tkMerge<TVertex>(adapter: GraphAdapter<TVertex>, arr1: TVertex[], arr2: TVertex[]): number[] {
+function merge<TVertex>(adapter: CycleDetector<TVertex>, arr1: TVertex[], arr2: TVertex[]): number[] {
     const res: number[] = [];
     const len1 = arr1.length;
     const len2 = arr2.length;
@@ -50,7 +50,7 @@ function tkMerge<TVertex>(adapter: GraphAdapter<TVertex>, arr1: TVertex[], arr2:
     return res;
 }
 
-export class PkImpl<TVertex> implements Algo<TVertex> {
+export class PearceKellyImpl<TVertex> implements Partial<GraphListener<TVertex>> {
     private id: number;
     private stack: TVertex[];
     private deltaXyF: TVertex[];
@@ -63,23 +63,7 @@ export class PkImpl<TVertex> implements Algo<TVertex> {
         this.deltaXyF = [];
     }
 
-    createVertex(adapter: GraphAdapter<TVertex>, vertex: TVertex): VertexData {
-        const id = this.id++;
-        return {
-            order: id,
-            visited: false,
-        };
-    }
-
-    deleteEdge(from: TVertex, to: TVertex): void {
-        // no-op
-    }
-
-    deleteVertex(adapter: GraphAdapter<TVertex>, vertex: TVertex) {
-        // no-op
-    }
-
-    addEdge(adapter: GraphAdapter<TVertex>, x: TVertex, y: TVertex): boolean {
+    beforeAddEdge(adapter: CycleDetector<TVertex>, x: TVertex, y: TVertex): boolean {
         const lb = adapter.getData(y).order;
         const ub = adapter.getData(x).order;
         this.deltaXyB = [];
@@ -97,10 +81,21 @@ export class PkImpl<TVertex> implements Algo<TVertex> {
         return true;
     }
 
-    isReachable(source: TVertex, target: TVertex, adapter: GraphAdapter<TVertex>): boolean {
+    createVertexData(vertex: TVertex): VertexData {
+        return {
+            custom: undefined,
+            order: this.id++,
+            visited: false,
+        };
+    }
+
+    isReachable(adapter: CycleDetector<TVertex>, source: TVertex, target: TVertex): boolean {
+        // Search for the target from the source. Only checks vertices whose
+        // toplogical order is between the source and target.
         if (source === target) {
             return true;
         }
+
         const tOrder = adapter.getData(target).order;
         if (adapter.getData(source).order > tOrder) {
             // target cannot be reached by source as source is sorted after target topologically
@@ -115,14 +110,14 @@ export class PkImpl<TVertex> implements Algo<TVertex> {
         return reachable;
     }
 
-    private cleanAfterCycle(adapter: GraphAdapter<TVertex>) {
+    private cleanAfterCycle(adapter: CycleDetector<TVertex>) {
         this.stack = [];
         for (let n = this.deltaXyF.pop(); n !== undefined; n = this.deltaXyF.pop()) {
             adapter.getData(n).visited = false;
         }
     }
 
-    private dfs_f(first: TVertex, adapter: GraphAdapter<TVertex>, ub: number): boolean {
+    private dfs_f(first: TVertex, adapter: CycleDetector<TVertex>, ub: number): boolean {
         this.stack.push(first);
         while (this.stack.length > 0) {
             const n = this.stack.pop() as TVertex;
@@ -147,7 +142,7 @@ export class PkImpl<TVertex> implements Algo<TVertex> {
         return true;
     }
 
-    private dfs_b(first: TVertex, adapter: GraphAdapter<TVertex>, lb: number): void {
+    private dfs_b(first: TVertex, adapter: CycleDetector<TVertex>, lb: number): void {
         this.stack.push(first);
         while (this.stack.length > 0) {
             const n = this.stack.pop() as TVertex;
@@ -167,12 +162,12 @@ export class PkImpl<TVertex> implements Algo<TVertex> {
         }
     }
 
-    private sort(adapter: GraphAdapter<TVertex>, vertices: TVertex[]): TVertex[] {
+    private sort(adapter: CycleDetector<TVertex>, vertices: TVertex[]): TVertex[] {
         // Sort by topological order.
         return vertices.map(v => ({key: adapter.getData(v).order,  val: v})).sort((v1, v2) => v1.key - v2.key).map(v => v.val);
     }
 
-    private reorder(adapter: GraphAdapter<TVertex>) {
+    private reorder(adapter: CycleDetector<TVertex>) {
         // sort sets to preserve original order of elements
         this.deltaXyB = this.sort(adapter, this.deltaXyB);
         this.deltaXyF = this.sort(adapter, this.deltaXyF);
@@ -184,7 +179,7 @@ export class PkImpl<TVertex> implements Algo<TVertex> {
             adapter.getData(w).visited = false;
         }
 
-        const R: number[] = tkMerge(adapter, this.deltaXyB, this.deltaXyF);
+        const R: number[] = merge(adapter, this.deltaXyB, this.deltaXyF);
 
         // allocate vertices in L starting from lowest
         for (let i = 0, j = L.length; i < j; ++i) {

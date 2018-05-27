@@ -5,18 +5,18 @@
 import { expect } from "chai";
 import { Graph } from 'graphlib';
 import { suite, test } from "mocha-typescript";
-import { CycleDetector, GraphlibAdapter, createGraph } from '../main';
+import { GraphlibAdapter } from '../main';
 
 @suite("Graph adapter - Graphlib")
 export class GraphlibAdapterTest {
-    private make(): CycleDetector<string, GraphlibAdapter> {
+    private make(): GraphlibAdapter {
         const adapter = new GraphlibAdapter();
-        return createGraph({adapter});
+        return adapter;
     }
 
     @test("should return the graphlib object")
     getGraph() {
         const g = this.make();
-        expect(g.unwrap().graph).to.be.an.instanceof(Graph);
+        expect(g.graph).to.be.an.instanceof(Graph);
     }
 }
