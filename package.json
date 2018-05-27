@@ -9,7 +9,7 @@
     "test-prod": "npx nyc --reporter=html --reporter=text npx mocha --reporter spec dist/test",
     "test-dev": "npx ts-mocha --reporter spec test/**/*.ts",
     "doc": "npm run doc-create",
-    "doc-create": "npx typedoc --mode file --name js-incremental-cycle-detect --readme README.md --out docs --excludeExternals --excludePrivate --excludeNotExported --excludeProtected --ignoreCompilerErrors --theme minimal main.ts",
+    "doc-create": "npx typedoc --mode file --name js-incremental-cycle-detect --readme README.md --out docs --excludeExternals --excludePrivate --excludeNotExported --excludeProtected --ignoreCompilerErrors --theme minimal src",
     "clean": "rm -rf main.js main.d.ts docs coverage dist",
     "transpile": "npx tsc -p tsconfig.json",
     "lint": "npx tslint -c tslint.json main.ts",
@@ -23,7 +23,7 @@
   "types": "./main.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blutorange/js-kagura.git"
+    "url": "git+https://github.com/blutorange/js-incremental-cycle-detect.git"
   },
   "keywords": [
     "comparator"
@@ -31,7 +31,7 @@
   "author": "Andre Wachsmuth",
   "license": "Unlicense",
   "bugs": {
-    "url": "https://github.com/blutorange/js-kagura/issues"
+    "url": "https://github.com/blutorange/js-incremental-cycle-detect/issues"
   },
   "devDependencies": {
     "@types/benchmark": "^1.0.31",

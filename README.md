@@ -53,11 +53,11 @@ graph.addEdge(3, 0) // => true, no cycle because we deleted edge (2,3)
 
 The main algorithm is implemented by `CycleDetectorImpl`. To allow for this lib to work with different graph
 data structures, it is subclassed. The subclass is called `...Adapter` responsible for storing the vertex and edge data.
-The following adapters are part of this library:
+The following adapters are part of this library and all implement [CycleDetector](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/cycledetector.html)
 
-- GenericGraphAdapter: Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well. 
-- GraphlibAdapter: For the npm module `graphlib`. Vertices are strings.
-- ObjectGraphAdatpter: Uses plain `objects` instead of `Map`s. Slightly less performant, use if `Map` is not available.
+- [GenericGraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/genericgraphadapter.html): Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well. 
+- [GraphlibAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/graphlibadapter.html): For the npm module [graphlib](https://www.npmjs.com/package/graphlib). Vertices are strings.
+- [ObjectGraphAdatpter](https://blutorange.github.io/js-incremental-cycle-detect/classes/objectgraphadapter.html): Uses plain `objects` instead of `Map`s. Slightly less performant, use if `Map` is not available.
 
 You can add vertices explicitly, but it is not required. They are added if they do not exist.
 
