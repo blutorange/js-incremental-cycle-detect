@@ -5,6 +5,7 @@ sandbox.ts
 
 main.js
 main.d.ts
+*.tgz
 
 # ---> Linux
 *~

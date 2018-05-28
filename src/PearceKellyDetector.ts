@@ -1,14 +1,5 @@
 import { CycleDetector, GraphAdapter, VertexData } from "./Header";
 
-/*
- * Based on the paper
- * A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
- *   DAVID J. PEARCE / PAUL H. J. KELLY
- *   Journal of Experimental Algorithmics (JEA)
- *   Volume 11, 2006, Article No. 1.7
- *   ACM New York, NY, USA
- */
-
 /**
  * Performs a merge sort step of two arrays, with the actual array value stored
  * in the key property of the array item.
@@ -54,6 +45,21 @@ function sort<TVertex>(adapter: GraphAdapter<TVertex>, vertices: TVertex[]): TVe
     return vertices.map(v => ({key: adapter.getData(v).order,  val: v})).sort((v1, v2) => v1.key - v2.key).map(v => v.val);
 }
 
+/**
+ * Performs a cycle detection while edges are added. You must call
+ * the methods when edges are added etc. as described in @see {@link CycleDetector}.
+ *
+ * ```text
+ * Based on the paper
+ * A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
+ *   DAVID J. PEARCE / PAUL H. J. KELLY
+ *   Journal of Experimental Algorithmics (JEA)
+ *   Volume 11, 2006, Article No. 1.7
+ *   ACM New York, NY, USA
+ * ```
+ *
+ * @see {@link CycleDetector}
+ */
 export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
     private id: number;
     private stack: TVertex[];

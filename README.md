@@ -56,7 +56,7 @@ The main algorithm is implemented by `CycleDetectorImpl`. To allow for this lib 
 data structures, it is subclassed. The subclass is called `...Adapter` responsible for storing the vertex and edge data.
 For convenience, the following adapters are provided and all implement [CommonAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/commonadapter.html)
 
-- [GenericGraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/genericgraphadapter.html): Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well.
+- [GenericGraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/genericgraphadapter.html): Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well.
 - [GraphlibAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/graphlibadapter.html): For the npm module [graphlib](https://www.npmjs.com/package/graphlib). Vertices are strings.
 
 ```javascript

@@ -1,10 +1,15 @@
 .vscode
 .nyc_output
+docs
 dist/test
 test
 perf
 coverage
 
+tsconfig.json
+tslint.json
+**/*.ts
+*.tgz
 sandbox.ts
 
 # ---> Linux
