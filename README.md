@@ -123,4 +123,5 @@ I use the following keywords:
 
 From newest to oldest:
 
+- 0.1.1 Fixed package.json and dependencies (was missing tslib).
 - 0.1.0 Initial version.
