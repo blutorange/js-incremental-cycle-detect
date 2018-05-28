@@ -5,12 +5,25 @@
 import { expect } from "chai";
 import { Graph } from 'graphlib';
 import { suite, test } from "mocha-typescript";
-import { GraphlibAdapter } from '../main';
+import { GraphlibAdapter, VertexData } from '../main';
+
+function toArray<T>(it: Iterator<T>) {
+    const arr: T[] = [];
+    for (let res = it.next(); !res.done; res = it.next()) {
+        arr.push(res.value);
+    }
+    return arr;
+}
+
+interface Vertex extends VertexData {
+    id: number;
+    name: string;
+}
 
 @suite("Graph adapter - Graphlib")
 export class GraphlibAdapterTest {
-    private make(): GraphlibAdapter {
-        const adapter = new GraphlibAdapter();
+    private make<TVertexData extends VertexData = VertexData>(): GraphlibAdapter<TVertexData> {
+        const adapter = new GraphlibAdapter({graphlib: Graph});
         return adapter;
     }
 
@@ -18,5 +31,26 @@ export class GraphlibAdapterTest {
     getGraph() {
         const g = this.make();
         expect(g.graph).to.be.an.instanceof(Graph);
+    }
+
+    @test("should allow associating vertex data")
+    vertexData() {
+        const g = this.make<Vertex>();
+        const v1 = {id: 1, name: "foo"};
+        const v2 = {id: 2, name: "bar"};
+        const v3 = {id: 3, name: "baz"};
+        g.addVertex("1", v1);
+        g.addVertex("2", v2);
+        g.addVertex("3", v3);
+        expect(toArray(g.getVertices())
+            .sort((lhs, rhs) => g.getVertexData(lhs).id - g.getVertexData(rhs).id)
+            .map(v => ({id: g.getVertexData(v).id, name: g.getVertexData(v).name})))
+            .to.deep.equal([v1, v2, v3]);
+    }
+
+    @test("should allow associating edge source/target data")
+    edgeData() {
+        const g = this.make();
+        g.addEdge("0", "1", )
     }
 }

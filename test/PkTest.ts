@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Graph, alg } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
-import { CycleDetector, GenericGraphAdapter, GraphlibAdapter, ObjectGraphAdapter } from "../main";
+import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter } from "../main";
 
 const log = false;
 
@@ -23,30 +23,32 @@ export const hack: any[] = [];
     {
         clazz: GenericGraphAdapter,
         make: () => new GenericGraphAdapter(),
-        convert: (vertex: number, g: CycleDetector<any>) => vertex
+        convert: (vertex: number) => vertex
     },
     {
         clazz: GraphlibAdapter,
-        make: () => new GraphlibAdapter(),
-        convert: (vertex: number, g: CycleDetector<any>) => String(vertex)
-    },
-    {
-        clazz: ObjectGraphAdapter,
-        make: () => new ObjectGraphAdapter(),
-        convert: (vertex: number, g: CycleDetector<any>) => (g as any).createVertex(),
+        make: () => new GraphlibAdapter({graphlib: Graph}),
+        convert: (vertex: number) => String(vertex)
     },
 ].forEach((adapter) => {
     // For each ID, we only create the vertex once and store it for later use.
     let id = 0;
-    const r = new WeakMap<CycleDetector<any>, Map<number, any>>();
-    function get(g: CycleDetector<any>, vertex: number, remove: boolean = false): any {
+    const r = new WeakMap<CommonAdapter<any>, Map<number, any>>();
+    function get(g: CommonAdapter<any>, vertex: number, remove: boolean = false): any {
         const registry = r.get(g);
         if (!registry) throw new Error("no registry found");
         let v = registry.get(vertex);
         if (v === undefined && remove) throw new Error("vertex not found: " + vertex);
-        if (v === undefined) registry.set(vertex, v = adapter.convert(vertex, g));
+        if (v === undefined) registry.set(vertex, v = adapter.convert(vertex));
         if (remove) registry.delete(vertex);
         return v;
+    }
+
+    function has(g: CommonAdapter<any>, vertex: number): any {
+        const registry = r.get(g);
+        if (!registry) throw new Error("no registry found");
+        let v = registry.get(vertex);
+        return v !== undefined;
     }
 
     function edgeSorter(lhs: number[], rhs: number[]): number {
@@ -62,7 +64,7 @@ export const hack: any[] = [];
         return v;
     }
 
-    function expectEdgesToEqual(g: CycleDetector<any>, should: Pair<number>[]) {
+    function expectEdgesToEqual(g: CommonAdapter<any>, should: Pair<number>[]) {
         const is = toArray(g.getEdges());
         const ismapped = is.map(v => [vertexIdentifier(v[0]), vertexIdentifier(v[1])]);
         const shouldmapped = should.map(v => [vertexIdentifier(get(g, v[0])), vertexIdentifier(get(g, v[1]))]);
@@ -71,7 +73,7 @@ export const hack: any[] = [];
         expect(ismapped).to.deep.equal(shouldmapped);
     }
 
-    function expectVerticesToEqual(g: CycleDetector<any>, should: number[]) {
+    function expectVerticesToEqual(g: CommonAdapter<any>, should: number[]) {
         const is = toArray(g.getVertices());
         const ismapped = is.map(v => vertexIdentifier(v));
         const shouldmapped = should.map(v => vertexIdentifier(get(g, v)));
@@ -80,54 +82,54 @@ export const hack: any[] = [];
         expect(ismapped).to.deep.equal(shouldmapped);
     }
 
-    function addEdge(g: CycleDetector<any>, from: number, to: number): boolean {
+    function addEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
         const f = get(g, from);
         const t = get(g, to);
         return g.addEdge(f, t);
     }
 
-    function addVertex(g: CycleDetector<any>, vertex: number): boolean {
+    function addVertex(g: CommonAdapter<any>, vertex: number): boolean {
         const v = get(g, vertex);
         return g.addVertex(v);
     }
 
-    function contractEdge(g: CycleDetector<any>, from: number, to: number): boolean {
+    function contractEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
         const f = get(g, from);
         const t = get(g, to);
         return g.contractEdge(f, t);
     }
 
-    function hasEdge(g: CycleDetector<any>, from: number, to: number): boolean {
+    function hasEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
         return g.hasEdge(get(g, from), get(g, to));
     }
 
-    function deleteEdge(g: CycleDetector<any>, from: number, to: number): boolean {
+    function hasVertex(g: CommonAdapter<any>, vertex: number): boolean {
+        const exists = has(g, vertex);
+        if (!exists) {
+            return false;
+        }
+        return g.hasVertex(get(g, vertex));
+    }
+
+    function deleteEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
         return g.deleteEdge(get(g, from), get(g, to));
     }
 
-    function deleteVertex(g: CycleDetector<any>, vertex: number): boolean {
+    function deleteVertex(g: CommonAdapter<any>, vertex: number): boolean {
         return g.deleteVertex(get(g, vertex, true));
     }
 
-    function isReachable(g: CycleDetector<any>, from: number, to: number): boolean {
+    function isReachable(g: CommonAdapter<any>, from: number, to: number): boolean {
         return g.isReachable(get(g, from), get(g, to));
     }
 
-    function setData(g: CycleDetector<any>, vertex: number, data: any): void {
-        g.setData(get(g, vertex), data);
-    }
-
-    function getData(g: CycleDetector<any>, vertex: number): any {
-        return g.getData(get(g, vertex));
-    }
-
-    function make<T = any>(): CycleDetector<any, T> {
+    function make<TVertex = any>(): CommonAdapter<any> {
         const g = adapter.make();
         r.set(g, new Map<number, any>());
         return g;
     }
 
-    function randomDelete(mygraph: CycleDetector<any>, yourgraph: Graph, edges: Pair<number>[], engine: Random.Engine): void {
+    function randomDelete(mygraph: CommonAdapter<any>, yourgraph: Graph, edges: Pair<number>[], engine: Random.Engine): void {
         if (log) console.log("\n// ===begin delete");
         let edgeCount = Random.integer(1, edges.length)(engine);
         Random.shuffle(engine, edges);
@@ -139,7 +141,7 @@ export const hack: any[] = [];
         }
     }
     
-    function randomInsert(mygraph: CycleDetector<any>, yourgraph: Graph, edges: Pair<number>[], vertexCount: number, engine: Random.Engine): void {
+    function randomInsert(mygraph: CommonAdapter<any>, yourgraph: Graph, edges: Pair<number>[], vertexCount: number, engine: Random.Engine): void {
         if (log) console.log("\n/// ===begin insert");
         let edgeCount = Random.integer(Math.floor(vertexCount/5), vertexCount*5)(engine);
         let chooseVertex = Random.integer(0, vertexCount - 1);
@@ -175,93 +177,174 @@ export const hack: any[] = [];
             }
         }
 
-        @test("should not have any data set by default")
-        dataDefault() {
-            const g = make();
-            expect(getData(g, 0).custom).to.be.undefined;
-            expect(getData(g, 1).custom).to.be.undefined;
-            expect(getData(g, 2).custom).to.be.undefined;
-            expectVerticesToEqual(g, [0, 1, 2]);
-            addVertex(g, 0);
-            addVertex(g, 1);
-            addVertex(g, 2);
-            expect(getData(g, 0).custom).to.be.undefined;
-            expect(getData(g, 1).custom).to.be.undefined;
-            expect(getData(g, 2).custom).to.be.undefined;
-        }
-
-        @test("should allow setting and getting data")
-        data() {
-            const g = make<string>();
-            setData(g, 0, "foo");
-            expect(getData(g, 0).custom).to.equal("foo");
-            addVertex(g, 1);
-            setData(g, 1, "bar");
-            expect(getData(g, 1).custom).to.equal("bar");
-
-            const g2 = make<{foo: number}>();
-            const data = {foo: 0};
-            setData(g2, 2, data);
-            data.foo = 42;
-            expect(getData(g2, 2).custom.foo).to.equal(42);
-        }
-
-        @test("should return all vertices")
+        @test("should return all vertices and their count")
         getVertices() {
             const g = make();
+
+            expect(g.getVertexCount()).to.equal(0);
+            expect(hasVertex(g, 0)).to.be.false;
+            expect(hasVertex(g, 1)).to.be.false;
+            expect(hasVertex(g, 2)).to.be.false;
+            expect(hasVertex(g, 3)).to.be.false;
+            expect(hasVertex(g, 4)).to.be.false;
+            expect(hasVertex(g, 5)).to.be.false;
+            expect(hasVertex(g, 6)).to.be.false;
+            expect(hasVertex(g, 7)).to.be.false;
             
             addVertex(g, 0);
             expectVerticesToEqual(g, [0]);
+            expect(g.getVertexCount()).to.equal(1);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.false;
+            expect(hasVertex(g, 2)).to.be.false;
+            expect(hasVertex(g, 3)).to.be.false;
+            expect(hasVertex(g, 4)).to.be.false;
+            expect(hasVertex(g, 5)).to.be.false;
+            expect(hasVertex(g, 6)).to.be.false;
+            expect(hasVertex(g, 7)).to.be.false;
             
             addVertex(g, 1);
             expectVerticesToEqual(g, [0, 1]);
+            expect(g.getVertexCount()).to.equal(2);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.false;
+            expect(hasVertex(g, 3)).to.be.false;
+            expect(hasVertex(g, 4)).to.be.false;
+            expect(hasVertex(g, 5)).to.be.false;
+            expect(hasVertex(g, 6)).to.be.false;
+            expect(hasVertex(g, 7)).to.be.false;
             
             addVertex(g, 2);
             expectVerticesToEqual(g, [0, 1, 2]);
+            expect(g.getVertexCount()).to.equal(3);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.true;
+            expect(hasVertex(g, 3)).to.be.false;
+            expect(hasVertex(g, 4)).to.be.false;
+            expect(hasVertex(g, 5)).to.be.false;
+            expect(hasVertex(g, 6)).to.be.false;
+            expect(hasVertex(g, 7)).to.be.false;
     
             addEdge(g, 3, 4);
             expectVerticesToEqual(g, [0, 1, 2, 3, 4]);
-    
+            expect(g.getVertexCount()).to.equal(5);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.true;
+            expect(hasVertex(g, 3)).to.be.true;
+            expect(hasVertex(g, 4)).to.be.true;
+            expect(hasVertex(g, 5)).to.be.false;
+            expect(hasVertex(g, 6)).to.be.false;
+            expect(hasVertex(g, 7)).to.be.false;
+
             addEdge(g, 5, 6);
             expectVerticesToEqual(g, [0, 1, 2, 3, 4, 5, 6]);
+            expect(g.getVertexCount()).to.equal(7);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.true;
+            expect(hasVertex(g, 3)).to.be.true;
+            expect(hasVertex(g, 4)).to.be.true;
+            expect(hasVertex(g, 5)).to.be.true;
+            expect(hasVertex(g, 6)).to.be.true;
+            expect(hasVertex(g, 7)).to.be.false;
     
             addEdge(g, 6, 7);
             expectVerticesToEqual(g, [0, 1, 2, 3, 4, 5, 6, 7]);
-    
+            expect(g.getVertexCount()).to.equal(8);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.true;
+            expect(hasVertex(g, 3)).to.be.true;
+            expect(hasVertex(g, 4)).to.be.true;
+            expect(hasVertex(g, 5)).to.be.true;
+            expect(hasVertex(g, 6)).to.be.true;
+            expect(hasVertex(g, 7)).to.be.true;
+
             addEdge(g, 0, 1);
             expectVerticesToEqual(g, [0, 1, 2, 3, 4, 5, 6, 7]);
+            expect(g.getVertexCount()).to.equal(8);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.true;
+            expect(hasVertex(g, 3)).to.be.true;
+            expect(hasVertex(g, 4)).to.be.true;
+            expect(hasVertex(g, 5)).to.be.true;
+            expect(hasVertex(g, 6)).to.be.true;
+            expect(hasVertex(g, 7)).to.be.true;
     
             deleteVertex(g, 2);
             expectVerticesToEqual(g, [0, 1, 3, 4, 5, 6, 7]);
-
+            expect(g.getVertexCount()).to.equal(7);
+            expect(hasVertex(g, 0)).to.be.true;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.false;
+            expect(hasVertex(g, 3)).to.be.true;
+            expect(hasVertex(g, 4)).to.be.true;
+            expect(hasVertex(g, 5)).to.be.true;
+            expect(hasVertex(g, 6)).to.be.true;
+            expect(hasVertex(g, 7)).to.be.true;
+            
             deleteVertex(g, 0);
             expectVerticesToEqual(g, [1, 3, 4, 5, 6, 7]);
+            expect(g.getVertexCount()).to.equal(6);
+            expect(hasVertex(g, 0)).to.be.false;
+            expect(hasVertex(g, 1)).to.be.true;
+            expect(hasVertex(g, 2)).to.be.false;
+            expect(hasVertex(g, 3)).to.be.true;
+            expect(hasVertex(g, 4)).to.be.true;
+            expect(hasVertex(g, 5)).to.be.true;
+            expect(hasVertex(g, 6)).to.be.true;
+            expect(hasVertex(g, 7)).to.be.true;
         }
 
-        @test("should return all edges")
+        @test("should return all edges and their count")
         getEdges() {
             const g = make();
+
+            expect(g.getEdgeCount()).to.equal(0);
             
             addVertex(g, 0);
             expectEdgesToEqual(g, []);
+            expect(g.getEdgeCount()).to.equal(0);
+            expect(hasEdge(g, 0, 1)).to.be.false;
             
             addVertex(g, 1);
             expectEdgesToEqual(g, []);
+            expect(g.getEdgeCount()).to.equal(0);
+            expect(hasEdge(g, 0, 1)).to.be.false;
             
             addVertex(g, 2);
             expectEdgesToEqual(g, []);
+            expect(g.getEdgeCount()).to.equal(0);
+            expect(hasEdge(g, 0, 1)).to.be.false;
     
             addEdge(g, 3, 4);
             expectEdgesToEqual(g, [[3,4]]);
+            expect(g.getEdgeCount()).to.equal(1);
+            expect(hasEdge(g, 3, 4)).to.be.true;
     
             addEdge(g, 5, 6);
             expectEdgesToEqual(g, [[3,4], [5,6]]);
+            expect(g.getEdgeCount()).to.equal(2);
+            expect(hasEdge(g, 3, 4)).to.be.true;
+            expect(hasEdge(g, 5, 6)).to.be.true;
     
             addEdge(g, 3, 6);
             expectEdgesToEqual(g, [[3,4], [3,6], [5,6]]);
+            expect(g.getEdgeCount()).to.equal(3);
+            expect(hasEdge(g, 3, 4)).to.be.true;
+            expect(hasEdge(g, 3, 6)).to.be.true;
+            expect(hasEdge(g, 5, 6)).to.be.true;
     
             deleteEdge(g, 3, 4);
             expectEdgesToEqual(g, [[3,6], [5,6]]);
+            expect(g.getEdgeCount()).to.equal(2);
+            expect(hasEdge(g, 3, 4)).to.be.false;
+            expect(hasEdge(g, 3, 6)).to.be.true;
+            expect(hasEdge(g, 5, 6)).to.be.true;
         }
 
         @test("should detect cycles when inserting edges in increasing order")
@@ -460,6 +543,7 @@ export const hack: any[] = [];
         @test("should not delete edge if it does not exist")
         deleteNonExistingEdge() {
             const g = make();
+            expect(deleteEdge(g, 0, 1)).to.be.false;
             expect(addEdge(g, 0, 1)).to.be.true;
             expect(deleteEdge(g, 0, 1)).to.be.true;
             expect(deleteEdge(g, 0, 1)).to.be.false;

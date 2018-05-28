@@ -12,9 +12,9 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
    ACM New York, NY, USA
 ```
 
-# Documenation
+# Documentation
 
-[Documentation for all methods with examples.](https://blutorange.github.io/js-incremental-cycle-detect/)
+[See here for documentation](https://blutorange.github.io/js-incremental-cycle-detect/)
 
 # Install
 
@@ -40,6 +40,7 @@ The main purpose of this library is to add edges to a directed acyclic graph and
 that make the graph cyclic.
 
 ```javascript
+const { GenericGraphAdapter } = require("incremental-cycle-detect");
 const graph = new GenericGraphAdapter();
 graph.addEdge(0, 1) // => true
 graph.addEdge(1, 2) // => true
@@ -53,11 +54,16 @@ graph.addEdge(3, 0) // => true, no cycle because we deleted edge (2,3)
 
 The main algorithm is implemented by `CycleDetectorImpl`. To allow for this lib to work with different graph
 data structures, it is subclassed. The subclass is called `...Adapter` responsible for storing the vertex and edge data.
-The following adapters are part of this library and all implement [CycleDetector](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/cycledetector.html)
+For convenience, the following adapters are provided and all implement [CommonAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/commonadapter.html)
 
-- [GenericGraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/genericgraphadapter.html): Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well. 
+- [GenericGraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/genericgraphadapter.html): Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well.
 - [GraphlibAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/graphlibadapter.html): For the npm module [graphlib](https://www.npmjs.com/package/graphlib). Vertices are strings.
-- [ObjectGraphAdatpter](https://blutorange.github.io/js-incremental-cycle-detect/classes/objectgraphadapter.html): Uses plain `objects` instead of `Map`s. Slightly less performant, use if `Map` is not available.
+
+```javascript
+const { Graph } = require("graphlib");
+const graph = new GraphlibAdapter({graphlib: Graph});
+graph.addEdge(0, 1) // => true
+```
 
 You can add vertices explicitly, but it is not required. They are added if they do not exist.
 
@@ -65,27 +71,36 @@ See the documentation linked above for all methods available.
 
 # Performance
 
-Better than checking for cycles from scratch every time you add an edge. Tests done with [benchmark](https://www.npmjs.com/package/benchmark).
-Compared with running a full topological sort with `js-graph-algorithms` (via `alg.isAcyclic(graph)`) each time a vertex is added.
-Measured time is the time that was needed for creating a new graph and adding `n` vertices, checking
-for a cycle after each edge insertion.
+Incremental cycle detection performs better than checking for cycles from scratch every time you add an edge.
+Tests done with [benchmark](https://www.npmjs.com/package/benchmark). Compared with running a full topological
+sort with `graphlib` (via `alg.isAcyclic(graph)`) each time a vertex is added. Measured time is the time that
+was needed for creating a new graph and adding `n` vertices, checking for a cycle after each edge insertion.
 
 ```
 // 200 vertices, 15000 random (same for each algorithm) edges added
-incremental-cycle-detection(insert 15000, RandomSource) x 43.87 ops/sec ±4.39% (55 runs sampled)
-incremental-cycle-detection-objectgraph(insert 15000, RandomSource) x 50.73 ops/sec ±4.17% (61 runs sampled)
-incremental-cycle-detection-idgraph(insert 15000, RandomSource) x 11.74 ops/sec ±4.17% (33 runs sampled)
-incremental-cycle-detection-graphlib(insert 15000, RandomSource) x 7.41 ops/sec ±2.14% (22 runs sampled)
-graphlib(insert15000, RandomSource) x 0.19 ops/sec ±2.25% (5 runs sampled)
+incremental-cycle-detection(insert 15000, RandomSource) x 36.51 ops/sec ±4.53% (59 runs sampled)
+graphlib(insert15000, RandomSource) x 0.18 ops/sec ±2.78% (5 runs sampled)
 ```
 
 # JavaScript environment
 
-Some parts need `Map` and `Set`. You can either
+Some parts need `Map`. You can either
 
 - use this lib in an enviroment that [supports these](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
-- [polyfill](https://en.wikipedia.org/wiki/Polyfill_%28programming%29) Map/Set
-- pass an implementation of Map/Set to the constructor or factory method. This way you don't have to [monkey patch](https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad).
+- [polyfill](https://en.wikipedia.org/wiki/Polyfill_%28programming%29) [Map](https://www.npmjs.com/package/core-js)
+- pass an implementation of Mapt to the constructor of the graph adapter. This way you don't have to [monkey patch](https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad):
+
+```javascript
+import * as Map from "core-js/es6/map";
+const graph = new GenericGraphAdapter({mapConstructor: Map}):
+```
+
+# Use your own graph data structure
+
+You can also use the CycleDetector (implemented by `PearceKellyDetector`) directly and
+roll your own graph data structure. See the [docs](https://blutorange.github.io/js-incremental-cycle-detect/classes/pearcekellydetector.html).
+Basically, you need to call the `CycleDetector` every time you add an edge or delete a vertex. Then it tells you
+whether adding an edge is allowed. You can also use an existing `GraphAdapter` as the starting point.
 
 # Build
 

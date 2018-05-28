@@ -2,8 +2,8 @@ import { Pair } from "andross";
 import * as Benchmark from "benchmark";
 import { IStream, TypesafeStreamFactory } from "elbe";
 import { Graph, alg } from "graphlib";
-import { GenericGraphAdapter, ObjectGraphAdapter } from "../dist/main";
-import { GraphlibAdapter, ObjectVertex } from "../main";
+import { GenericGraphAdapter } from "../dist/main";
+import { GraphlibAdapter } from "../main";
 
 function log(...args: any[]): void {
 // tslint:disable-next-line:no-console
@@ -31,30 +31,12 @@ function mylib_insert(edges: number[][]) {
 }
 
 function mylib_glib_insert(edges: number[][]) {
-    const g = new GraphlibAdapter();
+    const g = new GraphlibAdapter({graphlib: Graph});
     edges.forEach(([x, y]) => {
         if (x === y || g.hasEdge(String(x), String(y))) {
           return;
         }
         g.addEdge(String(x), String(y));
-    });
-}
-
-function mylib_objgraph_insert(edges: number[][]) {
-    const g = new ObjectGraphAdapter();
-    const map = new Map<number, ObjectVertex>();
-    function get(id: number): ObjectVertex {
-        let v = map.get(id);
-        if (!v) {
-            map.set(id, v = g.createVertex());
-        }
-        return v;
-    }
-    edges.forEach(([x, y]) => {
-        if (x === y || g.hasEdge(get(x), get(y))) {
-          return;
-        }
-        g.addEdge(get(x), get(y));
     });
 }
 
@@ -80,7 +62,6 @@ function runPerf(n: number, source: IStream<Pair<number>>, details: string = "")
     };
     (new Benchmark.Suite())
         .add("incremental-cycle-detection(insert " + n + ", " + details + ")", () => mylib_insert((global as any).source), {setup})
-        .add("incremental-cycle-detection-objectgraph(insert " + n + ", " + details + ")", () => mylib_objgraph_insert((global as any).source), {setup})
         .add("incremental-cycle-detection-graphlib(insert " + n + ", " + details + ")", () => mylib_glib_insert((global as any).source), {setup})
         .add("graphlib(insert" + n + ", " + details + ")", () => graphlib_insert((global as any).source), {setup})
         .on("cycle", (event: Benchmark.Event) => {

@@ -1,5 +1,4 @@
-import { CycleDetector, GraphAdapter } from "./Header";
-import { VertexData } from "./InternalHeader";
+import { CycleDetector, GraphAdapter, VertexData } from "./Header";
 
 /*
  * Based on the paper
@@ -60,12 +59,14 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
     private stack: TVertex[];
     private deltaXyF: TVertex[];
     private deltaXyB: TVertex[];
+    private freeStack: number[];
 
     constructor() {
         this.id = 0;
         this.stack = [];
         this.deltaXyB = [];
         this.deltaXyF = [];
+        this.freeStack = [];
     }
 
     isReachable(adapter: GraphAdapter<TVertex>, source: TVertex, target: TVertex): boolean {
@@ -89,20 +90,26 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
         return reachable;
     }
 
-    createVertexData(g: GraphAdapter<TVertex>, vertex: TVertex): VertexData<any> {
+    createVertexData(g: GraphAdapter<TVertex>, vertex: TVertex): VertexData {
+        const id = this.freeStack.pop();
         return {
-            custom: undefined,
-            order: this.id++,
+            order: id !== undefined ? id : this.id++,
             visited: false,
         };
     }
 
-    canAddEdge(g: GraphAdapter<TVertex>, from: TVertex, to: TVertex): boolean {
-        return this.checkCycle(g, from, to);
+    onVertexDeletion(g: GraphAdapter<TVertex>, vertex: TVertex): void {
+        // add the topological sort index back to the pool of available indices
+        const data = g.getData(vertex);
+        this.freeStack.push(data.order);
     }
 
-    canContractEdge(g: GraphAdapter<TVertex>, from: TVertex, to: TVertex): boolean {
-        throw new Error("Method not implemented.");
+    canAddEdge(g: GraphAdapter<TVertex>, from: TVertex, to: TVertex): boolean {
+        // self-loop
+        if (from === to) {
+            return false;
+        }
+        return this.checkCycle(g, from, to);
     }
 
     private checkCycle(adapter: GraphAdapter<TVertex>, x: TVertex, y: TVertex): boolean {
@@ -175,7 +182,6 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
         }
     }
 
-
     private reorder(adapter: GraphAdapter<TVertex>) {
         // sort sets to preserve original order of elements
         this.deltaXyB = sort(adapter, this.deltaXyB);
@@ -196,48 +202,3 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
         }
     }
 }
-
-
-    /*
-    contractEdge(from: TVertex, to: TVertex): boolean {
-        if (!this.hasEdge(from, to)) {
-            return false;
-        }
-
-        this.deleteEdge(from, to);
-
-        // If target is still reachable after removing the edge(s) between source
-        // and target, merging both vertices results in a cycle.
-        if (this.listener.isReachable(this, from, to)) {
-            this.addEdge(from, to);
-            return false;
-        }
-
-        const succ = [];
-        const pred = [];
-
-        // Remove all edges from the second vertex.
-        for (let it = this.getSuccessorsOf(to), res = it.next(); !res.done; res = it.next()) {
-            this.deleteEdge(to, res.value);
-            succ.push(res.value);
-        }
-
-        for (let it = this.getPredecessorsOf(to), res = it.next(); !res.done; res = it.next()) {
-            this.deleteEdge(res.value, to);
-            pred.push(res.value);
-        }
-
-        // Add all the removed edges to the first vertex.
-        for (const node of succ) {
-            this.addEdge(from, node);
-        }
-        for (const node of pred) {
-            this.addEdge(node, from);
-        }
-
-        // Finally delete the second vertex. Now the edge is contracted.
-        this.deleteVertex(to);
-
-        return true;
-    }
-    */
