@@ -1,4 +1,4 @@
-import { Pair, RemoveFrom, TypedFunction } from "andross";
+import { Pair, Predicate, RemoveFrom, Triple, TypedFunction } from "andross";
 import { Graph } from "graphlib";
 import { CommonAdapter, CustomVertexData, CycleDetector, GenericGraphAdapterOptions, GraphAdapter, GraphlibAdapterOptions, VertexData } from "./Header";
 import { PartialExcept } from "./InternalHeader";
@@ -23,6 +23,43 @@ function assign<TFirst, TSecond>(target: TFirst, source: TSecond): TFirst & TSec
         }
     }
     return target as any;
+}
+
+export function toArray<T>(it: Iterator<T>) {
+    const arr: T[] = [];
+    for (let res = it.next(); !res.done; res = it.next()) {
+        arr.push(res.value);
+    }
+    return arr;
+}
+
+/*
+function createMappedIterator<T, V>(it: Iterator<T>, mapper: TypedFunction<T, V>): Iterator<V> {
+    return {
+        next(): IteratorResult<V> {
+            const res = it.next();
+            if (res.done) {
+                return DoneIteratorResult;
+            }
+            return {
+                done: false,
+                value: mapper(res.value),
+            };
+        }
+    };
+}
+*/
+
+function createFilteredIterator<T>(it: Iterator<T>, filter: Predicate<T>): Iterator<T> {
+    return {
+        next(): IteratorResult<T> {
+            let res = it.next();
+            while (!res.done && !filter(res.value)) {
+                res = it.next();
+            }
+            return res;
+        }
+    };
 }
 
 function createArrayIterator<T>(arr: (T|undefined)[]): Iterator<T> {
@@ -61,44 +98,68 @@ function createMappedArrayIterator<T, V>(arr: (T|undefined)[], mapFn: TypedFunct
     };
 }
 
-function contractEdge<TVertex>(adapter: CommonAdapter<TVertex>, from: TVertex, to: TVertex): boolean {
+function contractEdge<TVertex, TEdgeData>(adapter: CommonAdapter<TVertex, TEdgeData>, from: TVertex, to: TVertex, newVertex?: TVertex): boolean {
     if (!adapter.hasEdge(from, to)) {
         return false;
     }
 
-    adapter.deleteEdge(from, to);
+    {
+        const data = adapter.getEdgeData(from, to);
+        adapter.deleteEdge(from, to);
 
-    // If target is still reachable after removing the edge(s) between source
-    // and target, merging both vertices results in a cycle.
-    if (adapter.isReachable(from, to)) {
-        adapter.addEdge(from, to);
-        return false;
+        // If target is still reachable after removing the edge(s) between source
+        // and target, merging both vertices results in a cycle.
+        if (adapter.isReachable(from, to)) {
+            adapter.addEdge(from, to, data);
+            return false;
+        }
     }
 
-    const succ = [];
-    const pred = [];
+    const succ: Pair<TVertex, TEdgeData>[] = [];
+    const pred: Pair<TVertex, TEdgeData>[] = [];
+    const useNew = newVertex !== undefined && newVertex !== from;
 
     // Remove all edges from the second vertex.
     for (let it = adapter.getSuccessorsOf(to), res = it.next(); !res.done; res = it.next()) {
+        const data = adapter.getEdgeData(to, res.value);
         adapter.deleteEdge(to, res.value);
-        succ.push(res.value);
+        succ.push([res.value, data]);
     }
 
     for (let it = adapter.getPredecessorsOf(to), res = it.next(); !res.done; res = it.next()) {
+        const data = adapter.getEdgeData(res.value, to);
         adapter.deleteEdge(res.value, to);
-        pred.push(res.value);
+        pred.push([res.value, data]);
     }
 
-    // Add all the removed edges to the first vertex.
+    if (useNew) {
+        // Remove all edges from the first vertex.
+        for (let it = adapter.getSuccessorsOf(from), res = it.next(); !res.done; res = it.next()) {
+            const data = adapter.getEdgeData(from, res.value);
+            adapter.deleteEdge(from, res.value);
+            succ.push([res.value, data]);
+        }
+        for (let it = adapter.getPredecessorsOf(from), res = it.next(); !res.done; res = it.next()) {
+            const data = adapter.getEdgeData(res.value, from);
+            adapter.deleteEdge(res.value, from);
+            pred.push([res.value, data]);
+        }
+    }
+
+    // Add all the removed edges to the first or the new vertex.
+    const vertex = useNew ? newVertex as TVertex : from;
     for (const node of succ) {
-        adapter.addEdge(from, node);
+        adapter.addEdge(vertex, node[0], node[1]);
     }
     for (const node of pred) {
-        adapter.addEdge(node, from);
+        adapter.addEdge(node[0], vertex, node[1]);
     }
 
-    // Finally delete the second vertex. Now the edge is contracted.
+    // Finally delete the second and the first vertex. Now the edge is contracted.
     adapter.deleteVertex(to);
+    if (useNew) {
+        adapter.deleteVertex(from);
+    }
 
     return true;
 }
@@ -109,7 +170,7 @@ function contractEdge<TVertex>(adapter: CommonAdapter<TVertex>, from: TVertex, t
  *
  * @see {@link CommonAdapter}
  */
-export class GraphlibAdapter<TVertexData extends VertexData= any, TEdgeData = any> implements CommonAdapter<string> {
+export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = any> implements CommonAdapter<string, TEdgeData> {
     private g: Graph;
     private detector: CycleDetector<string>;
     private adapter: GraphAdapter<string>;
@@ -124,8 +185,8 @@ export class GraphlibAdapter<TVertexData extends VertexData= any, TEdgeData = an
         };
     }
 
-    contractEdge(from: string, to: string): boolean {
-        return contractEdge(this, from, to);
+    contractEdge(from: string, to: string, newVertex?: string): boolean {
+        return contractEdge(this, from, to, newVertex);
     }
 
     isReachable(source: string, target: string): boolean {
@@ -168,12 +229,32 @@ export class GraphlibAdapter<TVertexData extends VertexData= any, TEdgeData = an
         return this.g.node(vertex);
     }
 
+    getEdgeData(from: string, to: string): TEdgeData {
+        return this.g.edge(from, to);
+    }
+
+    setEdgeData(from: string, to: string, data: TEdgeData): boolean {
+        if (!this.g.hasEdge(from, to)) {
+            return false;
+        }
+        this.g.setEdge(from, to, data);
+        return true;
+    }
+
     getVertices(): Iterator<string> {
         return createArrayIterator(this.g.nodes());
     }
 
     getEdges(): Iterator<Pair<string>> {
         return createMappedArrayIterator(this.g.edges(), edge => [edge.v, edge.w] as Pair<string>);
+    }
+
+    supportsOrder(): boolean {
+        return this.detector.supportsOrder();
+    }
+
+    getOrder(vertex: string): number {
+        return this.detector.getOrder(this.adapter, vertex);
     }
 
     /**
@@ -282,12 +363,12 @@ export class GraphlibAdapter<TVertexData extends VertexData= any, TEdgeData = an
  *
  * @see {@link CommonAdapter}
  */
-export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTargetData = any> implements CommonAdapter<TVertex> {
+export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements CommonAdapter<TVertex, TEdgeData | undefined> {
     private detector: CycleDetector<TVertex>;
     private adapter: GraphAdapter<TVertex>;
     private vertices: Map<TVertex, VertexData>;
-    private forward: Map<TVertex, Map<TVertex, TEdgeTargetData | undefined>>;
-    private backward: Map<TVertex, Map<TVertex, TEdgeSourceData | undefined>>;
+    private forward: Map<TVertex, Map<TVertex, TEdgeData | undefined>>;
+    private backward: Map<TVertex, Map<TVertex, boolean>>;
     private edgeCount: number;
     private mapConstructor: MapConstructor;
 
@@ -307,8 +388,8 @@ export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTarg
         };
     }
 
-    contractEdge(from: TVertex, to: TVertex): boolean {
-        return contractEdge(this, from, to);
+    contractEdge(from: TVertex, to: TVertex, newVertex?: TVertex): boolean {
+        return contractEdge(this, from, to, newVertex);
     }
 
     isReachable(source: TVertex, target: TVertex): boolean {
@@ -335,30 +416,21 @@ export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTarg
         return this.vertices.keys();
     }
 
-    /**
-     * @param from Source vertex of the edge.
-     * @param to Target vertex of the edge.
-     * @return The data associated with the source of the given edge, or `undefined` if no data is associated.
-     */
-    getEdgeSourceData(from: TVertex, to: TVertex): TEdgeSourceData | undefined {
-        const map = this.backward.get(to);
-        if (!map) {
-            return undefined;
-        }
-        return map.get(from);
-    }
-
-    /**
-     * @param from Source vertex of the edge.
-     * @param to Target vertex of the edge.
-     * @return The data associated with the target of the given edge, or `undefined` if no data is associated.
-     */
-    getEdgeTargetData(from: TVertex, to: TVertex): TEdgeTargetData | undefined {
+    getEdgeData(from: TVertex, to: TVertex): TEdgeData | undefined {
         const map = this.forward.get(from);
         if (!map) {
             return undefined;
         }
         return map.get(to);
+    }
+
+    setEdgeData(from: TVertex, to: TVertex, data: TEdgeData | undefined): boolean {
+        const map = this.forward.get(to);
+        if (!map || !map.has(from)) {
+            return false;
+        }
+        map.set(from, data);
+        return true;
     }
 
     getEdges(): Iterator<Pair<TVertex>> {
@@ -375,6 +447,14 @@ export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTarg
         return this.edgeCount;
     }
 
+    supportsOrder(): boolean {
+        return this.detector.supportsOrder();
+    }
+
+    getOrder(vertex: TVertex): number {
+        return this.detector.getOrder(this.adapter, vertex);
+    }
+
     getVertexCount(): number {
         return this.vertices.size;
     }
@@ -388,7 +468,7 @@ export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTarg
         return this.vertices.has(vertex);
     }
 
-    addEdge(from: TVertex, to: TVertex, edgeSourceData?: TEdgeSourceData, edgeTargetData?: TEdgeTargetData): boolean {
+    addEdge(from: TVertex, to: TVertex, edgeData?: TEdgeData): boolean {
         // check if vertices exists, if not add it
         let f = this.forward.get(from);
         let b = this.backward.get(to);
@@ -416,8 +496,8 @@ export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTarg
 
         // check if the edge exists, if not, add it
         const sizeBefore = f.size;
-        f.set(to, edgeTargetData);
-        b.set(from, edgeSourceData);
+        f.set(to, edgeData);
+        b.set(from, true);
         if (sizeBefore === f.size) {
             // edge exists already
             return false;
@@ -466,7 +546,183 @@ export class GenericGraphAdapter<TVertex = any, TEdgeSourceData = any, TEdgeTarg
         return true;
     }
 
+    toJSON() {
+        return {
+            edges: toArray(this.getEdges()),
+            vertices: toArray(this.getVertices()),
+        };
+    }
+
     private getData(key: TVertex): VertexData {
         return this.vertices.get(key) as VertexData;
+    }
+}
+
+type MultiGraphTargetData<TEdgeData, TEdgeLabel> = Map<TEdgeLabel | undefined, TEdgeData | undefined>;
+
+export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any> implements CommonAdapter<TVertex, TEdgeData | undefined> {
+    private g: GenericGraphAdapter<TVertex, MultiGraphTargetData<TEdgeData, TEdgeLabel>>;
+    private edgeCount: number;
+
+    constructor(options: Partial<GenericGraphAdapterOptions<TVertex>> = {}) {
+        this.g = new GenericGraphAdapter(options);
+        this.edgeCount = 0;
+    }
+
+    addEdge(from: TVertex, to: TVertex, data?: TEdgeData, label?: TEdgeLabel): boolean {
+        const srcData = this.g.getEdgeData(from, to);
+        if (srcData !== undefined) {
+            // Second or more edge between these vertices.
+            const sizeBefore = srcData.size;
+            srcData.set(label, data);
+            if (sizeBefore === srcData.size) {
+                return false;
+            }
+            this.edgeCount += 1;
+            return true;
+        }
+        // First edge between these vertices.
+        this.edgeCount += 1;
+        const newData: MultiGraphTargetData<TEdgeData, TEdgeLabel> = new Map();
+        newData.set(label, data);
+        return this.g.addEdge(from, to, newData);
+    }
+
+    addVertex(vertex: TVertex): boolean {
+        return this.g.addVertex(vertex);
+    }
+
+    /**
+     * This contracts two vertices, ie. all edges between the given vertices.
+     * See {@link CommonAdapter}#contractEdge.
+     */
+    contractEdge(from: TVertex, to: TVertex, newVertex?: TVertex): boolean {
+        return this.g.contractEdge(from, to, newVertex);
+    }
+
+    deleteEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
+        if (label === undefined) {
+            return this.g.deleteEdge(from, to);
+        }
+        const srcData = this.g.getEdgeData(from, to);
+        if (srcData === undefined) {
+            // No such edge.
+            return false;
+        }
+        const wasDeleted = srcData.delete(label);
+        if (wasDeleted) {
+            this.edgeCount -= 1;
+        }
+        if (srcData.size === 0) {
+            // No more edges between these vertices.
+            this.g.deleteEdge(from, to);
+        }
+        return wasDeleted;
+    }
+
+    deleteVertex(vertex: TVertex): boolean {
+        return this.g.deleteVertex(vertex);
+    }
+
+    getUniqueEdgeCount(): number {
+        return this.g.getEdgeCount();
+    }
+
+    getEdgeCount(): number {
+        return this.edgeCount;
+    }
+
+    getEdgeData(from: TVertex, to: TVertex, label?: TEdgeLabel): TEdgeData | undefined {
+        const data = this.g.getEdgeData(from, to);
+        if (data === undefined) {
+            return undefined;
+        }
+        return data.get(label);
+    }
+
+    setEdgeData(from: TVertex, to: TVertex, data: TEdgeData | undefined, label?: TEdgeLabel): boolean {
+        const d = this.g.getEdgeData(from, to);
+        if (d === undefined || !d.has(label)) {
+            return true;
+        }
+        d.set(label, data);
+        return true;
+    }
+
+    getEdges(): Iterator<[TVertex, TVertex]> {
+        return this.g.getEdges();
+    }
+
+    getEdgeLabels(from: TVertex, to: TVertex): Iterator<TEdgeLabel | undefined> {
+        const data = this.g.getEdgeData(from, to);
+        if (data === undefined) {
+            return EmptyIterator;
+        }
+        return data.keys();
+    }
+
+    getLabeledEdges(): Iterator<[TVertex, TVertex, TEdgeLabel | undefined]> {
+        const edges: Triple<TVertex, TVertex, TEdgeLabel | undefined>[] = [];
+        for (let it = this.g.getEdges(), res = it.next(); !res.done; res = it.next()) {
+            const from = res.value[0];
+            const to = res.value[1];
+            const data = this.g.getEdgeData(from, to);
+            if (data !== undefined) {
+                for (let it2 = data.keys(), res2 = it2.next(); !res2.done; res2 = it2.next()) {
+                    edges.push([from, to, res2.value]);
+                }
+            }
+        }
+        return createArrayIterator(edges);
+    }
+
+    getPredecessorsOf(vertex: TVertex, label?: TEdgeLabel): Iterator<TVertex> {
+        if (label === undefined) {
+            return this.g.getPredecessorsOf(vertex);
+        }
+        return createFilteredIterator(this.g.getPredecessorsOf(vertex), to => {
+            const data = this.g.getEdgeData(vertex, to);
+            return data !== undefined && data.has(label);
+        });
+    }
+
+    getSuccessorsOf(vertex: TVertex, label?: TEdgeLabel): Iterator<TVertex> {
+        if (label === undefined) {
+            return this.g.getSuccessorsOf(vertex);
+        }
+        return createFilteredIterator(this.g.getSuccessorsOf(vertex), to => {
+            const data = this.g.getEdgeData(vertex, to);
+            return data !== undefined && data.has(label);
+        });
+    }
+
+    getOrder(vertex: TVertex): number {
+        return this.g.getOrder(vertex);
+    }
+
+    supportsOrder(): boolean {
+        return this.g.supportsOrder();
+    }
+
+    getVertexCount(): number {
+        return this.g.getVertexCount();
+    }
+
+    getVertices(): Iterator<TVertex> {
+        return this.g.getVertices();
+    }
+
+    hasEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
+        const data = this.g.getEdgeData(from, to);
+        // No label given and edge exsists, or edge with given label exists.
+        return data !== undefined && (label === undefined || data.has(label));
+    }
+
+    hasVertex(vertex: TVertex): boolean {
+        return this.g.hasVertex(vertex);
+    }
+
+    isReachable(source: TVertex, target: TVertex): boolean {
+        return this.g.isReachable(source, target);
     }
 }

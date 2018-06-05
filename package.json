@@ -1,6 +1,6 @@
 {
   "name": "incremental-cycle-detect",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Keeps a directed acyclic graph topologically sorted each time you add an edge or vertex to check for cycles.",
   "main": "dist/main.js",
   "scripts": {
@@ -26,7 +26,14 @@
     "url": "git+https://github.com/blutorange/js-incremental-cycle-detect.git"
   },
   "keywords": [
-    "graph,directed graph,acyclic graph,dag,cycle,cycle detection"
+    "graph",
+    "graphs",
+    "directed",
+    "acyclic",
+    "dag",
+    "cycle",
+    "cyclic",
+    "cycle detection"
   ],
   "author": "Andre Wachsmuth",
   "license": "Unlicense",

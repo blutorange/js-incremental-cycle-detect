@@ -118,6 +118,14 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
         return this.checkCycle(g, from, to);
     }
 
+    supportsOrder(): boolean {
+        return true;
+    }
+
+    getOrder(g: GraphAdapter<TVertex>, vertex: TVertex): number {
+        return g.getData(vertex).order;
+    }
+
     private checkCycle(adapter: GraphAdapter<TVertex>, x: TVertex, y: TVertex): boolean {
         const lb = adapter.getData(y).order;
         const ub = adapter.getData(x).order;

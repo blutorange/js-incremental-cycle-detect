@@ -106,10 +106,23 @@ export interface CycleDetector<TVertex> {
      * @param vertex New vertex that is about to be added or was just deleted.
      */
     onVertexDeletion(g: GraphAdapter<TVertex>, vertex: TVertex): void;
+
+    /**
+     * @return `true` iff this algorithm supports querying a vertex's topological order.
+     */
+    supportsOrder(): boolean;
+
+    /**
+     * Returns the topological order of the vertex, if supported.
+     * @param g The graph data structure to be used.
+     * @param vertex Vertex for which to determine its order.
+     * @return The topological order of the given vertex.
+     */
+    getOrder(g: GraphAdapter<TVertex>, vertex: TVertex): number;
 }
 
 /** Common methods implemented by the provided GraphAdapters. */
-export interface CommonAdapter<TVertex> {
+export interface CommonAdapter<TVertex, TEdgeData> {
     /**
      * Adds the given edge, if it does not exist, and it is allowed.
      * May not be allowed eg if adding the edge creates a cycle.
@@ -117,7 +130,7 @@ export interface CommonAdapter<TVertex> {
      * @param to Target vertex of the edge.
      * @return `true` iff the edge was added.
      */
-    addEdge(from: TVertex, to: TVertex): boolean;
+    addEdge(from: TVertex, to: TVertex, data?: TEdgeData): boolean;
     /**
      * Adds the given vertex, if it does not exist, and it is allowed.
      * @param vertex Vertex to be added.
@@ -130,9 +143,10 @@ export interface CommonAdapter<TVertex> {
      * of `to` to `from`.
      * @param from Source vertex of the edge.
      * @param to Target vertex of the edge.
+     * @param newVertex Vertex that replaces the old two vertices. If not given, defaults to `from`.
      * @return `true` iff the edge was contracted.
      */
-    contractEdge(from: TVertex, to: TVertex): boolean;
+    contractEdge(from: TVertex, to: TVertex, newVertex?: TVertex): boolean;
     /**
      * Delete the given edge, if it exists and it is allowed.
      * @param from Source vertex of the edge.
@@ -151,9 +165,22 @@ export interface CommonAdapter<TVertex> {
      */
     getEdgeCount(): number;
     /**
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @return The data associated with the given edge.
+     */
+    getEdgeData(from: TVertex, to: TVertex): TEdgeData;
+    /**
      * @return All edges in this graph.
      */
     getEdges(): Iterator<Pair<TVertex, TVertex>>;
+    /**
+     * Returns the topological order of the vertex, if supported.
+     * @param g The graph data structure to be used.
+     * @param vertex Vertex for which to determine its order.
+     * @return The topological order of the given vertex.
+     */
+    getOrder(vertex: TVertex): number;
     /**
      * @param vertex The vertex whose predecessors are to be found.
      * @return All immediate predecessors of the given vertex. None if the vertex does not exist.
@@ -190,6 +217,17 @@ export interface CommonAdapter<TVertex> {
      * @return `true` iff the target vertex can be reached from the source vertex, ie. iff there is a path from `source` to `target`.
      */
     isReachable(source: TVertex, target: TVertex): boolean;
+    /**
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @param data The data to be associated with the given edge.
+     * @return `true` iff the data was set, `false` iff the edge does not exist.
+     */
+    setEdgeData(from: TVertex, to: TVertex, data: TEdgeData): boolean;
+    /**
+     * @return `true` iff the algorithm in use supports querying a vertex's topological order.
+     */
+    supportsOrder(): boolean;
 }
 
 /**
