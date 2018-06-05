@@ -602,6 +602,7 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
 
     deleteEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
         if (label === undefined) {
+            this.edgeCount -= this.getEdgeCountBetween(from, to);
             return this.g.deleteEdge(from, to);
         }
         const srcData = this.g.getEdgeData(from, to);
@@ -651,6 +652,19 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
 
     getEdges(): Iterator<[TVertex, TVertex]> {
         return this.g.getEdges();
+    }
+
+    /**
+     * @param from Source vertex.
+     * @param to Target vertex.
+     * @return How many edges there are between the two vertices.
+     */
+    getEdgeCountBetween(from: TVertex, to: TVertex): number {
+        const data = this.g.getEdgeData(from, to);
+        if (data === undefined) {
+            return 0;
+        }
+        return data.size;
     }
 
     getEdgeLabels(from: TVertex, to: TVertex): Iterator<TEdgeLabel | undefined> {

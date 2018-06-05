@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Graph, alg } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
-import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter } from "../main";
+import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../main";
 
 const log = false;
 
@@ -24,6 +24,11 @@ export const hack: any[] = [];
         clazz: GenericGraphAdapter,
         make: () => new GenericGraphAdapter(),
         convert: (vertex: number) => vertex
+    },
+    {
+        clazz: MultiGraphAdapter,
+        make: () => new MultiGraphAdapter(),
+        convert: (vertex: number) => vertex,
     },
     {
         clazz: GraphlibAdapter,

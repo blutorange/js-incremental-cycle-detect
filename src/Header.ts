@@ -122,7 +122,7 @@ export interface CycleDetector<TVertex> {
 }
 
 /** Common methods implemented by the provided GraphAdapters. */
-export interface CommonAdapter<TVertex, TEdgeData> {
+export interface CommonAdapter<TVertex, TEdgeData = any> {
     /**
      * Adds the given edge, if it does not exist, and it is allowed.
      * May not be allowed eg if adding the edge creates a cycle.
