@@ -914,6 +914,9 @@ img { max-width: 100%; }
 			<a href="../classes/graphlibadapter.html" class="tsd-kind-icon">Graphlib<wbr>Adapter</a>
 		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
+			<a href="../classes/multigraphadapter.html" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Adapter</a>
+		</li>
+		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="../classes/pearcekellydetector.html" class="tsd-kind-icon">Pearce<wbr>Kelly<wbr>Detector</a>
 		</li>
 		<li class=" tsd-kind-interface tsd-has-type-parameter">
@@ -929,10 +932,16 @@ img { max-width: 100%; }
 					<a href="cycledetector.html#createvertexdata" class="tsd-kind-icon">create<wbr>Vertex<wbr>Data</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-interface">
+					<a href="cycledetector.html#getorder" class="tsd-kind-icon">get<wbr>Order</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-interface">
 					<a href="cycledetector.html#isreachable" class="tsd-kind-icon">is<wbr>Reachable</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-interface">
 					<a href="cycledetector.html#onvertexdeletion" class="tsd-kind-icon">on<wbr>Vertex<wbr>Deletion</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-interface">
+					<a href="cycledetector.html#supportsorder" class="tsd-kind-icon">supports<wbr>Order</a>
 				</li>
 			</ul>
 		</li>
@@ -956,6 +965,30 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 			<a href="../globals.html#partialexcept" class="tsd-kind-icon">Partial<wbr>Except</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#assign" class="tsd-kind-icon">assign</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createarrayiterator" class="tsd-kind-icon">create<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createmappedarrayiterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#toarray" class="tsd-kind-icon">to<wbr>Array</a>
+		</li>
+		<li class=" tsd-kind-object-literal tsd-is-private">
+			<a href="../globals.html#doneiteratorresult" class="tsd-kind-icon">Done<wbr>Iterator<wbr>Result</a>
+		</li>
+		<li class=" tsd-kind-object-literal tsd-is-private">
+			<a href="../globals.html#emptyiterator" class="tsd-kind-icon">Empty<wbr>Iterator</a>
 		</li>
 	</ul>
 </nav>
@@ -1002,8 +1035,10 @@ img { max-width: 100%; }
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="cycledetector.html#canaddedge" class="tsd-kind-icon">can<wbr>Add<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="cycledetector.html#createvertexdata" class="tsd-kind-icon">create<wbr>Vertex<wbr>Data</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="cycledetector.html#getorder" class="tsd-kind-icon">get<wbr>Order</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="cycledetector.html#isreachable" class="tsd-kind-icon">is<wbr>Reachable</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="cycledetector.html#onvertexdeletion" class="tsd-kind-icon">on<wbr>Vertex<wbr>Deletion</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="cycledetector.html#supportsorder" class="tsd-kind-icon">supports<wbr>Order</a></li>
 						</ul>
 					</section>
 				</div>
@@ -1021,7 +1056,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/Header.ts#L90">Header.ts:90</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L106">Header.ts:106</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1067,7 +1102,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/Header.ts#L79">Header.ts:79</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L95">Header.ts:95</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1098,6 +1133,44 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<a name="getorder" class="tsd-anchor"></a>
+				<h3>get<wbr>Order</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Order<span class="tsd-signature-symbol">(</span>g<span class="tsd-signature-symbol">: </span><a href="graphadapter.html" class="tsd-signature-type">GraphAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span>, vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L137">Header.ts:137</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Returns the topological order of the vertex, if supported.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>g: <a href="graphadapter.html" class="tsd-signature-type">GraphAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The graph data structure to be used.</p>
+								</div>
+							</li>
+							<li>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Vertex for which to determine its order.</p>
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						<p>The topological order of the given vertex.</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 				<a name="isreachable" class="tsd-anchor"></a>
 				<h3>is<wbr>Reachable</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -1107,7 +1180,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/Header.ts#L100">Header.ts:100</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L116">Header.ts:116</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1152,7 +1225,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/Header.ts#L108">Header.ts:108</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L124">Header.ts:124</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1177,6 +1250,26 @@ img { max-width: 100%; }
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<a name="supportsorder" class="tsd-anchor"></a>
+				<h3>supports<wbr>Order</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<li class="tsd-signature tsd-kind-icon">supports<wbr>Order<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L129">Header.ts:129</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+						</div>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						<p><code>true</code> iff this algorithm supports querying a vertex&#39;s topological order.</p>
 					</li>
 				</ul>
 			</section>

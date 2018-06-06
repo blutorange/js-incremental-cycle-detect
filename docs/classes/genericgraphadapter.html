@@ -932,13 +932,13 @@ img { max-width: 100%; }
 					<a href="genericgraphadapter.html#getedgecount" class="tsd-kind-icon">get<wbr>Edge<wbr>Count</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="genericgraphadapter.html#getedgesourcedata" class="tsd-kind-icon">get<wbr>Edge<wbr>Source<wbr>Data</a>
-				</li>
-				<li class=" tsd-kind-method tsd-parent-kind-class">
-					<a href="genericgraphadapter.html#getedgetargetdata" class="tsd-kind-icon">get<wbr>Edge<wbr>Target<wbr>Data</a>
+					<a href="genericgraphadapter.html#getedgedata" class="tsd-kind-icon">get<wbr>Edge<wbr>Data</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="genericgraphadapter.html#getedges" class="tsd-kind-icon">get<wbr>Edges</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="genericgraphadapter.html#getorder" class="tsd-kind-icon">get<wbr>Order</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="genericgraphadapter.html#getpredecessorsof" class="tsd-kind-icon">get<wbr>Predecessors<wbr>Of</a>
@@ -961,10 +961,19 @@ img { max-width: 100%; }
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="genericgraphadapter.html#isreachable" class="tsd-kind-icon">is<wbr>Reachable</a>
 				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="genericgraphadapter.html#setedgedata" class="tsd-kind-icon">set<wbr>Edge<wbr>Data</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="genericgraphadapter.html#supportsorder" class="tsd-kind-icon">supports<wbr>Order</a>
+				</li>
 			</ul>
 		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="graphlibadapter.html" class="tsd-kind-icon">Graphlib<wbr>Adapter</a>
+		</li>
+		<li class=" tsd-kind-class tsd-has-type-parameter">
+			<a href="multigraphadapter.html" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Adapter</a>
 		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="pearcekellydetector.html" class="tsd-kind-icon">Pearce<wbr>Kelly<wbr>Detector</a>
@@ -996,6 +1005,30 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 			<a href="../globals.html#partialexcept" class="tsd-kind-icon">Partial<wbr>Except</a>
 		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#assign" class="tsd-kind-icon">assign</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createarrayiterator" class="tsd-kind-icon">create<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createmappedarrayiterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#toarray" class="tsd-kind-icon">to<wbr>Array</a>
+		</li>
+		<li class=" tsd-kind-object-literal tsd-is-private">
+			<a href="../globals.html#doneiteratorresult" class="tsd-kind-icon">Done<wbr>Iterator<wbr>Result</a>
+		</li>
+		<li class=" tsd-kind-object-literal tsd-is-private">
+			<a href="../globals.html#emptyiterator" class="tsd-kind-icon">Empty<wbr>Iterator</a>
+		</li>
 	</ul>
 </nav>
 <div class="container container-main">
@@ -1004,10 +1037,8 @@ img { max-width: 100%; }
 			<div class="tsd-comment tsd-typography">
 				<div class="lead">
 					<p>Generic graph data structure that supports all types of vertex objects by using
-						<code>Map</code>s. Allows you to associate arbitrary data with each edges source and target,
-						ie. associates a pair <code>(TEdgeSourceData, TEdgeTargetData)</code> with each edge. Feel
-						free to use only <code>TEdgeSourceData</code> if you don&#39;t need a pair of data. For vertex
-					data, use an appropriate <code>TVertex</code> type.</p>
+						<code>Map</code>s. Allows you to associate arbitrary data with each edge. For vertex data,
+					use an appropriate <code>TVertex</code> type.</p>
 				</div>
 				<pre><code class="lang-typescript">
 <span class="hljs-comment">// Type of the data we want to use as vertices.</span>
@@ -1033,8 +1064,7 @@ graph.addEdge(v1, v2, <span class="hljs-string">"This is edge 1-2."</span>);
 graph.addEdge(v2, v3, <span class="hljs-string">"This is edge 2-3."</span>);
 
 <span class="hljs-comment">// Fetch the data associated with the edge.</span>
-graph.getEdgeSourceData(v1, v2); <span class="hljs-comment">// =&gt; "This is edge 1-2."</span>
-graph.getEdgeTargetData(v1, v2); <span class="hljs-comment">// =&gt; undefined</span>
+graph.getEdgeData(v1, v2); <span class="hljs-comment">// =&gt; "This is edge 1-2."</span>
 
 <span class="hljs-comment">// This edge would create cycle.</span>
 graph.addEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
@@ -1052,12 +1082,19 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 			<ul class="tsd-type-parameters">
 				<li>
 					<h4>TVertex</h4>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Type of the vertices of this graph.</p>
+						</div>
+					</div>
 				</li>
 				<li>
-					<h4>TEdgeSourceData</h4>
-				</li>
-				<li>
-					<h4>TEdgeTargetData</h4>
+					<h4>TEdgeData</h4>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Type of the data associated with edges.</p>
+						</div>
+					</div>
 				</li>
 			</ul>
 		</section>
@@ -1072,7 +1109,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 		<section class="tsd-panel">
 			<h3>Implements</h3>
 			<ul class="tsd-hierarchy">
-				<li><a href="../interfaces/commonadapter.html" class="tsd-signature-type">CommonAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<li><a href="../interfaces/commonadapter.html" class="tsd-signature-type">CommonAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></li>
 			</ul>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
@@ -1094,9 +1131,9 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#deleteedge" class="tsd-kind-icon">delete<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#deletevertex" class="tsd-kind-icon">delete<wbr>Vertex</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getedgecount" class="tsd-kind-icon">get<wbr>Edge<wbr>Count</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getedgesourcedata" class="tsd-kind-icon">get<wbr>Edge<wbr>Source<wbr>Data</a></li>
-							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getedgetargetdata" class="tsd-kind-icon">get<wbr>Edge<wbr>Target<wbr>Data</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getedgedata" class="tsd-kind-icon">get<wbr>Edge<wbr>Data</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getedges" class="tsd-kind-icon">get<wbr>Edges</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getorder" class="tsd-kind-icon">get<wbr>Order</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getpredecessorsof" class="tsd-kind-icon">get<wbr>Predecessors<wbr>Of</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getsuccessorsof" class="tsd-kind-icon">get<wbr>Successors<wbr>Of</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#getvertexcount" class="tsd-kind-icon">get<wbr>Vertex<wbr>Count</a></li>
@@ -1104,6 +1141,8 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#hasedge" class="tsd-kind-icon">has<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#hasvertex" class="tsd-kind-icon">has<wbr>Vertex</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#isreachable" class="tsd-kind-icon">is<wbr>Reachable</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#setedgedata" class="tsd-kind-icon">set<wbr>Edge<wbr>Data</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="genericgraphadapter.html#supportsorder" class="tsd-kind-icon">supports<wbr>Order</a></li>
 						</ul>
 					</section>
 				</div>
@@ -1121,7 +1160,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L292">GraphAdapter.ts:292</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L54">GenericGraphAdapter.ts:54</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1141,13 +1180,14 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 				<a name="addedge" class="tsd-anchor"></a>
 				<h3>add<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, edgeSourceData<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TEdgeSourceData</a>, edgeTargetData<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TEdgeTargetData</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, edgeData<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TEdgeData</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
+							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#addedge">addEdge</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L391">GraphAdapter.ts:391</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L152">GenericGraphAdapter.ts:152</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1159,10 +1199,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> edgeSourceData: <a href="" class="tsd-signature-type">TEdgeSourceData</a></h5>
-							</li>
-							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> edgeTargetData: <a href="" class="tsd-signature-type">TEdgeTargetData</a></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> edgeData: <a href="" class="tsd-signature-type">TEdgeData</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1180,7 +1217,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#addvertex">addVertex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L429">GraphAdapter.ts:429</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L190">GenericGraphAdapter.ts:190</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1197,14 +1234,14 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 				<a name="contractedge" class="tsd-anchor"></a>
 				<h3>contract<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, newVertex<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TVertex</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#contractedge">contractEdge</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L310">GraphAdapter.ts:310</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L72">GenericGraphAdapter.ts:72</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1214,6 +1251,9 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 							</li>
 							<li>
 								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> newVertex: <a href="" class="tsd-signature-type">TVertex</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1231,7 +1271,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#deleteedge">deleteEdge</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L437">GraphAdapter.ts:437</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L198">GenericGraphAdapter.ts:198</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1258,7 +1298,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#deletevertex">deleteVertex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L452">GraphAdapter.ts:452</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L213">GenericGraphAdapter.ts:213</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1282,7 +1322,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedgecount">getEdgeCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L374">GraphAdapter.ts:374</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L127">GenericGraphAdapter.ts:127</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1290,78 +1330,32 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="getedgesourcedata" class="tsd-anchor"></a>
-				<h3>get<wbr>Edge<wbr>Source<wbr>Data</h3>
+				<a name="getedgedata" class="tsd-anchor"></a>
+				<h3>get<wbr>Edge<wbr>Data</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Source<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeSourceData</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
+							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedgedata">getEdgeData</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L343">GraphAdapter.ts:343</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L100">GenericGraphAdapter.ts:100</a></li>
 							</ul>
 						</aside>
-						<div class="tsd-comment tsd-typography">
-						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
 								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
-								<div class="tsd-comment tsd-typography">
-									<p>Source vertex of the edge.</p>
-								</div>
 							</li>
 							<li>
 								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
-								<div class="tsd-comment tsd-typography">
-									<p>Target vertex of the edge.</p>
-								</div>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TEdgeSourceData</span>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TEdgeData</span>
 							<span class="tsd-signature-symbol"> | </span>
 							<span class="tsd-signature-type">undefined</span>
 						</h4>
-						<p>The data associated with the source of the given edge, or <code>undefined</code> if no data is associated.</p>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="getedgetargetdata" class="tsd-anchor"></a>
-				<h3>get<wbr>Edge<wbr>Target<wbr>Data</h3>
-				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Target<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeTargetData</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
-				</ul>
-				<ul class="tsd-descriptions">
-					<li class="tsd-description">
-						<aside class="tsd-sources">
-							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L356">GraphAdapter.ts:356</a></li>
-							</ul>
-						</aside>
-						<div class="tsd-comment tsd-typography">
-						</div>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
-								<div class="tsd-comment tsd-typography">
-									<p>Source vertex of the edge.</p>
-								</div>
-							</li>
-							<li>
-								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
-								<div class="tsd-comment tsd-typography">
-									<p>Target vertex of the edge.</p>
-								</div>
-							</li>
-						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TEdgeTargetData</span>
-							<span class="tsd-signature-symbol"> | </span>
-							<span class="tsd-signature-type">undefined</span>
-						</h4>
-						<p>The data associated with the target of the given edge, or <code>undefined</code> if no data is associated.</p>
 					</li>
 				</ul>
 			</section>
@@ -1376,10 +1370,34 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedges">getEdges</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L364">GraphAdapter.ts:364</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L117">GenericGraphAdapter.ts:117</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pair</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="getorder" class="tsd-anchor"></a>
+				<h3>get<wbr>Order</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Order<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getorder">getOrder</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L135">GenericGraphAdapter.ts:135</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1394,7 +1412,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getpredecessorsof">getPredecessorsOf</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L326">GraphAdapter.ts:326</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L88">GenericGraphAdapter.ts:88</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1418,7 +1436,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getsuccessorsof">getSuccessorsOf</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L318">GraphAdapter.ts:318</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L80">GenericGraphAdapter.ts:80</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1442,7 +1460,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertexcount">getVertexCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L378">GraphAdapter.ts:378</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L139">GenericGraphAdapter.ts:139</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1460,7 +1478,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertices">getVertices</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L334">GraphAdapter.ts:334</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L96">GenericGraphAdapter.ts:96</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1478,7 +1496,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#hasedge">hasEdge</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L382">GraphAdapter.ts:382</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L143">GenericGraphAdapter.ts:143</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1505,7 +1523,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#hasvertex">hasVertex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L387">GraphAdapter.ts:387</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L148">GenericGraphAdapter.ts:148</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1529,7 +1547,7 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#isreachable">isReachable</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/GraphAdapter.ts#L314">GraphAdapter.ts:314</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L76">GenericGraphAdapter.ts:76</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1541,6 +1559,53 @@ graph.hasEdge(v3, v1) <span class="hljs-comment">// =&gt; false</span>
 								<h5>target: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="setedgedata" class="tsd-anchor"></a>
+				<h3>set<wbr>Edge<wbr>Data</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">set<wbr>Edge<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L108">GenericGraphAdapter.ts:108</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
+							</li>
+							<li>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
+							</li>
+							<li>
+								<h5>data: <span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="supportsorder" class="tsd-anchor"></a>
+				<h3>supports<wbr>Order</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">supports<wbr>Order<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#supportsorder">supportsOrder</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GenericGraphAdapter.ts#L131">GenericGraphAdapter.ts:131</a></li>
+							</ul>
+						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 					</li>
 				</ul>

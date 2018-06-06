@@ -5,14 +5,7 @@
 import { expect } from "chai";
 import { suite, test } from "mocha-typescript";
 import { GenericGraphAdapter } from '../index';
-
-function toArray<T>(it: Iterator<T>) {
-    const arr: T[] = [];
-    for (let res = it.next(); !res.done; res = it.next()) {
-        arr.push(res.value);
-    }
-    return arr;
-}
+import { toArray } from '../src/util';
 
 interface Vertex {
     id: number;

@@ -1,7 +1,7 @@
-import { Pair } from 'andross';
-import { CommonAdapter, CycleDetector, GenericGraphAdapterOptions, GraphAdapter, VertexData } from './Header';
-import { PearceKellyDetector } from './PearceKellyDetector';
-import { EmptyIterator, contractEdge, createArrayIterator } from './util';
+import { BinaryOperator, Pair } from "andross";
+import { CommonAdapter, CycleDetector, GenericGraphAdapterOptions, GraphAdapter, VertexData } from "./Header";
+import { PearceKellyDetector } from "./PearceKellyDetector";
+import { EmptyIterator, canContractEdge, contractEdge, createArrayIterator } from "./util";
 
 /**
  * Generic graph data structure that supports all types of vertex objects by using
@@ -40,6 +40,8 @@ import { EmptyIterator, contractEdge, createArrayIterator } from './util';
  * graph.hasEdge(v3, v1) // => false
  * ```
  *
+ * @typeparam TVertex Type of the vertices of this graph.
+ * @typeparam TEdgeData Type of the data associated with edges.
  * @see {@link CommonAdapter}
  */
 export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements CommonAdapter<TVertex, TEdgeData | undefined> {
@@ -67,8 +69,12 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         };
     }
 
-    contractEdge(from: TVertex, to: TVertex, newVertex?: TVertex): boolean {
-        return contractEdge(this, from, to, newVertex);
+    canContractEdge(from: TVertex, to: TVertex): boolean {
+        return canContractEdge(this, from, to);
+    }
+
+    contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<TEdgeData | undefined>): boolean {
+        return contractEdge(this, from, to, vertexMerger, edgeMerger);
     }
 
     isReachable(source: TVertex, target: TVertex): boolean {
@@ -104,11 +110,11 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
     }
 
     setEdgeData(from: TVertex, to: TVertex, data: TEdgeData | undefined): boolean {
-        const map = this.forward.get(to);
-        if (!map || !map.has(from)) {
+        const map = this.forward.get(from);
+        if (!map || !map.has(to)) {
             return false;
         }
-        map.set(from, data);
+        map.set(to, data);
         return true;
     }
 
@@ -160,8 +166,8 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
             this.backward.set(to, b = new this.mapConstructor());
         }
 
-        // check if this edge creates a cycle
-        if (!this.detector.canAddEdge(this.adapter, from, to)) {
+        // check if this edge creates a cycle (or if the edge exists already)
+        if (f.has(to) || !this.detector.canAddEdge(this.adapter, from, to)) {
             // remove vertices if we added it
             // this method must not modify the graph if edge cannot be added
             if (didNotHaveFrom) {
@@ -174,13 +180,8 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         }
 
         // check if the edge exists, if not, add it
-        const sizeBefore = f.size;
         f.set(to, edgeData);
         b.set(from, true);
-        if (sizeBefore === f.size) {
-            // edge exists already
-            return false;
-        }
         this.edgeCount += 1;
         return true;
     }

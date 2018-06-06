@@ -1,9 +1,9 @@
-import { Pair, RemoveFrom } from "andross";
+import { BinaryOperator, Pair, RemoveFrom } from "andross";
 import { Graph } from "graphlib";
 import { CommonAdapter, CustomVertexData, CycleDetector, GraphAdapter, GraphlibAdapterOptions, VertexData } from "./Header";
 import { PartialExcept } from "./InternalHeader";
 import { PearceKellyDetector } from "./PearceKellyDetector";
-import { EmptyIterator, assign, contractEdge, createArrayIterator, createMappedArrayIterator } from './util';
+import { EmptyIterator, assign, canContractEdge, contractEdge, createArrayIterator, createMappedArrayIterator } from "./util";
 
 /**
  * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency and
@@ -26,8 +26,12 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
         };
     }
 
-    contractEdge(from: string, to: string, newVertex?: string): boolean {
-        return contractEdge(this, from, to, newVertex);
+    canContractEdge(from: string, to: string): boolean {
+        return canContractEdge(this, from, to);
+    }
+
+    contractEdge(from: string, to: string, vertexMerger?: BinaryOperator<string>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
+        return contractEdge(this, from, to, vertexMerger, edgeMerger);
     }
 
     isReachable(source: string, target: string): boolean {
@@ -107,9 +111,9 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
         return this.g;
     }
 
-    addEdge(from: string, to: string, label?: TEdgeData, name?: string): boolean {
+    addEdge(from: string, to: string, data?: TEdgeData): boolean {
         // Check if edge exists already, if so, do nothing
-        if (this.g.hasEdge(from, to, name)) {
+        if (this.g.hasEdge(from, to)) {
             return false;
         }
         // Check if vertices exist, if not, add them
@@ -127,7 +131,7 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
             return false;
         }
         // Add the edge
-        this.g.setEdge(from, to, label, name);
+        this.g.setEdge(from, to, data);
         return true;
     }
 

@@ -1,7 +1,23 @@
-import { Omit, Pair } from "andross";
+import { BinaryOperator, Omit, Pair } from "andross";
 import { Graph, GraphOptions } from "graphlib";
 
+/**
+ * For the {@link GraphlibAdapter}. Must extends the {@link VertexData} required by
+ * the cycle detection algorithm. This type omits all properties internal to the
+ * algorithm.
+ */
 export type CustomVertexData<TVertexData extends VertexData> = Omit<TVertexData, keyof VertexData>;
+
+/**
+ * The data the algorithm needs to associate with each vertex.
+ * @internal
+ */
+export interface VertexData {
+    /** Topological order of the vertex. It is updated each time an edge is added. */
+    order: number;
+    /** Used by the breadth-first search. */
+    visited: boolean;
+}
 
 /** Options that can be passed to {@link GenericGraphAdapter}. */
 export interface GenericGraphAdapterOptions<TVertex> {
@@ -138,15 +154,26 @@ export interface CommonAdapter<TVertex, TEdgeData = any> {
      */
     addVertex(vertex: TVertex): boolean;
     /**
+     * Checks whether the edge can be contracted without creating a cycle.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @return `true` iff the edge can be contracted without introducing a cycle.
+     */
+    canContractEdge(from: TVertex, to: TVertex): boolean;
+    /**
      * Contracts the given edge, ie. delete the vertex `to` and
      * all edges between `from` and `to`, and moves all remaining edges
      * of `to` to `from`.
      * @param from Source vertex of the edge.
      * @param to Target vertex of the edge.
-     * @param newVertex Vertex that replaces the old two vertices. If not given, defaults to `from`.
+     * @param vertexMerger The vertex that replaces the two old vertices. If not given, defaults to `from`.
+     * @param dataMerger Another vertex may be connected two both of the vertices that are to be contracted.
+     * In this case, their edge data needs to be merged. If not given, defaults to taking the edge data from
+     * one edge.
      * @return `true` iff the edge was contracted.
+     * @throws If vertex merger returns a vertex that is already contained in the graph.
      */
-    contractEdge(from: TVertex, to: TVertex, newVertex?: TVertex): boolean;
+    contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, dataMerger?: BinaryOperator<TEdgeData>): boolean;
     /**
      * Delete the given edge, if it exists and it is allowed.
      * @param from Source vertex of the edge.
@@ -228,15 +255,4 @@ export interface CommonAdapter<TVertex, TEdgeData = any> {
      * @return `true` iff the algorithm in use supports querying a vertex's topological order.
      */
     supportsOrder(): boolean;
-}
-
-/**
- * The data the algorithm needs to assoicate with each vertex.
- * @internal
- */
-export interface VertexData {
-    /** Topological order of the vertex. It is updated each time an edge is added. */
-    order: number;
-    /** Used by the breadth-first search. */
-    visited: boolean;
 }

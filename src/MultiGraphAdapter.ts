@@ -1,13 +1,34 @@
-import { Triple } from 'andross';
-import { GenericGraphAdapter } from './GenericGraphAdapter';
-import { CommonAdapter, GenericGraphAdapterOptions } from './Header';
-import { EmptyIterator, createArrayIterator, createFilteredIterator } from './util';
+import { BinaryOperator, Maybe, Triple } from "andross";
+import { GenericGraphAdapter } from "./GenericGraphAdapter";
+import { CommonAdapter, GenericGraphAdapterOptions } from "./Header";
+import { EmptyIterator, createArrayIterator, createFilteredIterator, takeFirst } from "./util";
 
 type MultiGraphTargetData<TEdgeData, TEdgeLabel> = Map<TEdgeLabel | undefined, TEdgeData | undefined>;
 
+type EdgeData<TEdgeData, TEdgeLabel> = Maybe<Map<Maybe<TEdgeLabel>, Maybe<TEdgeData>>>;
+
+// Combine all edges that point to the first or second node to be contracted.
+function createMerger<TEdgeData, TEdgeLabel>(edgeMerger: Maybe<BinaryOperator<Maybe<TEdgeData>>> = takeFirst) {
+    return (first: EdgeData<TEdgeData, TEdgeLabel>, second: EdgeData<TEdgeData, TEdgeLabel>): EdgeData<TEdgeData, TEdgeLabel> => {
+        if (first === undefined) {
+            return second;
+        }
+        if (second === undefined) {
+            return first;
+        }
+        for (let it = second.entries(), res = it.next(); !res.done; res = it.next()) {
+            let data = first.get(res.value[0]);
+            data = data === undefined ? res.value[1] : edgeMerger(data, res.value[1]);
+            first.set(res.value[0], data);
+        }
+        return first;
+    };
+}
+
 /**
  * Generic graph data structure similar to {@link GenericGraphAdapter}. It additionally
- * supports multiple edges between two vertices. An edge is identified by its label.
+ * supports multiple edges between two vertices. An edge is identified by its label. Labels
+ * are compared by a `Map`, ie. `===`.
  *
  * ```typescript
  *
@@ -52,6 +73,9 @@ type MultiGraphTargetData<TEdgeData, TEdgeLabel> = Map<TEdgeLabel | undefined, T
  * graph.addEdge(v3, v1) // true;
  * ```
  *
+ * @typeparam TVertex Type of the vertices of this graph.
+ * @typeparam TEdgeData Type of the data associated with edges.
+ * @typeparam TEdgeLabel Type of the label used to distiniguish different between edges with the same source and target vertex.
  * @see {@link GenericGraphAdapter}
  * @see {@link CommonAdapter}
  */
@@ -65,6 +89,15 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
     }
 
     /**
+     * Same as {@link MultiGraphAdapter}#addEdge, but with the `data` and `label` arguments
+     * reversed for convenience.
+     * @see {@link MultiGraphAdapter}#addEdge
+     */
+    addLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel, data?: TEdgeData) {
+        return this.addEdge(from, to, data, label);
+    }
+
+    /**
      * If no label is given, defaults to `undefined` for the label.
      * @see {@link CommonAdapter}#addEdge
      */
@@ -72,11 +105,11 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         const srcData = this.g.getEdgeData(from, to);
         if (srcData !== undefined) {
             // Second or more edge between these vertices.
-            const sizeBefore = srcData.size;
-            srcData.set(label, data);
-            if (sizeBefore === srcData.size) {
+            if (srcData.has(label)) {
+                // Do nothing if edge exists already.
                 return false;
             }
+            srcData.set(label, data);
             this.edgeCount += 1;
             return true;
         }
@@ -95,8 +128,12 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
      * This contracts two vertices, ie. all edges between the given vertices.
      * See {@link CommonAdapter}#contractEdge.
      */
-    contractEdge(from: TVertex, to: TVertex, newVertex?: TVertex): boolean {
-        return this.g.contractEdge(from, to, newVertex);
+    contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<Maybe<TEdgeData>>): boolean {
+        return this.g.contractEdge(from, to, vertexMerger, createMerger(edgeMerger));
+    }
+
+    canContractEdge(from: TVertex, to: TVertex): boolean {
+        return this.g.canContractEdge(from, to);
     }
 
     /**
@@ -164,7 +201,7 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
     setEdgeData(from: TVertex, to: TVertex, data: TEdgeData | undefined, label?: TEdgeLabel): boolean {
         const d = this.g.getEdgeData(from, to);
         if (d === undefined || !d.has(label)) {
-            return true;
+            return false;
         }
         d.set(label, data);
         return true;
@@ -195,6 +232,12 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return data.keys();
     }
 
+    /**
+     * Similar to {@link MultiGraphAdapter}#getEdges, but returns all edges
+     * between the vertices.
+     * @return All edges between the vertices. An edge is identified by its source
+     * vertex, its target vertex and its label.
+     */
     getLabeledEdges(): Iterator<[TVertex, TVertex, TEdgeLabel | undefined]> {
         const edges: Triple<TVertex, TVertex, TEdgeLabel | undefined>[] = [];
         for (let it = this.g.getEdges(), res = it.next(); !res.done; res = it.next()) {
@@ -219,8 +262,8 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         if (label === undefined) {
             return this.g.getPredecessorsOf(vertex);
         }
-        return createFilteredIterator(this.g.getPredecessorsOf(vertex), to => {
-            const data = this.g.getEdgeData(vertex, to);
+        return createFilteredIterator(this.g.getPredecessorsOf(vertex), from => {
+            const data = this.g.getEdgeData(from, vertex);
             return data !== undefined && data.has(label);
         });
     }

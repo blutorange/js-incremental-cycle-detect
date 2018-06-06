@@ -24,7 +24,7 @@ The [drill](https://docs.npmjs.com/getting-started/installing-npm-packages-local
 npm install --save incremental-cycle-detect
 ```
 
-Typings for [Typescript](https://www.typescriptlang.org/) are available (this is written in typescript!).
+Typings for [Typescript](https://www.typescriptlang.org/) are available (this is written in typescript).
 
 Use the `dist.js` or `dist.min.js` for [browser usage](http://browserify.org/) if you must.
 
@@ -37,7 +37,7 @@ import * as IncrementalCycleDetect from "incremental-cycle-detect";
 # Usage
 
 The main purpose of this library is to add edges to a directed acyclic graph and be told when
-that make the graph cyclic.
+that makes the graph cyclic.
 
 ```javascript
 const { GenericGraphAdapter } = require("incremental-cycle-detect");
@@ -52,12 +52,18 @@ graph.deleteEdge(2, 3);
 graph.addEdge(3, 0) // => true, no cycle because we deleted edge (2,3)
 ```
 
-The main algorithm is implemented by `CycleDetectorImpl`. To allow for this lib to work with different graph
-data structures, it is subclassed. The subclass is called `...Adapter` responsible for storing the vertex and edge data.
-For convenience, the following adapters are provided and all implement [CommonAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/commonadapter.html)
+The main algorithm is implemented by `CycleDetectorImpl`. To allow for this lib to work with different
+graph data structures, its methods take a `GraphAdapter` object for accessing the graph. You must
+called it every time an edge is added or removed, see the [docs for GraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/graphadapter.html) for more details.
+
+For convenience this library also provide a few graph data structures that ready to be used.
+The following all implement the methods from [CommonAdapter](https://blutorange.github.io/js-incremental-cycle-detect/interfaces/commonadapter.html):
 
 - [GenericGraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/genericgraphadapter.html): Uses `Map`s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well.
-- [GraphlibAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/graphlibadapter.html): For the npm module [graphlib](https://www.npmjs.com/package/graphlib). Vertices are strings.
+- [MultiGraphAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/multigraphadapter.html) Similar to `GenericGraphAdapter`, but allows for multiple edges between two vertices. Edges are identified by an additional label.
+- [GraphlibAdapter](https://blutorange.github.io/js-incremental-cycle-detect/classes/graphlibadapter.html): For the npm module [graphlib](https://www.npmjs.com/package/graphlib). Vertices are strings. Does not support multigraphs currently.
+
+Example for using the GraphlibAdapter:
 
 ```javascript
 const { Graph } = require("graphlib");
@@ -88,7 +94,7 @@ Some parts need `Map`. You can either
 
 - use this lib in an enviroment that [supports these](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)
 - [polyfill](https://en.wikipedia.org/wiki/Polyfill_%28programming%29) [Map](https://www.npmjs.com/package/core-js)
-- pass an implementation of Mapt to the constructor of the graph adapter. This way you don't have to [monkey patch](https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad):
+- pass an implementation of `Map` to the constructor of the graph adapter. This way you don't have to [monkey patch](https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad):
 
 ```javascript
 import * as Map from "core-js/es6/map";
@@ -97,10 +103,11 @@ const graph = new GenericGraphAdapter({mapConstructor: Map}):
 
 # Use your own graph data structure
 
-You can also use the CycleDetector (implemented by `PearceKellyDetector`) directly and
+As mentioned above, You can also use the CycleDetector (implemented by `PearceKellyDetector`) directly and
 roll your own graph data structure. See the [docs](https://blutorange.github.io/js-incremental-cycle-detect/classes/pearcekellydetector.html).
-Basically, you need to call the `CycleDetector` every time you add an edge or delete a vertex. Then it tells you
-whether adding an edge is allowed. You can also use an existing `GraphAdapter` as the starting point.
+
+Essentially, you need to call the `CycleDetector` every time you add modify the graph. Then it tells you
+whether adding an edge is allowed. You can also use an existing `GraphAdapter` (see above) as the starting point.
 
 # Build
 
@@ -113,6 +120,15 @@ npm install
 npm run build
 ```
 
+# Test
+
+```sh
+git clone https://github.com/blutorange/js-incremental-cycle-detect
+cd js-incremental-cycle-detection
+npm install
+npm run test
+```
+
 # Change log
 
 I use the following keywords:
@@ -123,5 +139,12 @@ I use the following keywords:
 
 From newest to oldest:
 
+# 0.2.0
+- Added a `MultiGraphAdapter` data structure that allows for multiple edges between two vertices.
+- Changed `GenericGraphAdapter, it now only allows for one kind of edge data.
+
+# 0.1.1
 - 0.1.1 Fixed package.json and dependencies (was missing tslib).
+
+# 0.1.0
 - 0.1.0 Initial version.

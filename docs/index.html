@@ -914,6 +914,9 @@ img { max-width: 100%; }
 			<a href="classes/graphlibadapter.html" class="tsd-kind-icon">Graphlib<wbr>Adapter</a>
 		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
+			<a href="classes/multigraphadapter.html" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Adapter</a>
+		</li>
+		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="classes/pearcekellydetector.html" class="tsd-kind-icon">Pearce<wbr>Kelly<wbr>Detector</a>
 		</li>
 		<li class=" tsd-kind-interface tsd-has-type-parameter">
@@ -943,6 +946,30 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 			<a href="globals.html#partialexcept" class="tsd-kind-icon">Partial<wbr>Except</a>
 		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="globals.html#assign" class="tsd-kind-icon">assign</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="globals.html#createarrayiterator" class="tsd-kind-icon">create<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="globals.html#createmappedarrayiterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="globals.html#toarray" class="tsd-kind-icon">to<wbr>Array</a>
+		</li>
+		<li class=" tsd-kind-object-literal tsd-is-private">
+			<a href="globals.html#doneiteratorresult" class="tsd-kind-icon">Done<wbr>Iterator<wbr>Result</a>
+		</li>
+		<li class=" tsd-kind-object-literal tsd-is-private">
+			<a href="globals.html#emptyiterator" class="tsd-kind-icon">Empty<wbr>Iterator</a>
+		</li>
 	</ul>
 </nav>
 <div class="container container-main">
@@ -964,14 +991,14 @@ img { max-width: 100%; }
 			<p>The <a href="https://docs.npmjs.com/getting-started/installing-npm-packages-locally">drill</a>:</p>
 			<pre><code class="lang-sh">npm install --save incremental-cycle-detect
 </code></pre>
-			<p>Typings for <a href="https://www.typescriptlang.org/">Typescript</a> are available (this is written in typescript!).</p>
+			<p>Typings for <a href="https://www.typescriptlang.org/">Typescript</a> are available (this is written in typescript).</p>
 			<p>Use the <code>dist.js</code> or <code>dist.min.js</code> for <a href="http://browserify.org/">browser usage</a> if you must.</p>
 			<p>Exposes a <a href="https://softwareengineering.stackexchange.com/questions/277279/why-are-globals-bad-in-javascript">global object</a> <code>window.IncrementalCycleDetect</code> with the same methods you can when importing this lib:</p>
 			<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> IncrementalCycleDetect <span class="hljs-keyword">from</span> <span class="hljs-string">"incremental-cycle-detect"</span>;
 </code></pre>
 			<h1 id="usage">Usage</h1>
 			<p>The main purpose of this library is to add edges to a directed acyclic graph and be told when
-			that make the graph cyclic.</p>
+			that makes the graph cyclic.</p>
 			<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> { GenericGraphAdapter } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"incremental-cycle-detect"</span>);
 <span class="hljs-keyword">const</span> graph = <span class="hljs-keyword">new</span> GenericGraphAdapter();
 graph.addEdge(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) <span class="hljs-comment">// =&gt; true</span>
@@ -983,13 +1010,17 @@ graph.addEdge(<span class="hljs-number">3</span>, <span class="hljs-number">0</s
 graph.deleteEdge(<span class="hljs-number">2</span>, <span class="hljs-number">3</span>);
 graph.addEdge(<span class="hljs-number">3</span>, <span class="hljs-number">0</span>) <span class="hljs-comment">// =&gt; true, no cycle because we deleted edge (2,3)</span>
 </code></pre>
-			<p>The main algorithm is implemented by <code>CycleDetectorImpl</code>. To allow for this lib to work with different graph
-				data structures, it is subclassed. The subclass is called <code>...Adapter</code> responsible for storing the vertex and edge data.
-			For convenience, the following adapters are provided and all implement <a href="https://blutorange.github.io/js-incremental-cycle-detect/interfaces/commonadapter.html">CommonAdapter</a></p>
+			<p>The main algorithm is implemented by <code>CycleDetectorImpl</code>. To allow for this lib to work with different
+				graph data structures, its methods take a <code>GraphAdapter</code> object for accessing the graph. You must
+			called it every time an edge is added or removed, see the <a href="https://blutorange.github.io/js-incremental-cycle-detect/interfaces/graphadapter.html">docs for GraphAdapter</a> for more details.</p>
+			<p>For convenience this library also provide a few graph data structures that ready to be used.
+			The following all implement the methods from <a href="https://blutorange.github.io/js-incremental-cycle-detect/interfaces/commonadapter.html">CommonAdapter</a>:</p>
 			<ul>
 				<li><a href="https://blutorange.github.io/js-incremental-cycle-detect/classes/genericgraphadapter.html">GenericGraphAdapter</a>: Uses <code>Map</code>s to associate data with a vertex, allowing any type of vertex. In the above example, you could use strings, booleans, objects etc. instead of numbers. Seems to perform pretty well.</li>
-				<li><a href="https://blutorange.github.io/js-incremental-cycle-detect/classes/graphlibadapter.html">GraphlibAdapter</a>: For the npm module <a href="https://www.npmjs.com/package/graphlib">graphlib</a>. Vertices are strings.</li>
+				<li><a href="https://blutorange.github.io/js-incremental-cycle-detect/classes/multigraphadapter.html">MultiGraphAdapter</a> Similar to <code>GenericGraphAdapter</code>, but allows for multiple edges between two vertices. Edges are identified by an additional label.</li>
+				<li><a href="https://blutorange.github.io/js-incremental-cycle-detect/classes/graphlibadapter.html">GraphlibAdapter</a>: For the npm module <a href="https://www.npmjs.com/package/graphlib">graphlib</a>. Vertices are strings. Does not support multigraphs currently.</li>
 			</ul>
+			<p>Example for using the GraphlibAdapter:</p>
 			<pre><code class="lang-javascript"><span class="hljs-keyword">const</span> { Graph } = <span class="hljs-built_in">require</span>(<span class="hljs-string">"graphlib"</span>);
 <span class="hljs-keyword">const</span> graph = <span class="hljs-keyword">new</span> GraphlibAdapter({<span class="hljs-attr">graphlib</span>: Graph});
 graph.addEdge(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>) <span class="hljs-comment">// =&gt; true</span>
@@ -1009,22 +1040,28 @@ graphlib(insert15000, RandomSource) x <span class="hljs-number">0.18</span> ops/
 			<ul>
 				<li>use this lib in an enviroment that <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map">supports these</a></li>
 				<li><a href="https://en.wikipedia.org/wiki/Polyfill_%28programming%29">polyfill</a> <a href="https://www.npmjs.com/package/core-js">Map</a></li>
-				<li>pass an implementation of Mapt to the constructor of the graph adapter. This way you don&#39;t have to <a href="https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad">monkey patch</a>:</li>
+				<li>pass an implementation of <code>Map</code> to the constructor of the graph adapter. This way you don&#39;t have to <a href="https://stackoverflow.com/questions/5741877/is-monkey-patching-really-that-bad">monkey patch</a>:</li>
 			</ul>
 			<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span> <span class="hljs-keyword">from</span> <span class="hljs-string">"core-js/es6/map"</span>;
 <span class="hljs-keyword">const</span> graph = <span class="hljs-keyword">new</span> GenericGraphAdapter({<span class="hljs-attr">mapConstructor</span>: <span class="hljs-built_in">Map</span>}):
 </code></pre>
 			<h1 id="use-your-own-graph-data-structure">Use your own graph data structure</h1>
-			<p>You can also use the CycleDetector (implemented by <code>PearceKellyDetector</code>) directly and
-				roll your own graph data structure. See the <a href="https://blutorange.github.io/js-incremental-cycle-detect/classes/pearcekellydetector.html">docs</a>.
-				Basically, you need to call the <code>CycleDetector</code> every time you add an edge or delete a vertex. Then it tells you
-			whether adding an edge is allowed. You can also use an existing <code>GraphAdapter</code> as the starting point.</p>
+			<p>As mentioned above, You can also use the CycleDetector (implemented by <code>PearceKellyDetector</code>) directly and
+			roll your own graph data structure. See the <a href="https://blutorange.github.io/js-incremental-cycle-detect/classes/pearcekellydetector.html">docs</a>.</p>
+			<p>Essentially, you need to call the <code>CycleDetector</code> every time you add modify the graph. Then it tells you
+			whether adding an edge is allowed. You can also use an existing <code>GraphAdapter</code> (see above) as the starting point.</p>
 			<h1 id="build">Build</h1>
 			<p>May not to work on <a href="https://xkcd.com/196/">Windows</a>.</p>
 			<pre><code class="lang-sh">git <span class="hljs-built_in">clone</span> https://github.com/blutorange/js-incremental-cycle-detect
 <span class="hljs-built_in">cd</span> js-incremental-cycle-detection
 npm install
 npm run build
+</code></pre>
+			<h1 id="test">Test</h1>
+			<pre><code class="lang-sh">git <span class="hljs-built_in">clone</span> https://github.com/blutorange/js-incremental-cycle-detect
+<span class="hljs-built_in">cd</span> js-incremental-cycle-detection
+npm install
+npm run <span class="hljs-built_in">test</span>
 </code></pre>
 			<h1 id="change-log">Change log</h1>
 			<p>I use the following keywords:</p>
@@ -1034,8 +1071,17 @@ npm run build
 				<li><code>Fixed</code> A bug or error that was fixed.</li>
 			</ul>
 			<p>From newest to oldest:</p>
+			<h1 id="0-2-0">0.2.0</h1>
+			<ul>
+				<li>Added a <code>MultiGraphAdapter</code> data structure that allows for multiple edges between two vertices.</li>
+				<li>Changed `GenericGraphAdapter, it now only allows for one kind of edge data.</li>
+			</ul>
+			<h1 id="0-1-1">0.1.1</h1>
 			<ul>
 				<li>0.1.1 Fixed package.json and dependencies (was missing tslib).</li>
+			</ul>
+			<h1 id="0-1-0">0.1.0</h1>
+			<ul>
 				<li>0.1.0 Initial version.</li>
 			</ul>
 		</div>
@@ -1049,6 +1095,7 @@ npm run build
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/genericgraphadapter.html" class="tsd-kind-icon">Generic<wbr>Graph<wbr>Adapter</a></li>
 							<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/graphlibadapter.html" class="tsd-kind-icon">Graphlib<wbr>Adapter</a></li>
+							<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/multigraphadapter.html" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Adapter</a></li>
 							<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/pearcekellydetector.html" class="tsd-kind-icon">Pearce<wbr>Kelly<wbr>Detector</a></li>
 						</ul>
 					</section>
@@ -1071,6 +1118,24 @@ npm run build
 							<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="globals.html#partialexcept" class="tsd-kind-icon">Partial<wbr>Except</a></li>
 						</ul>
 					</section>
+					<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+						<h3>Functions</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#assign" class="tsd-kind-icon">assign</a></li>
+							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a></li>
+							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createarrayiterator" class="tsd-kind-icon">create<wbr>Array<wbr>Iterator</a></li>
+							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a></li>
+							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createmappedarrayiterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator</a></li>
+							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#toarray" class="tsd-kind-icon">to<wbr>Array</a></li>
+						</ul>
+					</section>
+					<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+						<h3>Object literals</h3>
+						<ul class="tsd-index-list">
+							<li class="tsd-kind-object-literal tsd-is-private"><a href="globals.html#doneiteratorresult" class="tsd-kind-icon">Done<wbr>Iterator<wbr>Result</a></li>
+							<li class="tsd-kind-object-literal tsd-is-private"><a href="globals.html#emptyiterator" class="tsd-kind-icon">Empty<wbr>Iterator</a></li>
+						</ul>
+					</section>
 				</div>
 			</section>
 		</section>
@@ -1082,9 +1147,16 @@ npm run build
 				<div class="tsd-signature tsd-kind-icon">Custom<wbr>Vertex<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Omit</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">keyof VertexData</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/Header.ts#L4">Header.ts:4</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L9">Header.ts:9</a></li>
 					</ul>
 				</aside>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>For the <a href="classes/graphlibadapter.html">GraphlibAdapter</a>. Must extends the <a href="interfaces/vertexdata.html">VertexData</a> required by
+							the cycle detection algorithm. This type omits all properties internal to the
+						algorithm.</p>
+					</div>
+				</div>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-type-alias">
 				<a name="graphlibconstructor" class="tsd-anchor"></a>
@@ -1092,7 +1164,7 @@ npm run build
 				<div class="tsd-signature tsd-kind-icon">Graphlib<wbr>Constructor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/Header.ts#L24">Header.ts:24</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L40">Header.ts:40</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-type-declaration">
@@ -1107,7 +1179,7 @@ npm run build
 				<div class="tsd-signature tsd-kind-icon">Partial<wbr>Except<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/ac36c52/src/InternalHeader.ts#L4">InternalHeader.ts:4</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/InternalHeader.ts#L4">InternalHeader.ts:4</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1116,6 +1188,321 @@ npm run build
 						<dd></dd>
 					</dl>
 				</div>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+			<h2>Functions</h2>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
+				<a name="assign" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> assign</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">assign&lt;TFirst, TSecond&gt;<span class="tsd-signature-symbol">(</span>target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TFirst</span>, source<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TSecond</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TFirst</span><span class="tsd-signature-symbol"> &amp; </span><span class="tsd-signature-type">TSecond</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L29">util.ts:29</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<dl class="tsd-comment-tags">
+								<dt>internal</dt>
+								<dd></dd>
+							</dl>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>TFirst</h4>
+							</li>
+							<li>
+								<h4>TSecond</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>target: <span class="tsd-signature-type">TFirst</span></h5>
+							</li>
+							<li>
+								<h5>source: <span class="tsd-signature-type">TSecond</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TFirst</span>
+							<span class="tsd-signature-symbol"> &amp; </span>
+							<span class="tsd-signature-type">TSecond</span>
+						</h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
+				<a name="contractedge" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> contract<wbr>Edge</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge&lt;TVertex, TEdgeData&gt;<span class="tsd-signature-symbol">(</span>adapter<span class="tsd-signature-symbol">: </span><a href="interfaces/commonadapter.html" class="tsd-signature-type">CommonAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span>, from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, newVertex<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TVertex</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L131">util.ts:131</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<dl class="tsd-comment-tags">
+								<dt>internal</dt>
+								<dd></dd>
+							</dl>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>TVertex</h4>
+							</li>
+							<li>
+								<h4>TEdgeData</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>adapter: <a href="interfaces/commonadapter.html" class="tsd-signature-type">CommonAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+							<li>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
+							</li>
+							<li>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> newVertex: <a href="" class="tsd-signature-type">TVertex</a></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
+				<a name="createarrayiterator" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Array<wbr>Iterator</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">create<wbr>Array<wbr>Iterator&lt;T&gt;<span class="tsd-signature-symbol">(</span>arr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L87">util.ts:87</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<dl class="tsd-comment-tags">
+								<dt>internal</dt>
+								<dd></dd>
+							</dl>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>T</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>arr: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
+				<a name="createfilterediterator" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Filtered<wbr>Iterator</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">create<wbr>Filtered<wbr>Iterator&lt;T&gt;<span class="tsd-signature-symbol">(</span>it<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, filter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L71">util.ts:71</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<dl class="tsd-comment-tags">
+								<dt>internal</dt>
+								<dd></dd>
+							</dl>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>T</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>it: <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+							<li>
+								<h5>filter: <span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
+				<a name="createmappedarrayiterator" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Mapped<wbr>Array<wbr>Iterator</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator&lt;T, V&gt;<span class="tsd-signature-symbol">(</span>arr<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span>, mapFn<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L109">util.ts:109</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<dl class="tsd-comment-tags">
+								<dt>internal</dt>
+								<dd></dd>
+							</dl>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>T</h4>
+							</li>
+							<li>
+								<h4>V</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>arr: <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+							<li>
+								<h5>mapFn: <span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">V</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
+				<a name="toarray" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> to<wbr>Array</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">to<wbr>Array&lt;T&gt;<span class="tsd-signature-symbol">(</span>it<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L42">util.ts:42</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<dl class="tsd-comment-tags">
+								<dt>internal</dt>
+								<dd></dd>
+							</dl>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>T</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>it: <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">[]</span></h4>
+					</li>
+				</ul>
+			</section>
+		</section>
+		<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+			<h2>Object literals</h2>
+			<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-is-private">
+				<a name="doneiteratorresult" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagConst">Const</span> Done<wbr>Iterator<wbr>Result</h3>
+				<div class="tsd-signature tsd-kind-icon">Done<wbr>Iterator<wbr>Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L8">util.ts:8</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<dl class="tsd-comment-tags">
+						<dt>internal</dt>
+						<dd></dd>
+					</dl>
+				</div>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+					<a name="doneiteratorresult.done" class="tsd-anchor"></a>
+					<h3>done</h3>
+					<div class="tsd-signature tsd-kind-icon">done<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L9">util.ts:9</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
+					<a name="doneiteratorresult.value" class="tsd-anchor"></a>
+					<h3>value</h3>
+					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L10">util.ts:10</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-object-literal tsd-is-private">
+				<a name="emptyiterator" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagConst">Const</span> Empty<wbr>Iterator</h3>
+				<div class="tsd-signature tsd-kind-icon">Empty<wbr>Iterator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
+				<aside class="tsd-sources">
+					<ul>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L17">util.ts:17</a></li>
+					</ul>
+				</aside>
+				<div class="tsd-comment tsd-typography">
+					<dl class="tsd-comment-tags">
+						<dt>internal</dt>
+						<dd></dd>
+					</dl>
+				</div>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-object-literal">
+					<a name="emptyiterator.next" class="tsd-anchor"></a>
+					<h3>next</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-object-literal">
+						<li class="tsd-signature tsd-kind-icon">next<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IteratorResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/util.ts#L18">util.ts:18</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IteratorResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</section>
 		<footer class="with-border-bottom">

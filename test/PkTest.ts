@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import { Pair } from 'andross';
+import { BinaryOperator, Pair } from 'andross';
 import { expect } from "chai";
 import { Graph, alg } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
@@ -87,10 +87,10 @@ export const hack: any[] = [];
         expect(ismapped).to.deep.equal(shouldmapped);
     }
 
-    function addEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
+    function addEdge(g: CommonAdapter<any>, from: number, to: number, data?: any): boolean {
         const f = get(g, from);
         const t = get(g, to);
-        return g.addEdge(f, t);
+        return g.addEdge(f, t, data);
     }
 
     function addVertex(g: CommonAdapter<any>, vertex: number): boolean {
@@ -98,10 +98,16 @@ export const hack: any[] = [];
         return g.addVertex(v);
     }
 
-    function contractEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
+    function contractEdge(g: CommonAdapter<any>, from: number, to: number, newVertex?: number, edgeMerger?: BinaryOperator<any>): boolean {
         const f = get(g, from);
         const t = get(g, to);
-        return g.contractEdge(f, t);
+        if (newVertex !== undefined) {
+            const n = get(g, newVertex);
+            return g.contractEdge(f, t, () => n, edgeMerger);
+        }
+        else {
+            return g.contractEdge(f, t, undefined, edgeMerger);
+        }
     }
 
     function hasEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
@@ -132,6 +138,14 @@ export const hack: any[] = [];
         const g = adapter.make();
         r.set(g, new Map<number, any>());
         return g;
+    }
+
+    function getEdgeData(g: CommonAdapter<any>, from: number, to: number): any {
+        return g.getEdgeData(get(g, from), get(g, to));
+    }
+
+    function setEdgeData(g: CommonAdapter<any>, from: number, to: number, data: any): boolean {
+        return g.setEdgeData(get(g, from), get(g, to), data);
     }
 
     function randomDelete(mygraph: CommonAdapter<any>, yourgraph: Graph, edges: Pair<number>[], engine: Random.Engine): void {
@@ -188,12 +202,17 @@ export const hack: any[] = [];
             g.addEdge(0, 1, "foo");
             g.addEdge(0, 2, undefined);
             g.addEdge(1, 2, "bar");
-            expect(g.getEdgeData(0, 1)).to.equal("foo");
-            expect(g.getEdgeData(0, 2)).to.be.undefined;
-            expect(g.getEdgeData(1, 2)).to.equal("bar");
-            expect(g.getEdgeData(1, 0)).to.be.undefined;
-            expect(g.getEdgeData(2, 0)).to.be.undefined;
-            expect(g.getEdgeData(2, 1)).to.be.undefined;
+            expect(getEdgeData(g, 0, 1)).to.equal("foo");
+            expect(getEdgeData(g, 0, 2)).to.be.undefined;
+            expect(getEdgeData(g, 1, 2)).to.equal("bar");
+            expect(getEdgeData(g, 1, 0)).to.be.undefined;
+            expect(getEdgeData(g, 2, 0)).to.be.undefined;
+            expect(getEdgeData(g, 2, 1)).to.be.undefined;
+            expect(setEdgeData(g, 0, 1, "foobar")).to.be.true;
+            expect(getEdgeData(g, 0, 1)).to.equal("foobar");
+            expect(setEdgeData(g, 0, 3, "baz")).to.be.false;
+            expect(addVertex(g, 3)).to.be.true;
+            expect(setEdgeData(g, 1, 3, "baz")).to.be.false;
         }
 
         @test("should return all vertices and their count")
@@ -488,6 +507,25 @@ export const hack: any[] = [];
             expect(addEdge(g, 2, 1)).to.be.false;
         }
 
+        @test("should merge the edge data when contracting")
+        edgeContractionMerge() {
+            const g = make();
+            expect(addEdge(g, 1, 2, 3)).to.be.true;
+            expect(addEdge(g, 1, 3, 5)).to.be.true;
+            
+            expect(addEdge(g, 2, 3, -1)).to.be.true;
+
+            expect(addEdge(g, 2, 5, 11)).to.be.true;
+            expect(addEdge(g, 3, 5, 13)).to.be.true;
+
+            expect(contractEdge(g, 2, 3, 42, (first, second) => {
+                return first + second;
+            })).to.be.true;
+            
+            expect(getEdgeData(g, 1, 42)).to.equal(8);
+            expect(getEdgeData(g, 42, 5)).to.equal(24);
+        }
+
         @test("should check whether edge contraction is allowed")
         edgeContraction() {
             const g = make();
@@ -518,11 +556,13 @@ export const hack: any[] = [];
             deleteEdge(g, 0, 4);
             deleteEdge(g, 2, 4);
 
+            expect(() => contractEdge(g, 0, 1, 2)).to.throw();
             expect(contractEdge(g, 0, 1)).to.be.true;
             expect(contractEdge(g, 2, 3)).to.be.true;
             expect(contractEdge(g, 0, 2)).to.be.true;
             expect(contractEdge(g, 0, 4)).to.be.true;
-            expect(contractEdge(g, 5, 0)).to.be.true;
+            expect(contractEdge(g, 5, 0, 9)).to.be.true;
+            expect(hasVertex(g, 9)).to.be.true;
         }
 
         @test("should allow insertion again after deleting an edge")
@@ -575,6 +615,15 @@ export const hack: any[] = [];
             const v = get(g, 0);
             expect(g.deleteVertex(v)).to.be.true;
             expect(g.deleteVertex(v)).to.be.false;
+        }
+        
+        @test("should not do anything when edge exists already")
+        addExistingEdge() {
+            const g = make();
+            expect(addEdge(g, 1, 2, "foo")).to.be.true;
+            expect(getEdgeData(g, 1, 2)).to.equal("foo");
+            expect(addEdge(g, 1, 2, "bar")).to.be.false;
+            expect(getEdgeData(g, 1, 2)).to.equal("foo");
         }
 
         @test("should report whether vertices are reachable")
