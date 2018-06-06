@@ -323,10 +323,8 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
 
 /**
  * Generic graph data structure that supports all types of vertex objects by using
- * `Map`s. Allows you to associate arbitrary data with each edges source and target,
- * ie. associates a pair `(TEdgeSourceData, TEdgeTargetData)` with each edge. Feel
- * free to use only `TEdgeSourceData` if you don't need a pair of data. For vertex
- * data, use an appropriate `TVertex` type.
+ * `Map`s. Allows you to associate arbitrary data with each edge. For vertex data,
+ * use an appropriate `TVertex` type.
  *
  * ```typescript
  *
@@ -353,8 +351,7 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
  * graph.addEdge(v2, v3, "This is edge 2-3.");
  *
  * // Fetch the data associated with the edge.
- * graph.getEdgeSourceData(v1, v2); // => "This is edge 1-2."
- * graph.getEdgeTargetData(v1, v2); // => undefined
+ * graph.getEdgeData(v1, v2); // => "This is edge 1-2."
  *
  * // This edge would create cycle.
  * graph.addEdge(v3, v1) // => false
@@ -560,6 +557,56 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
 
 type MultiGraphTargetData<TEdgeData, TEdgeLabel> = Map<TEdgeLabel | undefined, TEdgeData | undefined>;
 
+/**
+ * Generic graph data structure similar to {@link GenericGraphAdapter}. It additionally
+ * supports multiple edges between two vertices. An edge is identified by its label.
+ *
+ * ```typescript
+ *
+ * // Type of the data we want to use as vertices.
+ * interface Vertex {
+ *   id: number;
+ *   name: string;
+ *   // ...
+ * }
+ *
+ * // Create a new graph.
+ * const graph = new MultiGraphAdapter<Vertex, string>();
+ *
+ * // Add some vertices and edges.
+ * const v1 = {id: 1, name: "foo"};
+ * const v2 = {id: 2, name: "bar"};
+ * const v3 = {id: 2, name: "baz"};
+ *
+ * graph.addVertex(v1);
+ * graph.addVertex(v2);
+ * graph.addVertex(v3);
+ *
+ * graph.addEdge(v1, v2, "Some edge data", "Label1");
+ * // Another edge from v1 to v2, but with a different label.
+ * graph.addEdge(v1, v2, "More edge data", "Label2");
+ * graph.addEdge(v2, v3, "Even more data, "Label3");
+ *
+ * // Fetch the data associated with the edge.
+ * graph.getEdgeData(v1, v2, "Label1"); // => "Some edge data"
+ * graph.getEdgeData(v1, v2, "Label2"); // => "More edge data"
+ * graph.getEdgeData(v1, v2, "no-such-label"); // => undefined
+ *
+ * // This edge would create cycle.
+ * graph.addEdge(v3, v1); // => false
+ * graph.hasEdge(v3, v1); // => false
+ *
+ * graph.deleteEdge(v1, v2, "Label2");
+ * // There is still an edge left between v1 and v2, so this would create a cycle.
+ * graph.addEdge(v3, v1) // => false;
+ *
+ * graph.deleteEdge(v1, v2, "Label1");
+ * graph.addEdge(v3, v1) // true;
+ * ```
+ *
+ * @see {@link GenericGraphAdapter}
+ * @see {@link CommonAdapter}
+ */
 export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any> implements CommonAdapter<TVertex, TEdgeData | undefined> {
     private g: GenericGraphAdapter<TVertex, MultiGraphTargetData<TEdgeData, TEdgeLabel>>;
     private edgeCount: number;
@@ -569,6 +616,10 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         this.edgeCount = 0;
     }
 
+    /**
+     * If no label is given, defaults to `undefined` for the label.
+     * @see {@link CommonAdapter}#addEdge
+     */
     addEdge(from: TVertex, to: TVertex, data?: TEdgeData, label?: TEdgeLabel): boolean {
         const srcData = this.g.getEdgeData(from, to);
         if (srcData !== undefined) {
@@ -600,6 +651,10 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return this.g.contractEdge(from, to, newVertex);
     }
 
+    /**
+     * If no label is given, deletes all edges between the two given vertices.
+     * @see {@link CommonAdapter}#deleteEdge
+     */
     deleteEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
         if (label === undefined) {
             this.edgeCount -= this.getEdgeCountBetween(from, to);
@@ -625,14 +680,27 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return this.g.deleteVertex(vertex);
     }
 
+    /**
+     * @return The number of edges between two distinct vertices, ie. not including
+     * multiple edges between the same vertices.
+     */
     getUniqueEdgeCount(): number {
         return this.g.getEdgeCount();
     }
 
+    /**
+     * This returns the number of all edges, ie. including multiple
+     * edges between the same vertices.
+     * @see {@link CommonAdapter}#getEdgeCount
+     */
     getEdgeCount(): number {
         return this.edgeCount;
     }
 
+    /**
+     * If no label is given, defaults to `undefined` for the label.
+     * @see {@link CommonAdapter}#getEdgeData
+     */
     getEdgeData(from: TVertex, to: TVertex, label?: TEdgeLabel): TEdgeData | undefined {
         const data = this.g.getEdgeData(from, to);
         if (data === undefined) {
@@ -641,6 +709,10 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return data.get(label);
     }
 
+    /**
+     * If no label is given, defaults to `undefined` for the label.
+     * @see {@link CommonAdapter}#setEdgeData
+     */
     setEdgeData(from: TVertex, to: TVertex, data: TEdgeData | undefined, label?: TEdgeLabel): boolean {
         const d = this.g.getEdgeData(from, to);
         if (d === undefined || !d.has(label)) {
@@ -690,6 +762,11 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return createArrayIterator(edges);
     }
 
+    /**
+     * If a label is given, only returns predecessors connected to this
+     * vertex by an edge with the given label.
+     * @see {@link CommonAdapter}#getPredecessorsOf
+     */
     getPredecessorsOf(vertex: TVertex, label?: TEdgeLabel): Iterator<TVertex> {
         if (label === undefined) {
             return this.g.getPredecessorsOf(vertex);
@@ -700,6 +777,11 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         });
     }
 
+    /**
+     * If a label is given, only returns successors connected to this
+     * vertex by an edge with the given label.
+     * @see {@link CommonAdapter}#getSuccessorsOf
+     */
     getSuccessorsOf(vertex: TVertex, label?: TEdgeLabel): Iterator<TVertex> {
         if (label === undefined) {
             return this.g.getSuccessorsOf(vertex);
@@ -726,6 +808,12 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return this.g.getVertices();
     }
 
+    /**
+     * If no label is given, returns true iff an edge with any label exists
+     * between the two given vertices. Otherwise, returns true iff an edge
+     * with the given label exists.
+     * @see {@link CommonAdapter}#hasEdge
+     */
     hasEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
         const data = this.g.getEdgeData(from, to);
         // No label given and edge exsists, or edge with given label exists.
