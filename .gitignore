@@ -3,7 +3,9 @@ dist
 coverage
 sandbox.ts
 
+index.js
 main.js
+index.d.ts
 main.d.ts
 *.tgz
 

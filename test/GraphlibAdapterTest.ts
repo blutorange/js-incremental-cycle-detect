@@ -5,7 +5,7 @@
 import { expect } from "chai";
 import { Graph } from 'graphlib';
 import { suite, test } from "mocha-typescript";
-import { GraphlibAdapter, VertexData } from '../main';
+import { GraphlibAdapter, VertexData } from '../index';
 
 function toArray<T>(it: Iterator<T>) {
     const arr: T[] = [];

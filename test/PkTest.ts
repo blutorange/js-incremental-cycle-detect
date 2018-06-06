@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Graph, alg } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
-import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../main";
+import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../index";
 
 const log = false;
 
@@ -180,6 +180,20 @@ export const hack: any[] = [];
             if (adapter.clazz) {
                 expect(make()).to.be.an.instanceof(adapter.clazz);
             }
+        }
+
+        @test("should allow associating edge source/target data")
+        edgeData() {
+            const g = make();
+            g.addEdge(0, 1, "foo");
+            g.addEdge(0, 2, undefined);
+            g.addEdge(1, 2, "bar");
+            expect(g.getEdgeData(0, 1)).to.equal("foo");
+            expect(g.getEdgeData(0, 2)).to.be.undefined;
+            expect(g.getEdgeData(1, 2)).to.equal("bar");
+            expect(g.getEdgeData(1, 0)).to.be.undefined;
+            expect(g.getEdgeData(2, 0)).to.be.undefined;
+            expect(g.getEdgeData(2, 1)).to.be.undefined;
         }
 
         @test("should return all vertices and their count")

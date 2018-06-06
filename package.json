@@ -2,7 +2,7 @@
   "name": "incremental-cycle-detect",
   "version": "0.2.0",
   "description": "Keeps a directed acyclic graph topologically sorted each time you add an edge or vertex to check for cycles.",
-  "main": "dist/main.js",
+  "main": "dist/index.js",
   "scripts": {
     "perf": "npx ts-node perf/insert",
     "test": "npm run transpile && npm run test-prod",
@@ -10,17 +10,17 @@
     "test-dev": "npx ts-mocha --reporter spec test/**/*.ts",
     "doc": "npm run doc-create",
     "doc-create": "npx typedoc --mode file --name js-incremental-cycle-detect --readme README.md --out docs --excludeExternals --excludePrivate --excludeNotExported --excludeProtected --ignoreCompilerErrors --theme minimal src",
-    "clean": "rm -rf main.js main.d.ts docs coverage dist",
+    "clean": "rm -rf index.js index.d.ts docs coverage dist",
     "transpile": "npx tsc -p tsconfig.json",
-    "lint": "npx tslint -c tslint.json main.ts",
-    "browserify": "npx browserify dist/main.js --standalone IncrementalCycleDetect -o dist/browser.js",
+    "lint": "npx tslint -c tslint.json index.ts",
+    "browserify": "npx browserify dist/index.js --standalone IncrementalCycleDetect -o dist/browser.js",
     "minify": "npx minify dist/browser.js --out-file dist/browser.min.js",
     "prepublishOnly": "npm run build",
     "prebuild": "npm run clean && npm run lint",
     "build": "npm run transpile && npm run browserify && npm run minify && npm run doc",
     "postbuild": "npm run test"
   },
-  "types": "./main.d.ts",
+  "types": "./index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blutorange/js-incremental-cycle-detect.git"
@@ -55,17 +55,16 @@
     "jsperf": "^0.2.1",
     "mocha": "^5.2.0",
     "mocha-typescript": "^1.1.14",
-    "nyc": "^11.8.0",
+    "nyc": "^12.0.2",
     "random-js": "^1.0.8",
     "ts-mocha": "^1.2.0",
-    "ts-node": "^6.0.5",
+    "ts-node": "^6.1.0",
+    "tslib": "^1.9.2",
     "tslint": "^5.10.0",
     "tslint-strict-null-checks": "^1.0.1",
     "typedoc": "^0.11.1",
-    "typescript": "^2.8.3"
+    "typescript": "^2.9.1"
   },
   "homepage": "https://github.com/blutorange/js-incremental-cycle-detect#readme",
-  "dependencies": {
-    "tslib": "^1.9.1"
-  }
+  "dependencies": {}
 }

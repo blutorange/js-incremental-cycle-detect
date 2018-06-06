@@ -4,7 +4,7 @@
 
 import { expect } from "chai";
 import { suite, test } from "mocha-typescript";
-import { GenericGraphAdapter } from '../main';
+import { GenericGraphAdapter } from '../index';
 
 function toArray<T>(it: Iterator<T>) {
     const arr: T[] = [];
@@ -36,19 +36,5 @@ export class GenericAdapterTest {
         g.addVertex(v2);
         g.addVertex(v3);
         expect(toArray(g.getVertices()).sort((lhs, rhs) => lhs.id - rhs.id)).to.deep.equal([v1, v2, v3]);
-    }
-
-    @test("should allow associating edge source/target data")
-    edgeData() {
-        const g = this.make<number, string, boolean>();
-        g.addEdge(0, 1, "foo");
-        g.addEdge(0, 2, undefined);
-        g.addEdge(1, 2, "bar");
-        expect(g.getEdgeData(0, 1)).to.equal("foo");
-        expect(g.getEdgeData(0, 2)).to.be.undefined;
-        expect(g.getEdgeData(1, 2)).to.equal("bar");
-        expect(g.getEdgeData(1, 0)).to.be.undefined;
-        expect(g.getEdgeData(2, 0)).to.be.undefined;
-        expect(g.getEdgeData(2, 1)).to.be.undefined;
     }
 }
