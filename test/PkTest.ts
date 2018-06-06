@@ -158,6 +158,17 @@ export const hack: any[] = [];
             yourgraph.removeEdge(String(from), String(to));
             deleteEdge(mygraph, from, to);
         }
+        assertOrder(mygraph);
+    }
+
+    function assertOrder(mygraph: CommonAdapter<any>) {
+        if (mygraph.supportsOrder()) {
+            for (let it = mygraph.getEdges(), res = it.next(); !res.done; res = it.next()) {
+                const from = res.value[0];
+                const to = res.value[1];
+                expect(mygraph.getOrder(from)).to.be.lessThan(mygraph.getOrder(to));
+            }
+        }
     }
     
     function randomInsert(mygraph: CommonAdapter<any>, yourgraph: Graph, edges: Pair<number>[], vertexCount: number, engine: Random.Engine): void {
@@ -184,6 +195,7 @@ export const hack: any[] = [];
                 edges.push([from, to]);
             }
         }
+        assertOrder(mygraph);
     }
 
     @suite("PkTest with adapter " + (adapter.clazz ? adapter.clazz.name : "none"))
