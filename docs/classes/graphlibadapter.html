@@ -926,6 +926,9 @@ img { max-width: 100%; }
 					<a href="graphlibadapter.html#addvertex" class="tsd-kind-icon">add<wbr>Vertex</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="graphlibadapter.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="graphlibadapter.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -1015,6 +1018,9 @@ img { max-width: 100%; }
 			<a href="../globals.html#assign" class="tsd-kind-icon">assign</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
@@ -1024,7 +1030,16 @@ img { max-width: 100%; }
 			<a href="../globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createflatmappediterator" class="tsd-kind-icon">create<wbr>Flat<wbr>Mapped<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#createmappedarrayiterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createmappediterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#takefirst" class="tsd-kind-icon">take<wbr>First</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#toarray" class="tsd-kind-icon">to<wbr>Array</a>
@@ -1098,6 +1113,7 @@ img { max-width: 100%; }
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#addedge" class="tsd-kind-icon">add<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#addvertex" class="tsd-kind-icon">add<wbr>Vertex</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#deleteedge" class="tsd-kind-icon">delete<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#deletevertex" class="tsd-kind-icon">delete<wbr>Vertex</a></li>
@@ -1132,7 +1148,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L17">GraphlibAdapter.ts:17</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L17">GraphlibAdapter.ts:17</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1154,7 +1170,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">graph<span class="tsd-signature-symbol">:</span> </div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L106">GraphlibAdapter.ts:106</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L110">GraphlibAdapter.ts:110</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1172,13 +1188,13 @@ img { max-width: 100%; }
 				<a name="addedge" class="tsd-anchor"></a>
 				<h3>add<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, label<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TEdgeData</a>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TEdgeData</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L110">GraphlibAdapter.ts:110</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L114">GraphlibAdapter.ts:114</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1190,10 +1206,7 @@ img { max-width: 100%; }
 								<h5>to: <span class="tsd-signature-type">string</span></h5>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> label: <a href="" class="tsd-signature-type">TEdgeData</a></h5>
-							</li>
-							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> name: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <a href="" class="tsd-signature-type">TEdgeData</a></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1210,7 +1223,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L134">GraphlibAdapter.ts:134</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L138">GraphlibAdapter.ts:138</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1227,16 +1240,42 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-				<a name="contractedge" class="tsd-anchor"></a>
-				<h3>contract<wbr>Edge</h3>
+				<a name="cancontractedge" class="tsd-anchor"></a>
+				<h3>can<wbr>Contract<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, newVertex<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">can<wbr>Contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L29">GraphlibAdapter.ts:29</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L29">GraphlibAdapter.ts:29</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>from: <span class="tsd-signature-type">string</span></h5>
+							</li>
+							<li>
+								<h5>to: <span class="tsd-signature-type">string</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="contractedge" class="tsd-anchor"></a>
+				<h3>contract<wbr>Edge</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, vertexMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, edgeMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L33">GraphlibAdapter.ts:33</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1248,7 +1287,10 @@ img { max-width: 100%; }
 								<h5>to: <span class="tsd-signature-type">string</span></h5>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> newVertex: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> vertexMerger: <span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> edgeMerger: <span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1265,7 +1307,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L143">GraphlibAdapter.ts:143</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L147">GraphlibAdapter.ts:147</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1294,7 +1336,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L151">GraphlibAdapter.ts:151</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L155">GraphlibAdapter.ts:155</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1318,7 +1360,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedgecount">getEdgeCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L65">GraphlibAdapter.ts:65</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L69">GraphlibAdapter.ts:69</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1335,7 +1377,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L73">GraphlibAdapter.ts:73</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L77">GraphlibAdapter.ts:77</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1362,7 +1404,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedges">getEdges</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L89">GraphlibAdapter.ts:89</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L93">GraphlibAdapter.ts:93</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pair</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1379,7 +1421,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L97">GraphlibAdapter.ts:97</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L101">GraphlibAdapter.ts:101</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1402,7 +1444,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L45">GraphlibAdapter.ts:45</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L49">GraphlibAdapter.ts:49</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1425,7 +1467,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L37">GraphlibAdapter.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L41">GraphlibAdapter.ts:41</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1449,7 +1491,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertexcount">getVertexCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L61">GraphlibAdapter.ts:61</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L65">GraphlibAdapter.ts:65</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1466,7 +1508,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L69">GraphlibAdapter.ts:69</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L73">GraphlibAdapter.ts:73</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1490,7 +1532,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertices">getVertices</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L85">GraphlibAdapter.ts:85</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L89">GraphlibAdapter.ts:89</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1507,7 +1549,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L53">GraphlibAdapter.ts:53</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L57">GraphlibAdapter.ts:57</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1533,7 +1575,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L57">GraphlibAdapter.ts:57</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L61">GraphlibAdapter.ts:61</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1556,7 +1598,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L33">GraphlibAdapter.ts:33</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L37">GraphlibAdapter.ts:37</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1582,7 +1624,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L77">GraphlibAdapter.ts:77</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L81">GraphlibAdapter.ts:81</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1612,7 +1654,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#supportsorder">supportsOrder</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/GraphlibAdapter.ts#L93">GraphlibAdapter.ts:93</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/GraphlibAdapter.ts#L97">GraphlibAdapter.ts:97</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>

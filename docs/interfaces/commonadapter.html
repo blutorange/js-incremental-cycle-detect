@@ -929,6 +929,9 @@ img { max-width: 100%; }
 					<a href="commonadapter.html#addvertex" class="tsd-kind-icon">add<wbr>Vertex</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-interface">
+					<a href="commonadapter.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-interface">
 					<a href="commonadapter.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-interface">
@@ -1006,6 +1009,9 @@ img { max-width: 100%; }
 			<a href="../globals.html#assign" class="tsd-kind-icon">assign</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
@@ -1015,7 +1021,16 @@ img { max-width: 100%; }
 			<a href="../globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createflatmappediterator" class="tsd-kind-icon">create<wbr>Flat<wbr>Mapped<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#createmappedarrayiterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#createmappediterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="../globals.html#takefirst" class="tsd-kind-icon">take<wbr>First</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#toarray" class="tsd-kind-icon">to<wbr>Array</a>
@@ -1073,6 +1088,7 @@ img { max-width: 100%; }
 						<ul class="tsd-index-list">
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="commonadapter.html#addedge" class="tsd-kind-icon">add<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="commonadapter.html#addvertex" class="tsd-kind-icon">add<wbr>Vertex</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="commonadapter.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="commonadapter.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="commonadapter.html#deleteedge" class="tsd-kind-icon">delete<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-interface"><a href="commonadapter.html#deletevertex" class="tsd-kind-icon">delete<wbr>Vertex</a></li>
@@ -1106,7 +1122,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L149">Header.ts:149</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L149">Header.ts:149</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1148,7 +1164,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L155">Header.ts:155</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L155">Header.ts:155</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1171,23 +1187,21 @@ img { max-width: 100%; }
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-				<a name="contractedge" class="tsd-anchor"></a>
-				<h3>contract<wbr>Edge</h3>
+				<a name="cancontractedge" class="tsd-anchor"></a>
+				<h3>can<wbr>Contract<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, newVertex<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TVertex</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">can<wbr>Contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L165">Header.ts:165</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L162">Header.ts:162</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>Contracts the given edge, ie. delete the vertex <code>to</code> and
-									all edges between <code>from</code> and <code>to</code>, and moves all remaining edges
-								of <code>to</code> to <code>from</code>.</p>
+								<p>Checks whether the edge can be contracted without creating a cycle.</p>
 							</div>
 						</div>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1204,10 +1218,63 @@ img { max-width: 100%; }
 									<p>Target vertex of the edge.</p>
 								</div>
 							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						<p><code>true</code> iff the edge can be contracted without introducing a cycle.</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+				<a name="contractedge" class="tsd-anchor"></a>
+				<h3>contract<wbr>Edge</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, vertexMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span>, dataMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L176">Header.ts:176</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Contracts the given edge, ie. delete the vertex <code>to</code> and
+									all edges between <code>from</code> and <code>to</code>, and moves all remaining edges
+								of <code>to</code> to <code>from</code>.</p>
+							</div>
+							<dl class="tsd-comment-tags">
+								<dt>throws</dt>
+								<dd><p>If vertex merger returns a vertex that is already contained in the graph.</p>
+								</dd>
+							</dl>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> newVertex: <a href="" class="tsd-signature-type">TVertex</a></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 								<div class="tsd-comment tsd-typography">
-									<p>Vertex that replaces the old two vertices. If not given, defaults to <code>from</code>.</p>
+									<p>Source vertex of the edge.</p>
+								</div>
+							</li>
+							<li>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Target vertex of the edge.</p>
+								</div>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> vertexMerger: <span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>The vertex that replaces the two old vertices. If not given, defaults to <code>from</code>.</p>
+								</div>
+							</li>
+							<li>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> dataMerger: <span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Another vertex may be connected two both of the vertices that are to be contracted.
+										In this case, their edge data needs to be merged. If not given, defaults to taking the edge data from
+									one edge.</p>
 								</div>
 							</li>
 						</ul>
@@ -1226,7 +1293,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L172">Header.ts:172</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L183">Header.ts:183</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1264,7 +1331,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L178">Header.ts:178</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L189">Header.ts:189</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1296,7 +1363,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L182">Header.ts:182</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L193">Header.ts:193</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1316,7 +1383,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L188">Header.ts:188</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L199">Header.ts:199</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1351,7 +1418,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L192">Header.ts:192</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L203">Header.ts:203</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1371,7 +1438,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L199">Header.ts:199</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L210">Header.ts:210</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1403,7 +1470,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L204">Header.ts:204</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L215">Header.ts:215</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1432,7 +1499,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L209">Header.ts:209</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L220">Header.ts:220</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1461,7 +1528,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L213">Header.ts:213</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L224">Header.ts:224</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1481,7 +1548,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L217">Header.ts:217</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L228">Header.ts:228</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1501,7 +1568,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L223">Header.ts:223</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L234">Header.ts:234</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1536,7 +1603,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L228">Header.ts:228</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L239">Header.ts:239</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1562,7 +1629,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L235">Header.ts:235</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L246">Header.ts:246</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1600,7 +1667,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L242">Header.ts:242</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L253">Header.ts:253</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1641,7 +1708,7 @@ img { max-width: 100%; }
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/b264f4b/src/Header.ts#L246">Header.ts:246</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/70213d0/src/Header.ts#L257">Header.ts:257</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">

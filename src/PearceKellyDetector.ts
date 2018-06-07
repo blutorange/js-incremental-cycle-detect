@@ -82,16 +82,14 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
             return true;
         }
 
-        const tOrder = adapter.getData(target).order;
-        if (adapter.getData(source).order > tOrder) {
+        const targetOrder = adapter.getData(target).order;
+        if (adapter.getData(source).order > targetOrder) {
             // target cannot be reached by source as source is sorted after target topologically
             return false;
         }
 
-        const reachable = !this.dfs_f(source, adapter, tOrder);
-        if (reachable) {
-            this.cleanAfterCycle(adapter);
-        }
+        const reachable = !this.dfs_f(source, adapter, targetOrder);
+        this.cleanAfterCycle(adapter);
 
         return reachable;
     }

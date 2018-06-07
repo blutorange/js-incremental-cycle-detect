@@ -1,9 +1,9 @@
 import { Pair } from "andross";
 import * as Benchmark from "benchmark";
 import { IStream, TypesafeStreamFactory } from "elbe";
-import { Graph, alg } from "graphlib";
+import { alg, Graph } from "graphlib";
 import { GenericGraphAdapter } from "../dist/main";
-import { GraphlibAdapter } from "../main";
+import { GraphlibAdapter, MultiGraphAdapter } from "../index";
 
 function log(...args: any[]): void {
 // tslint:disable-next-line:no-console
@@ -30,6 +30,15 @@ function mylib_insert(edges: number[][]) {
     });
 }
 
+function mylib_insert_multi(edges: number[][]) {
+    const g = new MultiGraphAdapter();
+    edges.forEach(([x, y]) => {
+        if (x === y || g.hasEdge(x, y)) {
+          return;
+        }
+        g.addEdge(x, y);
+    });
+}
 function mylib_glib_insert(edges: number[][]) {
     const g = new GraphlibAdapter({graphlib: Graph});
     edges.forEach(([x, y]) => {
@@ -62,6 +71,7 @@ function runPerf(n: number, source: IStream<Pair<number>>, details: string = "")
     };
     (new Benchmark.Suite())
         .add("incremental-cycle-detection(insert " + n + ", " + details + ")", () => mylib_insert((global as any).source), {setup})
+        .add("incremental-cycle-detection-multi(insert " + n + ", " + details + ")", () => mylib_insert_multi((global as any).source), {setup})
         .add("incremental-cycle-detection-graphlib(insert " + n + ", " + details + ")", () => mylib_glib_insert((global as any).source), {setup})
         .add("graphlib(insert" + n + ", " + details + ")", () => graphlib_insert((global as any).source), {setup})
         .on("cycle", (event: Benchmark.Event) => {

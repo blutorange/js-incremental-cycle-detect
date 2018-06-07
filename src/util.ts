@@ -59,8 +59,11 @@ export function toArray<T>(it: Iterator<T>) {
     return arr;
 }
 
-/*
-function createMappedIterator<T, V>(it: Iterator<T>, mapper: TypedFunction<T, V>): Iterator<V> {
+/**
+ * @internal
+ * @private
+ */
+export function createMappedIterator<T, V>(it: Iterator<T>, mapper: TypedFunction<T, V>): Iterator<V> {
     return {
         next(): IteratorResult<V> {
             const res = it.next();
@@ -74,7 +77,6 @@ function createMappedIterator<T, V>(it: Iterator<T>, mapper: TypedFunction<T, V>
         }
     };
 }
-*/
 
 /**
  * @internal
@@ -93,22 +95,54 @@ export function createFilteredIterator<T>(it: Iterator<T>, filter: Predicate<T>)
 }
 
 /**
+ * Maps each item with the provided mapper function to an iterator, and iterates
+ * over all items of these iterators.
+ * @param iterator Base iterator.
+ * @param mapper Mapper that maps an item to an iterator.
  * @internal
  * @private
  */
-export function createArrayIterator<T>(arr: (T|undefined)[]): Iterator<T> {
+export function createFlatMappedIterator<T, S>(iterator: Iterator<T>, mapper: TypedFunction<T, Iterator<S>>): Iterator<S> {
+    // The mapped sub iterator, initialize to an empty iterator. Once the
+    // next method is called, we proceed to call iterator.next.
+    let subIterator: Iterator<S> = EmptyIterator;
+    return {
+        next(): IteratorResult<S> {
+            let subNext = subIterator.next();
+            while (subNext.done) {
+                const next = iterator.next();
+                if (next.done) {
+                    return DoneIteratorResult;
+                }
+                subIterator = mapper(next.value);
+                subNext = subIterator.next();
+            }
+            return {
+                done: false,
+                value: subNext.value,
+            };
+        }
+    };
+}
+
+/**
+ * @internal
+ * @private
+ */
+export function createArrayIterator<T>(array: (T|undefined)[]): Iterator<T> & {array: (T|undefined)[]} {
     let i = 0;
     return {
+        array,
         next(): IteratorResult<T> {
-            while (arr[i] === undefined) {
-                if (i > arr.length) {
+            while (array[i] === undefined) {
+                if (i > array.length) {
                     return DoneIteratorResult;
                 }
                 i +=  1;
             }
             return {
                 done: false,
-                value: arr[i++] as T,
+                value: array[i++] as T,
             };
         }
     };

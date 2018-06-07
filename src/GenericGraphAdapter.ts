@@ -1,7 +1,7 @@
 import { BinaryOperator, Pair } from "andross";
 import { CommonAdapter, CycleDetector, GenericGraphAdapterOptions, GraphAdapter, VertexData } from "./Header";
 import { PearceKellyDetector } from "./PearceKellyDetector";
-import { EmptyIterator, canContractEdge, contractEdge, createArrayIterator } from "./util";
+import { canContractEdge, contractEdge, createFlatMappedIterator, createMappedIterator, EmptyIterator } from "./util";
 
 /**
  * Generic graph data structure that supports all types of vertex objects by using
@@ -119,13 +119,8 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
     }
 
     getEdges(): Iterator<Pair<TVertex>> {
-        const edges: Pair<TVertex>[] = [];
-        for (let it = this.forward.entries(), res = it.next(); !res.done; res = it.next()) {
-            for (let it2 = res.value[1].keys(), res2 = it2.next(); !res2.done; res2 = it2.next()) {
-                edges.push([res.value[0], res2.value]);
-            }
-        }
-        return createArrayIterator(edges);
+        return createFlatMappedIterator(this.forward.entries(), entry =>
+            createMappedIterator(entry[1].keys(), key => [entry[0], key] as Pair<TVertex>));
     }
 
     getEdgeCount(): number {

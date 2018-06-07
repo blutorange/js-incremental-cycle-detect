@@ -2,10 +2,11 @@
 
 import { BinaryOperator, Pair } from 'andross';
 import { expect } from "chai";
-import { Graph, alg } from "graphlib";
+import { alg, Graph } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
 import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../index";
+import { assertOrder } from './util';
 
 const log = false;
 
@@ -93,9 +94,40 @@ export const hack: any[] = [];
         return g.addEdge(f, t, data);
     }
 
+    function expectSuccessorsToEqual(g: CommonAdapter<any>, vertex: number, should: number[]) {
+        const is = toArray(g.getSuccessorsOf(get(g, vertex)));
+        const ismapped = is.map(v => vertexIdentifier(v));
+        const shouldmapped = should.map(v => vertexIdentifier(get(g, v)));
+        ismapped.sort();
+        shouldmapped.sort();
+        expect(ismapped).to.deep.equal(shouldmapped);
+    }
+
+    function expectPredecessorsToEqual(g: CommonAdapter<any>, vertex: number, should: number[]) {
+        const is = toArray(g.getPredecessorsOf(get(g, vertex)));
+        const ismapped = is.map(v => vertexIdentifier(v));
+        const shouldmapped = should.map(v => vertexIdentifier(get(g, v)));
+        ismapped.sort();
+        shouldmapped.sort();
+        expect(ismapped).to.deep.equal(shouldmapped);
+    }
+
     function addVertex(g: CommonAdapter<any>, vertex: number): boolean {
         const v = get(g, vertex);
         return g.addVertex(v);
+    }
+
+    function expectContractEdgeToBe(g: CommonAdapter<any>, from: number, to: number, should: boolean, newVertex?: number, edgeMerger?: BinaryOperator<any>) {
+        const sizeBefore = g.getEdgeCount();
+        expect(canContractEdge(g, from, to)).to.equal(should);
+        expect(g.getEdgeCount()).to.equal(sizeBefore);
+        expect(contractEdge(g, from, to, newVertex, edgeMerger)).to.equal(should);
+    }
+
+    function canContractEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
+        const f = get(g, from);
+        const t = get(g, to);
+        return g.canContractEdge(f, t);
     }
 
     function contractEdge(g: CommonAdapter<any>, from: number, to: number, newVertex?: number, edgeMerger?: BinaryOperator<any>): boolean {
@@ -154,21 +186,14 @@ export const hack: any[] = [];
         Random.shuffle(engine, edges);
         while (edgeCount -- > 0) {
             const [from, to] = edges.pop() as [number, number];
-            if (log) console.log("g.deleteEdge(get(" + from + "), get(" + to + "));");
+            if (log) console.log("g.deleteEdge(" + from + ", " + to + ");");
             yourgraph.removeEdge(String(from), String(to));
             deleteEdge(mygraph, from, to);
-        }
-        assertOrder(mygraph);
-    }
-
-    function assertOrder(mygraph: CommonAdapter<any>) {
-        if (mygraph.supportsOrder()) {
-            for (let it = mygraph.getEdges(), res = it.next(); !res.done; res = it.next()) {
-                const from = res.value[0];
-                const to = res.value[1];
-                expect(mygraph.getOrder(from)).to.be.lessThan(mygraph.getOrder(to));
+            if (edgeCount %10 === 0) {
+                assertOrder(mygraph);
             }
         }
+        assertOrder(mygraph);
     }
     
     function randomInsert(mygraph: CommonAdapter<any>, yourgraph: Graph, edges: Pair<number>[], vertexCount: number, engine: Random.Engine): void {
@@ -185,7 +210,7 @@ export const hack: any[] = [];
             yourgraph.setEdge(String(from), String(to));
             const myResult = addEdge(mygraph, from, to);
             const yourResult = alg.isAcyclic(yourgraph);
-            if (log) console.log("expect(addEdge(g, get(" + from + "), get(" + to + "))).to.be." + yourResult + "; // is " + myResult);
+            if (log) console.log("expect(g.addEdge(" + from + ", " + to + ")).to.be." + yourResult + "; // is " + myResult);
             expect(myResult).to.equal(yourResult);
             // remove the offending edge that makes the graph cyclic
             if (!myResult) {
@@ -193,6 +218,9 @@ export const hack: any[] = [];
             }
             else {
                 edges.push([from, to]);
+            }
+            if (edgeCount % 10 === 0) {
+                assertOrder(mygraph);
             }
         }
         assertOrder(mygraph);
@@ -500,23 +528,38 @@ export const hack: any[] = [];
         @test("should detect 1-cycles")
         detect1Cycle() {
             const g = make();
+            expect(g.getEdgeCount()).to.equal(0);
             expect(addEdge(g, 0, 0)).to.be.false;
+            expect(g.getEdgeCount()).to.equal(0);
         }
 
         @test("should detect 2-cycles")
         detect2Cycle() {
             const g = make();
+            expect(g.getEdgeCount()).to.equal(0);
             expect(addEdge(g, 0, 1)).to.be.true;
+            expect(g.getEdgeCount()).to.equal(1);
             expect(addEdge(g, 1, 0)).to.be.false;
+            expect(g.getEdgeCount()).to.equal(1);
         }
 
         @test("should detect 3-cycles")
         detect3Cycle() {
             const g = make();
+
+            expect(g.getEdgeCount()).to.equal(0);
+            
             expect(addEdge(g, 0, 1)).to.be.true;
-            expect(addEdge(g, 1, 2)).to.be.true;
+            expect(g.getEdgeCount()).to.equal(1);
+
+            expect(addEdge(g, 1, 2)).to.be.true;            
+            expect(g.getEdgeCount()).to.equal(2);
+            
             expect(addEdge(g, 2, 0)).to.be.false;
+            expect(g.getEdgeCount()).to.equal(2);
+
             expect(addEdge(g, 2, 1)).to.be.false;
+            expect(g.getEdgeCount()).to.equal(2);
         }
 
         @test("should merge the edge data when contracting")
@@ -538,6 +581,24 @@ export const hack: any[] = [];
             expect(getEdgeData(g, 42, 5)).to.equal(24);
         }
 
+        @test("should not modify the graph with canContractEdge")
+        realWorld() {
+            const g = make();
+            g.addEdge(1, 4)
+            g.addEdge(2, 4)
+            g.addEdge(3, 4)
+            g.addEdge(3, 5)
+            g.addEdge(2, 3)
+            g.addEdge(1, 2)
+            for (let i = 10; i--> 0;) {
+                expect(g.getEdgeCount()).to.equal(6);
+                expect(g.canContractEdge(1, 4)).to.be.false;
+                expect(g.canContractEdge(2, 4)).to.be.false;
+                expect(g.canContractEdge(3, 4)).to.be.true;
+                expect(g.canContractEdge(3, 5)).to.be.true;
+            }
+        }    
+
         @test("should check whether edge contraction is allowed")
         edgeContraction() {
             const g = make();
@@ -551,29 +612,30 @@ export const hack: any[] = [];
             expect(addEdge(g, 0, 3)).to.be.true;
             expect(addEdge(g, 0, 4)).to.be.true;
             expect(addEdge(g, 2, 4)).to.be.true;
-            expect(contractEdge(g, 0, 2)).to.be.false;
-            expect(contractEdge(g, 2, 0)).to.be.false;
-            expect(contractEdge(g, 0, 3)).to.be.false;
-            expect(contractEdge(g, 3, 0)).to.be.false;
-            expect(contractEdge(g, 0, 4)).to.be.false;
-            expect(contractEdge(g, 4, 0)).to.be.false;
-            expect(contractEdge(g, 1, 3)).to.be.false;
-            expect(contractEdge(g, 3, 1)).to.be.false;
-            expect(contractEdge(g, 1, 4)).to.be.false;
-            expect(contractEdge(g, 4, 1)).to.be.false;
-            expect(contractEdge(g, 2, 4)).to.be.false;
-            expect(contractEdge(g, 4, 2)).to.be.false;
+            expectContractEdgeToBe(g, 0, 2, false);
+            
+            expectContractEdgeToBe(g, 2, 0, false);
+            expectContractEdgeToBe(g, 0, 3, false);
+            expectContractEdgeToBe(g, 3, 0, false);
+            expectContractEdgeToBe(g, 0, 4, false);
+            expectContractEdgeToBe(g, 4, 0, false);
+            expectContractEdgeToBe(g, 1, 3, false);
+            expectContractEdgeToBe(g, 3, 1, false);
+            expectContractEdgeToBe(g, 1, 4, false);
+            expectContractEdgeToBe(g, 4, 1, false);
+            expectContractEdgeToBe(g, 2, 4, false);
+            expectContractEdgeToBe(g, 4, 2, false);
             deleteEdge(g, 0, 2);
             deleteEdge(g, 0, 3);
             deleteEdge(g, 0, 4);
             deleteEdge(g, 2, 4);
 
             expect(() => contractEdge(g, 0, 1, 2)).to.throw();
-            expect(contractEdge(g, 0, 1)).to.be.true;
-            expect(contractEdge(g, 2, 3)).to.be.true;
-            expect(contractEdge(g, 0, 2)).to.be.true;
-            expect(contractEdge(g, 0, 4)).to.be.true;
-            expect(contractEdge(g, 5, 0, 9)).to.be.true;
+            expectContractEdgeToBe(g, 0, 1, true);
+            expectContractEdgeToBe(g, 2, 3, true);
+            expectContractEdgeToBe(g, 0, 2, true);
+            expectContractEdgeToBe(g, 0, 4, true);
+            expectContractEdgeToBe(g, 5, 0, true, 9);
             expect(hasVertex(g, 9)).to.be.true;
         }
 
@@ -638,6 +700,56 @@ export const hack: any[] = [];
             expect(getEdgeData(g, 1, 2)).to.equal("foo");
         }
 
+        @test("should return the successors of a vertex")
+        getSuccessors() {
+            const g = make();
+            expectSuccessorsToEqual(g, 1, []);
+            addEdge(g, 1, 2);
+            expectSuccessorsToEqual(g, 1, [2]);
+            expectSuccessorsToEqual(g, 2, []);
+            addEdge(g, 1, 3);
+            expectSuccessorsToEqual(g, 1, [2, 3]);
+            expectSuccessorsToEqual(g, 2, []);
+            expectSuccessorsToEqual(g, 3, []);
+            addEdge(g, 2, 3);
+            expectSuccessorsToEqual(g, 1, [2, 3]);
+            expectSuccessorsToEqual(g, 2, [3]);
+            expectSuccessorsToEqual(g, 3, []);
+            deleteEdge(g, 1, 2);
+            expectSuccessorsToEqual(g, 1, [3]);
+            expectSuccessorsToEqual(g, 2, [3]);
+            expectSuccessorsToEqual(g, 3, []);
+            deleteVertex(g, 1);
+            expectSuccessorsToEqual(g, 1, []);
+            expectSuccessorsToEqual(g, 2, [3]);
+            expectSuccessorsToEqual(g, 3, []);
+        }
+
+        @test("should return the predecessors of a vertex")
+        getPredecessors() {
+            const g = make();
+            expectPredecessorsToEqual(g, 1, []);
+            addEdge(g, 2, 1);
+            expectPredecessorsToEqual(g, 1, [2]);
+            expectPredecessorsToEqual(g, 2, []);
+            addEdge(g, 3, 1);
+            expectPredecessorsToEqual(g, 1, [2, 3]);
+            expectPredecessorsToEqual(g, 2, []);
+            expectPredecessorsToEqual(g, 3, []);
+            addEdge(g, 3, 2);
+            expectPredecessorsToEqual(g, 1, [2, 3]);
+            expectPredecessorsToEqual(g, 2, [3]);
+            expectPredecessorsToEqual(g, 3, []);
+            deleteEdge(g, 2, 1);
+            expectPredecessorsToEqual(g, 1, [3]);
+            expectPredecessorsToEqual(g, 2, [3]);
+            expectPredecessorsToEqual(g, 3, []);
+            deleteVertex(g, 1);
+            expectPredecessorsToEqual(g, 1, []);
+            expectPredecessorsToEqual(g, 2, [3]);
+            expectPredecessorsToEqual(g, 3, []);
+        }
+
         @test("should report whether vertices are reachable")
         reachable() {
             const g = make();
@@ -692,7 +804,7 @@ export const hack: any[] = [];
         }
 
         @test("should pass random test")
-        @timeout(10000)
+        @timeout(20000)
         random() {
             const engine = Random.engines.mt19937();
             engine.seed(0x4213);
@@ -703,6 +815,9 @@ export const hack: any[] = [];
                 const edges: Pair<number>[] = [];
 
                 // Inserts and deletes
+                if (log) {
+                    console.log("// ====== begin random test")
+                }
                 randomInsert(mygraph, yourgraph, edges, vertexCount, engine);
                 randomDelete(mygraph, yourgraph, edges, engine);
                 randomInsert(mygraph, yourgraph, edges, vertexCount, engine);

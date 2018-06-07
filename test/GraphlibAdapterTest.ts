@@ -40,10 +40,4 @@ export class GraphlibAdapterTest {
             .map(v => ({id: g.getVertexData(v).id, name: g.getVertexData(v).name})))
             .to.deep.equal([v1, v2, v3]);
     }
-
-    @test("should allow associating edge source/target data")
-    edgeData() {
-        const g = this.make();
-        g.addEdge("0", "1", )
-    }
 }

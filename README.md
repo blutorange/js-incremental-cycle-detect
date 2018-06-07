@@ -82,11 +82,13 @@ Tests done with [benchmark](https://www.npmjs.com/package/benchmark). Compared w
 sort with `graphlib` (via `alg.isAcyclic(graph)`) each time a vertex is added. Measured time is the time that
 was needed for creating a new graph and adding `n` vertices, checking for a cycle after each edge insertion.
 
-```
-// 200 vertices, 15000 random (same for each algorithm) edges added
-incremental-cycle-detection(insert 15000, RandomSource) x 36.51 ops/sec ±4.53% (59 runs sampled)
-graphlib(insert15000, RandomSource) x 0.18 ops/sec ±2.78% (5 runs sampled)
-```
+> **incremental-cycle-detection**(insert 15000, RandomSource) x **36.43** ops/sec ±0.79% (58 runs sampled)
+>
+> **incremental-cycle-detection-multi**(insert 15000, RandomSource) x **25.71** ops/sec ±10.12% (45 runs sampled)
+>
+> **graphlib**(insert15000, RandomSource) x **0.17** ops/sec ±1.63% (5 runs sampled)
+
+(200 vertices, 15000 random (same for each algorithm) edges added)
 
 # JavaScript environment
 
@@ -140,8 +142,10 @@ I use the following keywords:
 From newest to oldest:
 
 # 0.2.0
+- Added the method `getOrder` to the graph adapters. It allows you to access the topological order of each vertex.
 - Added a `MultiGraphAdapter` data structure that allows for multiple edges between two vertices.
-- Changed `GenericGraphAdapter, it now only allows for one kind of edge data.
+- Changed `GenericGraphAdapter`, it now only allows for one kind of edge data to be compatible with the `CommonAdapter` interface. You can use objects if you need to store more data.
+- Added more test cases for the `MultiGraphAdapter` and fixed some bugs, updated dependencies.
 
 # 0.1.1
 - 0.1.1 Fixed package.json and dependencies (was missing tslib).

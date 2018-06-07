@@ -3,7 +3,7 @@ import { Graph } from "graphlib";
 import { CommonAdapter, CustomVertexData, CycleDetector, GraphAdapter, GraphlibAdapterOptions, VertexData } from "./Header";
 import { PartialExcept } from "./InternalHeader";
 import { PearceKellyDetector } from "./PearceKellyDetector";
-import { EmptyIterator, assign, canContractEdge, contractEdge, createArrayIterator, createMappedArrayIterator } from "./util";
+import { assign, canContractEdge, contractEdge, createArrayIterator, createMappedArrayIterator, EmptyIterator } from "./util";
 
 /**
  * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency and

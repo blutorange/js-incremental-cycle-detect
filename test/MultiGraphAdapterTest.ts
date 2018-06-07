@@ -2,14 +2,87 @@
 
 // Tests functionality not covered by PkTest
 
+import { Maybe, Triple } from 'andross';
 import { expect } from "chai";
-import { suite, test } from "mocha-typescript";
+import { alg, Graph } from 'graphlib';
+import { suite, test, timeout } from "mocha-typescript";
+import * as Random from "random-js";
 import { MultiGraphAdapter } from '../index';
 import { toArray } from '../src/util';
+import { assertOrder } from './util';
+
+const log: "js" | "dot" | "glib" | boolean = false;
 
 interface Vertex {
     id: number;
     name: string;
+}
+
+function randomInsert(mygraph: MultiGraphAdapter<any>, yourgraph: Graph, edges: Triple<number, number, Maybe<string>>[], vertexCount: number, engine: Random.Engine): void {
+    if (log) console.log("\n/// ===begin insert");
+    
+    let edgeCount = Random.integer(Math.floor(vertexCount), vertexCount*10)(engine);
+    let chooseVertex = Random.integer(0, vertexCount - 1);
+    let chooseLabel = Random.picker(["foo", "bar", "undefined"]);
+
+    while (edgeCount -- > 0) {
+        const from = chooseVertex(engine);
+        const to = chooseVertex(engine);
+        const label = chooseLabel(engine);
+
+        const myHasEdge = mygraph.hasEdge(from, to, label);
+        const yourHasEdge = yourgraph.hasEdge(String(from), String(to), label);
+
+        if (log === "dot") console.log("  " + from + " -> " + to + "[label=\"" + label + "\"];");
+        if (log === "glib") {
+            console.log("expect(g.hasEdge(\"" + from + "\", \"" + to + "\", \"" + label + "\")).to.be." + myHasEdge + "; // is " + yourHasEdge);
+            console.log("g.setEdge(\"" + from + "\", \"" + to + "\", \"" + label + "\");");
+        }
+        if (log === "js") console.log("expect(g.hasEdge(" + from + ", " + to + ", '" + label + "')).to.be." + yourHasEdge + "; // is " + myHasEdge);
+        expect(myHasEdge).to.equal(yourHasEdge);
+
+        if (from === to || myHasEdge) continue;
+
+        yourgraph.setEdge(String(from), String(to), undefined, label);
+
+        const myResult = mygraph.addLabeledEdge(from, to, label);
+        const yourResult = alg.isAcyclic(yourgraph);
+
+        if (log === "js") console.log("expect(g.addLabeledEdge(" + from + ", " + to + ", '" + label + "')).to.be." + yourResult + "; // is " + myResult);
+        expect(myResult).to.equal(yourResult);
+
+        // remove the offending edge that makes the graph cyclic
+        if (!myResult) {
+            yourgraph.removeEdge(String(from), String(to), label);
+        }
+        else {
+            edges.push([from, to, label]);
+        }
+        if (edgeCount % 10 === 0) {
+            assertOrder(mygraph);
+        }
+    }
+    assertOrder(mygraph);
+}
+
+function randomDelete(mygraph: MultiGraphAdapter<any>, yourgraph: Graph, edges: Triple<number, number, Maybe<string>>[], engine: Random.Engine): void {
+    if (log) console.log("\n// ===begin delete");
+
+    let edgeCount = Random.integer(1, edges.length)(engine);
+
+    Random.shuffle(engine, edges);
+
+    while (edgeCount -- > 0) {
+        const [from, to, label] = edges.pop() as [number, number, string | undefined];
+        if (log) console.log("g.deleteEdge(" + from + ", " + to + ", '" + label + "');");
+        yourgraph.removeEdge(String(from), String(to), label);
+        mygraph.deleteEdge(from, to, label);
+        if (edgeCount % 10 === 0) {
+            assertOrder(mygraph);
+        }
+    }
+
+    assertOrder(mygraph);
 }
 
 function edgeSorter3(lhs: [any, any, any], rhs: [any,any,any]): number {
@@ -59,29 +132,50 @@ export class MultiAdapterTest {
     }
 
     @test("should differentiate between total and unqiue edges")
-    uniqueEdgeCount() {
+    labeledEdgeCount() {
         const g = this.make();
         expect(g.addLabeledEdge(1, 2, "foo")).to.be.true;
         expect(g.getEdgeCount()).to.equal(1);
-        expect(g.getUniqueEdgeCount()).to.equal(1);
+        expect(g.getLabeledEdgeCount()).to.equal(1);
 
         expect(g.addLabeledEdge(1, 3, "foo")).to.be.true;
         expect(g.getEdgeCount()).to.equal(2);
-        expect(g.getUniqueEdgeCount()).to.equal(2);
+        expect(g.getLabeledEdgeCount()).to.equal(2);
 
         expect(g.addLabeledEdge(1, 2, "bar")).to.be.true;
-        expect(g.getEdgeCount()).to.equal(3);
-        expect(g.getUniqueEdgeCount()).to.equal(2);
+        expect(g.getEdgeCount()).to.equal(2);
+        expect(g.getLabeledEdgeCount()).to.equal(3);
 
         expect(g.deleteEdge(1, 2, "foo")).to.be.true;
         expect(g.getEdgeCount()).to.equal(2);
-        expect(g.getUniqueEdgeCount()).to.equal(2);
+        expect(g.getLabeledEdgeCount()).to.equal(2);
     }
 
     @test("should support order")
     supportsOrder() {
         const g = this.make();
         expect(g.supportsOrder()).to.be.true;
+    }
+
+    @test("should check whether a labeled edge exists")
+    hasEdge() {
+        const g = this.make();
+
+        expect(g.hasEdge(1, 2, "foo")).to.be.false;
+        expect(g.hasEdge(1, 2, "bar")).to.be.false;
+        g.addLabeledEdge(1, 2, "foo");
+        expect(g.hasEdge(1, 2, "foo")).to.be.true;
+        expect(g.hasEdge(1, 2, "bar")).to.be.false;
+        g.addLabeledEdge(1, 2, "bar");
+        expect(g.hasEdge(1, 2, "foo")).to.be.true;
+        expect(g.hasEdge(1, 2, "bar")).to.be.true;
+        
+        expect(g.hasEdge(1, 2, undefined)).to.be.true;
+        expect(g.hasLabeledEdge(1, 2, undefined)).to.be.false;
+        expect(g.hasLabeledEdge(1, 3, undefined)).to.be.false;
+        g.addLabeledEdge(1, 2, undefined);
+        expect(g.hasLabeledEdge(1, 2, undefined)).to.be.true;
+        expect(g.hasLabeledEdge(1, 3, undefined)).to.be.false;
     }
 
     @test("should return the bundled edges")
@@ -110,7 +204,7 @@ export class MultiAdapterTest {
     }
 
     @test("should return the all individual edges")
-    getUniqueEdges() {
+    getLabeledEdges() {
         const g = this.make();
         g.addLabeledEdge(3, 7 , "c");
         g.addLabeledEdge(2, 3 , "baz");
@@ -204,11 +298,11 @@ export class MultiAdapterTest {
         const g = this.make();
         g.addLabeledEdge(1, 2, "foo");
         g.addLabeledEdge(1, 2, "bar");
-        expect(g.getEdgeCount()).to.equal(2);
+        expect(g.getLabeledEdgeCount()).to.equal(2);
         g.deleteEdge(1, 2, "bar");
-        expect(g.getEdgeCount()).to.equal(1);
+        expect(g.getLabeledEdgeCount()).to.equal(1);
         g.deleteEdge(1, 2, "foo");
-        expect(g.getEdgeCount()).to.equal(0);
+        expect(g.getLabeledEdgeCount()).to.equal(0);
         expect(toArray(g.getEdges()).length).to.equal(0);
     }
 
@@ -251,5 +345,40 @@ export class MultiAdapterTest {
             [9, 4, "foobar"],
             [9, 4, "y"],
         ]);
+    }
+
+    @test("should pass random test")
+    @timeout(20000)
+    random() {
+        const engine = Random.engines.mt19937();
+        engine.seed(0x4213);
+        for (let n = 20; n --> 0;) {
+            const mygraph = this.make();
+            const yourgraph = new Graph({directed: true, multigraph: true});
+            const vertexCount = n * 4 + 10;
+            const edges: Triple<number, number, Maybe<string>>[] = [];
+
+            // Inserts and deletes
+            if (log) {
+                console.log("// ====== begin random test")
+            }
+            if (log === "dot") {
+                console.log("digraph G {");
+            }
+            if (log === "glib") {
+                console.log("const g = new Graph({directed:true, multigraph: true});");
+            }
+            if (log === "js") {
+                console.log("const g = new MultiGraphAdapter();");
+            }
+            randomInsert(mygraph, yourgraph, edges, vertexCount, engine);
+            randomDelete(mygraph, yourgraph, edges, engine);
+            randomInsert(mygraph, yourgraph, edges, vertexCount, engine);
+            randomDelete(mygraph, yourgraph, edges, engine);
+            randomInsert(mygraph, yourgraph, edges, vertexCount, engine);
+            if (log === "dot") {
+                console.log("}");
+            }
+        }
     }
 }

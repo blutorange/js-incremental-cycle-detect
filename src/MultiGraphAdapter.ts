@@ -1,7 +1,7 @@
-import { BinaryOperator, Maybe, Triple } from "andross";
+import { BinaryOperator, Maybe, Pair, Triple } from "andross";
 import { GenericGraphAdapter } from "./GenericGraphAdapter";
 import { CommonAdapter, GenericGraphAdapterOptions } from "./Header";
-import { EmptyIterator, createArrayIterator, createFilteredIterator, takeFirst } from "./util";
+import { createFilteredIterator, createFlatMappedIterator, createMappedIterator, EmptyIterator, takeFirst } from "./util";
 
 type MultiGraphTargetData<TEdgeData, TEdgeLabel> = Map<TEdgeLabel | undefined, TEdgeData | undefined>;
 
@@ -166,20 +166,21 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
     }
 
     /**
-     * @return The number of edges between two distinct vertices, ie. not including
-     * multiple edges between the same vertices.
+     * This returns the number of all edges, ie. including multiple
+     * edges between the same vertices.
+     * @return The number of edges in this graph, counting each multiple edge.
      */
-    getUniqueEdgeCount(): number {
-        return this.g.getEdgeCount();
+    getLabeledEdgeCount(): number {
+        return this.edgeCount;
     }
 
     /**
-     * This returns the number of all edges, ie. including multiple
-     * edges between the same vertices.
+     * @return The number of edges between two distinct vertices, ie. not including
+     * multiple edges between the same vertices.
      * @see {@link CommonAdapter}#getEdgeCount
      */
     getEdgeCount(): number {
-        return this.edgeCount;
+        return this.g.getEdgeCount();
     }
 
     /**
@@ -207,7 +208,7 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return true;
     }
 
-    getEdges(): Iterator<[TVertex, TVertex]> {
+    getEdges(): Iterator<Pair<TVertex>> {
         return this.g.getEdges();
     }
 
@@ -238,19 +239,15 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
      * @return All edges between the vertices. An edge is identified by its source
      * vertex, its target vertex and its label.
      */
-    getLabeledEdges(): Iterator<[TVertex, TVertex, TEdgeLabel | undefined]> {
-        const edges: Triple<TVertex, TVertex, TEdgeLabel | undefined>[] = [];
-        for (let it = this.g.getEdges(), res = it.next(); !res.done; res = it.next()) {
-            const from = res.value[0];
-            const to = res.value[1];
-            const data = this.g.getEdgeData(from, to);
-            if (data !== undefined) {
-                for (let it2 = data.keys(), res2 = it2.next(); !res2.done; res2 = it2.next()) {
-                    edges.push([from, to, res2.value]);
-                }
+    getLabeledEdges(): Iterator<Triple<TVertex, TVertex, Maybe<TEdgeLabel>>> {
+        // For each edge, get all labels and output one result for each label.
+        return createFlatMappedIterator(this.g.getEdges(), (edge: Pair<TVertex>): Iterator<Triple<TVertex, TVertex, Maybe<TEdgeLabel>>> => {
+            const data = this.g.getEdgeData(edge[0], edge[1]);
+            if (data === undefined) {
+                return EmptyIterator;
             }
-        }
-        return createArrayIterator(edges);
+            return createMappedIterator(data.keys(), key => [edge[0], edge[1], key] as Triple<TVertex, TVertex, Maybe<TEdgeLabel>>);
+        });
     }
 
     /**
@@ -309,6 +306,20 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         const data = this.g.getEdgeData(from, to);
         // No label given and edge exsists, or edge with given label exists.
         return data !== undefined && (label === undefined || data.has(label));
+    }
+
+    /**
+     * Similar to {@link MultiGraphAdapter}#hasEdge, but if `undefined` is
+     * given for the label, checks whether an edge with an `undefined` label exists.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @param label Label the edge must have.
+     * @return Whether this graph contains an edge form the given source to the target with the given label.
+     */
+    hasLabeledEdge(from: TVertex, to: TVertex, label: TEdgeLabel | undefined): boolean {
+        const data = this.g.getEdgeData(from, to);
+        // No label given and edge exsists, or edge with given label exists.
+        return data !== undefined && data.has(label);
     }
 
     hasVertex(vertex: TVertex): boolean {
