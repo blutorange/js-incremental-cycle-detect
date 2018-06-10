@@ -141,6 +141,9 @@ I use the following keywords:
 
 From newest to oldest:
 
+# 0.2.1
+- Fixed typings for typescript.
+
 # 0.2.0
 - Added the method `getOrder` to the graph adapters. It allows you to access the topological order of each vertex.
 - Added a `MultiGraphAdapter` data structure that allows for multiple edges between two vertices.

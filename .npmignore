@@ -8,7 +8,8 @@ coverage
 
 tsconfig.json
 tslint.json
-**/*.ts
+/src
+/index.ts
 *.tgz
 sandbox.ts
 

@@ -20,7 +20,7 @@
     "build": "npm run transpile && npm run browserify && npm run minify && npm run doc",
     "postbuild": "npm run test"
   },
-  "types": "./index.d.ts",
+  "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blutorange/js-incremental-cycle-detect.git"
