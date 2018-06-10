@@ -141,6 +141,10 @@ I use the following keywords:
 
 From newest to oldest:
 
+# 0.2.2
+- Added two methods for accessing edge data of incoming / outgoing edges: `getEdgeDataFrom`, `getEdgeDataTo`
+- Added a method for checking whether an edge can be added: `canAddEdge`.
+
 # 0.2.1
 - Fixed typings for typescript.
 

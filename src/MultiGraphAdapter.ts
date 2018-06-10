@@ -1,7 +1,7 @@
 import { BinaryOperator, Maybe, Pair, Triple } from "andross";
 import { GenericGraphAdapter } from "./GenericGraphAdapter";
 import { CommonAdapter, GenericGraphAdapterOptions } from "./Header";
-import { createFilteredIterator, createFlatMappedIterator, createMappedIterator, EmptyIterator, takeFirst } from "./util";
+import { EmptyIterator, createFilteredIterator, createFlatMappedIterator, createMappedIterator, takeFirst } from "./util";
 
 type MultiGraphTargetData<TEdgeData, TEdgeLabel> = Map<TEdgeLabel | undefined, TEdgeData | undefined>;
 
@@ -97,6 +97,17 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return this.addEdge(from, to, data, label);
     }
 
+    canAddEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
+        const srcData = this.g.getEdgeData(from, to);
+        if (srcData !== undefined) {
+            if (srcData.has(label)) {
+                return false;
+            }
+            return true;
+        }
+        return this.g.canAddEdge(from, to);
+    }
+
     /**
      * If no label is given, defaults to `undefined` for the label.
      * @see {@link CommonAdapter}#addEdge
@@ -122,6 +133,28 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
 
     addVertex(vertex: TVertex): boolean {
         return this.g.addVertex(vertex);
+    }
+
+    getEdgeDataTo(vertex: TVertex, label?: TEdgeLabel): Iterator<TEdgeData> {
+        if (label === undefined) {
+            return createFilteredIterator(createFlatMappedIterator(this.g.getEdgeDataTo(vertex), data => data.values()), data => data !== undefined) as Iterator<TEdgeData>;
+        }
+        return createMappedIterator(
+                createFilteredIterator(
+                    createFlatMappedIterator(this.g.getEdgeDataTo(vertex), data => data.entries()),
+                entry => entry[1] !== undefined && entry[0] === label),
+            entry => entry[1]) as Iterator<TEdgeData>;
+    }
+
+    getEdgeDataFrom(vertex: TVertex, label?: TEdgeLabel): Iterator<TEdgeData> {
+        if (label === undefined) {
+            return createFilteredIterator(createFlatMappedIterator(this.g.getEdgeDataFrom(vertex), data => data.values()), data => data !== undefined) as Iterator<TEdgeData>;
+        }
+        return createMappedIterator(
+                createFilteredIterator(
+                    createFlatMappedIterator(this.g.getEdgeDataFrom(vertex), data => data.entries()),
+                entry => entry[1] !== undefined && entry[0] === label),
+            entry => entry[1]) as Iterator<TEdgeData>;
     }
 
     /**

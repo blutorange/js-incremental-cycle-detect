@@ -2,7 +2,7 @@
 
 import { BinaryOperator, Pair } from 'andross';
 import { expect } from "chai";
-import { alg, Graph } from "graphlib";
+import { Graph, alg } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
 import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../index";
@@ -94,6 +94,12 @@ export const hack: any[] = [];
         return g.addEdge(f, t, data);
     }
 
+    function canAddEdge(g: CommonAdapter<any>, from: number, to: number): boolean {
+        const f = get(g, from);
+        const t = get(g, to);
+        return g.canAddEdge(f, t);
+    }
+
     function expectSuccessorsToEqual(g: CommonAdapter<any>, vertex: number, should: number[]) {
         const is = toArray(g.getSuccessorsOf(get(g, vertex)));
         const ismapped = is.map(v => vertexIdentifier(v));
@@ -111,6 +117,21 @@ export const hack: any[] = [];
         shouldmapped.sort();
         expect(ismapped).to.deep.equal(shouldmapped);
     }
+
+    function expectEdgesDataFromToEqual(g: CommonAdapter<any>, vertex: number, should: (string|undefined)[]) {
+        const is = toArray(g.getEdgeDataFrom(get(g, vertex)));
+        is.sort();
+        should.sort();
+        expect(is).to.deep.equal(should);
+    }
+
+    function expectEdgesDataToToEqual(g: CommonAdapter<any>, vertex: number, should: (string|undefined)[]) {
+        const is = toArray(g.getEdgeDataTo(get(g, vertex)));
+        is.sort();
+        should.sort();
+        expect(is).to.deep.equal(should);
+    }
+
 
     function addVertex(g: CommonAdapter<any>, vertex: number): boolean {
         const v = get(g, vertex);
@@ -234,6 +255,32 @@ export const hack: any[] = [];
             if (adapter.clazz) {
                 expect(make()).to.be.an.instanceof(adapter.clazz);
             }
+        }
+
+        @test("should return the edge data from the vertex")
+        edgeDataFrom() {
+            const g = make();
+            g.addEdge(0, 1, "foo");
+            g.addEdge(0, 2, undefined);
+            g.addEdge(0, 3, "baz");
+            g.addEdge(1, 2, "bar");
+            expectEdgesDataFromToEqual(g, 0, ["foo", "baz"]);
+            expectEdgesDataFromToEqual(g, 1, ["bar"]);
+            expectEdgesDataFromToEqual(g, 2, []);
+            expectEdgesDataFromToEqual(g, 42, []);
+        }
+
+        @test("should return the edge data to the vertex")
+        edgeDataTo() {
+            const g = make();
+            g.addEdge(1, 0, "foo");
+            g.addEdge(2, 0, undefined);
+            g.addEdge(3, 0, "baz");
+            g.addEdge(2, 1, "bar");
+            expectEdgesDataToToEqual(g, 0, ["foo", "baz"]);
+            expectEdgesDataToToEqual(g, 1, ["bar"]);
+            expectEdgesDataToToEqual(g, 2, []);
+            expectEdgesDataToToEqual(g, 42, []);
         }
 
         @test("should allow associating edge source/target data")
@@ -428,25 +475,64 @@ export const hack: any[] = [];
         @test("should detect cycles when inserting edges in increasing order")
         detectCycleIncreasingInsert() {
             const g = make();
+            expect(canAddEdge(g, 0, 1)).to.be.true;
             expect(addEdge(g, 0, 1)).to.be.true;
+
+            expect(canAddEdge(g, 1, 2)).to.be.true;
             expect(addEdge(g, 1, 2)).to.be.true;
+
+            expect(canAddEdge(g, 2, 3)).to.be.true;
             expect(addEdge(g, 2, 3)).to.be.true;
+
+            expect(canAddEdge(g, 3, 4)).to.be.true;
             expect(addEdge(g, 3, 4)).to.be.true;
+
+            expect(canAddEdge(g, 4, 5)).to.be.true;
             expect(addEdge(g, 4, 5)).to.be.true;
+
+            expect(canAddEdge(g, 5, 4)).to.be.false;
             expect(addEdge(g, 5, 4)).to.be.false;
+
+            expect(canAddEdge(g, 5, 3)).to.be.false;
             expect(addEdge(g, 5, 3)).to.be.false;
+
+            expect(canAddEdge(g, 5, 2)).to.be.false;
             expect(addEdge(g, 5, 2)).to.be.false;
+
+            expect(canAddEdge(g, 5, 1)).to.be.false;
             expect(addEdge(g, 5, 1)).to.be.false;
+
+            expect(canAddEdge(g, 5, 0)).to.be.false;
             expect(addEdge(g, 5, 0)).to.be.false;
+
+            expect(canAddEdge(g, 4, 3)).to.be.false;
             expect(addEdge(g, 4, 3)).to.be.false;
+
+            expect(canAddEdge(g, 4, 2)).to.be.false;
             expect(addEdge(g, 4, 2)).to.be.false;
+
+            expect(canAddEdge(g, 4, 1)).to.be.false;
             expect(addEdge(g, 4, 1)).to.be.false;
+
+            expect(canAddEdge(g, 4, 0)).to.be.false;
             expect(addEdge(g, 4, 0)).to.be.false;
+
+            expect(canAddEdge(g, 3, 2)).to.be.false;
             expect(addEdge(g, 3, 2)).to.be.false;
+
+            expect(canAddEdge(g, 3, 1)).to.be.false;
             expect(addEdge(g, 3, 1)).to.be.false;
+
+            expect(canAddEdge(g, 3, 0)).to.be.false;
             expect(addEdge(g, 3, 0)).to.be.false;
+
+            expect(canAddEdge(g, 2, 1)).to.be.false;
             expect(addEdge(g, 2, 1)).to.be.false;
+
+            expect(canAddEdge(g, 2, 0)).to.be.false;
             expect(addEdge(g, 2, 0)).to.be.false;
+
+            expect(canAddEdge(g, 1, 0)).to.be.false;
             expect(addEdge(g, 1, 0)).to.be.false;
         }
 
@@ -529,6 +615,7 @@ export const hack: any[] = [];
         detect1Cycle() {
             const g = make();
             expect(g.getEdgeCount()).to.equal(0);
+            expect(canAddEdge(g, 0, 0)).to.be.false;
             expect(addEdge(g, 0, 0)).to.be.false;
             expect(g.getEdgeCount()).to.equal(0);
         }
@@ -537,8 +624,10 @@ export const hack: any[] = [];
         detect2Cycle() {
             const g = make();
             expect(g.getEdgeCount()).to.equal(0);
+            expect(canAddEdge(g, 0, 1)).to.be.true;
             expect(addEdge(g, 0, 1)).to.be.true;
             expect(g.getEdgeCount()).to.equal(1);
+            expect(canAddEdge(g, 1, 0)).to.be.false;
             expect(addEdge(g, 1, 0)).to.be.false;
             expect(g.getEdgeCount()).to.equal(1);
         }
@@ -549,15 +638,19 @@ export const hack: any[] = [];
 
             expect(g.getEdgeCount()).to.equal(0);
             
+            expect(canAddEdge(g, 0, 1)).to.be.true;
             expect(addEdge(g, 0, 1)).to.be.true;
             expect(g.getEdgeCount()).to.equal(1);
 
+            expect(canAddEdge(g, 1, 2)).to.be.true;
             expect(addEdge(g, 1, 2)).to.be.true;            
             expect(g.getEdgeCount()).to.equal(2);
             
+            expect(canAddEdge(g, 2, 0)).to.be.false;
             expect(addEdge(g, 2, 0)).to.be.false;
             expect(g.getEdgeCount()).to.equal(2);
 
+            expect(canAddEdge(g, 2, 1)).to.be.false;
             expect(addEdge(g, 2, 1)).to.be.false;
             expect(g.getEdgeCount()).to.equal(2);
         }

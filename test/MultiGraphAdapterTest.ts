@@ -4,7 +4,7 @@
 
 import { Maybe, Triple } from 'andross';
 import { expect } from "chai";
-import { alg, Graph } from 'graphlib';
+import { Graph, alg } from 'graphlib';
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
 import { MultiGraphAdapter } from '../index';
@@ -228,6 +228,50 @@ export class MultiAdapterTest {
             [3, 5, "a"],
             [3, 7, "c"],
         ]);
+    }
+
+    @test("should return the edge data from the vertex with the given label")
+    getEdgeDataFrom() {
+        const g = this.make();
+        g.addLabeledEdge(1, 2 , "foo", 0);
+        g.addLabeledEdge(1, 2 , "bar", 1);
+        g.addLabeledEdge(1, 3 , "baz", 2);
+        g.addLabeledEdge(1, 5 , "foo", 3);
+        g.addLabeledEdge(3, 7 , undefined, 4);
+        g.addLabeledEdge(3, 6 , undefined, 5);
+        expect(toArray(g.getEdgeDataFrom(1, "foo")).sort()).to.deep.equal([0, 3]);
+        expect(toArray(g.getEdgeDataFrom(1, "bar")).sort()).to.deep.equal([1]);
+        expect(toArray(g.getEdgeDataFrom(1, "baz")).sort()).to.deep.equal([2]);
+        expect(toArray(g.getEdgeDataFrom(3, undefined)).sort()).to.deep.equal([4, 5]);
+    }
+
+    @test("should return the edge data to the vertex with the given label")
+    getEdgeDataTo() {
+        const g = this.make();
+        g.addLabeledEdge(2, 1 , "foo", 0);
+        g.addLabeledEdge(2, 1 , "bar", 1);
+        g.addLabeledEdge(3, 1 , "baz", 2);
+        g.addLabeledEdge(5, 1 , "foo", 3);
+        g.addLabeledEdge(7, 3 , undefined, 4);
+        g.addLabeledEdge(6, 3 , undefined, 5);
+        expect(toArray(g.getEdgeDataTo(1, "foo")).sort()).to.deep.equal([0, 3]);
+        expect(toArray(g.getEdgeDataTo(1, "bar")).sort()).to.deep.equal([1]);
+        expect(toArray(g.getEdgeDataTo(1, "baz")).sort()).to.deep.equal([2]);
+        expect(toArray(g.getEdgeDataTo(3, undefined)).sort()).to.deep.equal([4, 5]);
+    }
+
+    @test("should return the labeled successors")
+    canAddEdge() {
+        const g = this.make();
+        g.addLabeledEdge(0, 1, "foo");
+        expect(g.canAddEdge(0, 1, "foo")).to.be.false;
+        expect(g.getEdgeCount()).to.equal(1);
+        expect(g.canAddEdge(0, 1, "bar")).to.be.true;
+        expect(g.getEdgeCount()).to.equal(1);
+        expect(g.canAddEdge(0, 1, "foo")).to.be.false;
+        expect(g.getEdgeCount()).to.equal(1);
+        expect(g.canAddEdge(0, 1, "bar")).to.be.true;
+        expect(g.getEdgeCount()).to.equal(1);
     }
 
     @test("should return the labeled successors")

@@ -3,7 +3,7 @@ import { Graph } from "graphlib";
 import { CommonAdapter, CustomVertexData, CycleDetector, GraphAdapter, GraphlibAdapterOptions, VertexData } from "./Header";
 import { PartialExcept } from "./InternalHeader";
 import { PearceKellyDetector } from "./PearceKellyDetector";
-import { assign, canContractEdge, contractEdge, createArrayIterator, createMappedArrayIterator, EmptyIterator } from "./util";
+import { EmptyIterator, assign, canContractEdge, contractEdge, createArrayIterator, createFilteredIterator, createMappedArrayIterator } from "./util";
 
 /**
  * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency and
@@ -74,6 +74,22 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
         return this.g.node(vertex);
     }
 
+    getEdgeDataFrom(vertex: string): Iterator<TEdgeData> {
+        const edges = this.g.outEdges(vertex);
+        if (edges === undefined) {
+            return EmptyIterator;
+        }
+        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w)), data => data !== undefined);
+    }
+
+    getEdgeDataTo(vertex: string): Iterator<TEdgeData> {
+        const edges = this.g.inEdges(vertex);
+        if (edges === undefined) {
+            return EmptyIterator;
+        }
+        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w)), data => data !== undefined);
+    }
+
     getEdgeData(from: string, to: string): TEdgeData {
         return this.g.edge(from, to);
     }
@@ -109,6 +125,26 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
      */
     get graph() {
         return this.g;
+    }
+
+    canAddEdge(from: string, to: string): boolean {
+        if (this.g.hasEdge(from, to)) {
+            return false;
+        }
+        const didNotHaveFrom = this.addVertex(from);
+        const didNotHaveTo = this.addVertex(to);
+        if (!this.detector.canAddEdge(this.adapter, from, to)) {
+            // remove vertices if we added it
+            // this method must not modify the graph if edge cannot be added
+            if (didNotHaveFrom) {
+                this.deleteVertex(from);
+            }
+            if (didNotHaveTo) {
+                this.deleteVertex(to);
+            }
+            return false;
+        }
+        return true;
     }
 
     addEdge(from: string, to: string, data?: TEdgeData): boolean {

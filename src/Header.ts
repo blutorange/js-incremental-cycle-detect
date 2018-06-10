@@ -154,6 +154,13 @@ export interface CommonAdapter<TVertex, TEdgeData = any> {
      */
     addVertex(vertex: TVertex): boolean;
     /**
+     * Checks whether adding the edge would add a cycle.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @return `true` iff the edge can be added without introducing a cycle.
+     */
+    canAddEdge(from: TVertex, to: TVertex): boolean;
+    /**
      * Checks whether the edge can be contracted without creating a cycle.
      * @param from Source vertex of the edge.
      * @param to Target vertex of the edge.
@@ -197,6 +204,20 @@ export interface CommonAdapter<TVertex, TEdgeData = any> {
      * @return The data associated with the given edge.
      */
     getEdgeData(from: TVertex, to: TVertex): TEdgeData;
+    /**
+     * Returns the edge data of all edges that point to (end at)
+     * the given vertex.
+     * @param vertex Vertex where the edge ends.
+     * @return Edge data for the edges (*, vertex)
+     */
+    getEdgeDataTo(vertex: TVertex): Iterator<TEdgeData>;
+    /**
+     * Returns the edge data of all edges that point from (start at)
+     * the given vertex.
+     * @param vertex Vertex where the edge starts.
+     * @return Edge data for the edges (vertex, *)
+     */
+    getEdgeDataFrom(vertex: TVertex): Iterator<TEdgeData>;
     /**
      * @return All edges in this graph.
      */
