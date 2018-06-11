@@ -1,4 +1,4 @@
-import { BinaryOperator, Pair, Predicate, TypedFunction } from "andross";
+import { BinaryOperator, Maybe, Pair, Predicate, TypedFunction } from "andross";
 import { CommonAdapter, CycleDetector, GraphAdapter, VertexData } from "./Header";
 
 /**
@@ -245,8 +245,8 @@ function performEdgeContraction<TVertex, TEdgeData>(
         dataMerger: BinaryOperator<TEdgeData> = takeFirst,
         newVertex: TVertex,
     ): void {
-    const succ: Pair<TVertex, TEdgeData>[] = [];
-    const pred: Pair<TVertex, TEdgeData>[] = [];
+    const succ: Pair<TVertex, Maybe<TEdgeData>>[] = [];
+    const pred: Pair<TVertex, Maybe<TEdgeData>>[] = [];
 
     // Remove all edges from the first vertex.
     if (newVertex !== from) {
@@ -289,7 +289,8 @@ function performEdgeContraction<TVertex, TEdgeData>(
             adapter.addEdge(newVertex, node[0], node[1]);
         }
         else {
-            adapter.setEdgeData(newVertex, node[0], dataMerger(data, node[1]));
+            const other = node[1];
+            adapter.setEdgeData(newVertex, node[0], other !== undefined ? dataMerger(data, other) : data);
         }
     }
     for (const node of pred) {
@@ -299,7 +300,8 @@ function performEdgeContraction<TVertex, TEdgeData>(
             adapter.addEdge(node[0], newVertex, node[1]);
         }
         else {
-            adapter.setEdgeData(node[0], newVertex, dataMerger(data, node[1]));
+            const other = node[1];
+            adapter.setEdgeData(node[0], newVertex, other !== undefined ? dataMerger(data, other) : data);
         }
     }
 
