@@ -2,7 +2,7 @@
 
 import { BinaryOperator, Pair } from 'andross';
 import { expect } from "chai";
-import { Graph, alg } from "graphlib";
+import { alg, Graph } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
 import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../index";
@@ -23,17 +23,17 @@ export const hack: any[] = [];
 [
     {
         clazz: GenericGraphAdapter,
-        make: () => new GenericGraphAdapter(),
+        make: () => GenericGraphAdapter.create(),
         convert: (vertex: number) => vertex
     },
     {
         clazz: MultiGraphAdapter,
-        make: () => new MultiGraphAdapter(),
+        make: () => MultiGraphAdapter.create(),
         convert: (vertex: number) => vertex,
     },
     {
         clazz: GraphlibAdapter,
-        make: () => new GraphlibAdapter({graphlib: Graph}),
+        make: () => GraphlibAdapter.create({graphlib: Graph}),
         convert: (vertex: number) => String(vertex)
     },
 ].forEach((adapter) => {

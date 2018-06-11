@@ -4,7 +4,7 @@
 
 import { Maybe, Triple } from 'andross';
 import { expect } from "chai";
-import { Graph, alg } from 'graphlib';
+import { alg, Graph } from 'graphlib';
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
 import { MultiGraphAdapter } from '../index';
@@ -106,7 +106,7 @@ function edgeSorter2(lhs: [any, any], rhs: [any, any]): number {
 @suite("Graph adapter - Multi")
 export class MultiAdapterTest {
     private make<TVertex, TEdgeData = any, TEdgeLabel = any>(): MultiGraphAdapter<TVertex, TEdgeData, TEdgeLabel> {
-        const adapter = new MultiGraphAdapter<TVertex, TEdgeData, TEdgeLabel>();
+        const adapter = MultiGraphAdapter.create<TVertex, TEdgeData, TEdgeLabel>();
         return adapter;
     }
 

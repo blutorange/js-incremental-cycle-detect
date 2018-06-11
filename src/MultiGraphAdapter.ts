@@ -1,24 +1,27 @@
-import { BinaryOperator, Maybe, Pair, Triple } from "andross";
+import { BinaryOperator, Maybe, Pair, Triple, TypedFunction, UnaryOperator } from "andross";
 import { GenericGraphAdapter } from "./GenericGraphAdapter";
-import { CommonAdapter, GenericGraphAdapterOptions } from "./Header";
-import { EmptyIterator, createFilteredIterator, createFlatMappedIterator, createMappedIterator, takeFirst } from "./util";
+import { ClonableAdapter, CommonAdapter, GraphFactory, MultiGraphAdapterOptions, MultiGraphEdgeData } from "./Header";
+import { createFilteredIterator, createFlatMappedIterator, createMappedIterator, EmptyIterator, takeFirst } from "./util";
 
-type MultiGraphTargetData<TEdgeData, TEdgeLabel> = Map<TEdgeLabel | undefined, TEdgeData | undefined>;
-
-type EdgeData<TEdgeData, TEdgeLabel> = Maybe<Map<Maybe<TEdgeLabel>, Maybe<TEdgeData>>>;
-
-// Combine all edges that point to the first or second node to be contracted.
-function createMerger<TEdgeData, TEdgeLabel>(edgeMerger: Maybe<BinaryOperator<Maybe<TEdgeData>>> = takeFirst) {
-    return (first: EdgeData<TEdgeData, TEdgeLabel>, second: EdgeData<TEdgeData, TEdgeLabel>): EdgeData<TEdgeData, TEdgeLabel> => {
+// When contracting an edge, we may need to combine the edge data, ie. the map
+// between the edge labels and the actual edge data.
+function createMerger<TEdgeData, TEdgeLabel>(edgeMerger: BinaryOperator<TEdgeData> = takeFirst, mapConstructor: MapConstructor): BinaryOperator<MultiGraphEdgeData<TEdgeData, TEdgeLabel>> {
+    return (first: MultiGraphEdgeData<TEdgeData, TEdgeLabel>, second: MultiGraphEdgeData<TEdgeData, TEdgeLabel>): MultiGraphEdgeData<TEdgeData, TEdgeLabel> => {
         if (first === undefined) {
-            return second;
+            return second || new mapConstructor();
         }
         if (second === undefined) {
             return first;
         }
         for (let it = second.entries(), res = it.next(); !res.done; res = it.next()) {
             let data = first.get(res.value[0]);
-            data = data === undefined ? res.value[1] : edgeMerger(data, res.value[1]);
+            if (data === undefined) {
+                data = res.value[1];
+            }
+            else {
+                const other = res.value[1];
+                data = other !== undefined ? edgeMerger(data, other) : data;
+            }
             first.set(res.value[0], data);
         }
         return first;
@@ -26,7 +29,7 @@ function createMerger<TEdgeData, TEdgeLabel>(edgeMerger: Maybe<BinaryOperator<Ma
 }
 
 /**
- * Generic graph data structure similar to {@link GenericGraphAdapter}. It additionally
+ * Generic graph data structure similar to {@link CommonAdapter}. It additionally
  * supports multiple edges between two vertices. An edge is identified by its label. Labels
  * are compared by a `Map`, ie. `===`.
  *
@@ -40,7 +43,7 @@ function createMerger<TEdgeData, TEdgeLabel>(edgeMerger: Maybe<BinaryOperator<Ma
  * }
  *
  * // Create a new graph.
- * const graph = new MultiGraphAdapter<Vertex, string>();
+ * const graph = MultiGraphAdapter.create<Vertex, string>();
  *
  * // Add some vertices and edges.
  * const v1 = {id: 1, name: "foo"};
@@ -76,16 +79,71 @@ function createMerger<TEdgeData, TEdgeLabel>(edgeMerger: Maybe<BinaryOperator<Ma
  * @typeparam TVertex Type of the vertices of this graph.
  * @typeparam TEdgeData Type of the data associated with edges.
  * @typeparam TEdgeLabel Type of the label used to distiniguish different between edges with the same source and target vertex.
- * @see {@link GenericGraphAdapter}
+ * @see {@link CommonAdapter}
  * @see {@link CommonAdapter}
  */
-export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any> implements CommonAdapter<TVertex, TEdgeData | undefined> {
-    private g: GenericGraphAdapter<TVertex, MultiGraphTargetData<TEdgeData, TEdgeLabel>>;
-    private edgeCount: number;
+export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any> implements CommonAdapter<TVertex, TEdgeData>, ClonableAdapter<TVertex, TEdgeData> {
+    /**
+     * Creates a new graph adapter with the given options.
+     * @param options Options for configuring this instance.
+     * @see {@link CommonAdapterOptions}
+     * @typeparam TVertex Type of the vertices of this graph.
+     * @typeparam TEdgeData Type of the data associated with edges.
+     * @typeparam TEdgeLabel Type of the label used to distiniguish different between edges with the same source and target vertex.
+     */
+    static create<TVertex = any, TEdgeData = any, TEdgeLabel = any>(options: Partial<MultiGraphAdapterOptions<TVertex, TEdgeData, TEdgeLabel>> = {}): MultiGraphAdapter<TVertex, TEdgeData, TEdgeLabel> {
+        const graphFactory = options.graphFactory || GenericGraphAdapter.create;
+        const mapConstructor = options.mapConstructor || Map;
+        return new MultiGraphAdapter(graphFactory, 0, mapConstructor);
+    }
 
-    constructor(options: Partial<GenericGraphAdapterOptions<TVertex>> = {}) {
-        this.g = new GenericGraphAdapter(options);
-        this.edgeCount = 0;
+    private g: CommonAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>> & ClonableAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>>;
+    private edgeCount: number;
+    private mapConstructor: MapConstructor;
+
+    private constructor(graphFactory: GraphFactory<TVertex, TEdgeData, TEdgeLabel>, edgeCount: number, mapConstructor: MapConstructor) {
+        this.g = graphFactory();
+        this.edgeCount = edgeCount;
+        this.mapConstructor = mapConstructor;
+    }
+
+    /**
+     * Creates an independent copy of this graph data structure and maps
+     * each vertex and edge datum to a new vertex and edge datum and edge label.
+     * Further changes to this graph are not reflected in the returned copy, and
+     * vice-versa.
+     *
+     * @param vertexMapper Mapping function that takes a vertex and returns a mapped copy of it.
+     * @param edgeDataMapper Mapping function that takes an edge datum and returns a mapped copy of it.
+     * @param labelMapper Mapping function that takes a label and returns a mapped copy of it.
+     * @return A mapped copy of this graph.
+     * @typeparam TClonedVertex Type of the mapped vertices.
+     * @typeparam TClonedEdgeData Type of the cloned edge data.
+     * @typeparam TClonedEdgeLabel Type of the cloned edge label.
+     */
+    mapLabeled<TClonedVertex, TClonedEdgeData, TClonedEdgeLabel>(vertexMapper: TypedFunction<TVertex, TClonedVertex>, edgeDataMapper: TypedFunction<TEdgeData, TClonedEdgeData>, labelMapper: TypedFunction<TEdgeLabel, TClonedEdgeLabel>): MultiGraphAdapter<TClonedVertex, TClonedEdgeData, TClonedEdgeLabel> {
+        const g = this.g.map<TClonedVertex, MultiGraphEdgeData<TClonedEdgeData, TClonedEdgeLabel>>(vertexMapper, edgeLabelToEdgeDataMap => {
+            // Create a copy of the edge label to edge data map, applying the given mappers
+            const clonedEdgeLabelToEdgeDataMap: MultiGraphEdgeData<TClonedEdgeData, TClonedEdgeLabel> = new this.mapConstructor();
+            edgeLabelToEdgeDataMap.forEach((edgeData, edgeLabel) => {
+                const clonedEdgeData = edgeData !== undefined ? edgeDataMapper(edgeData) : undefined;
+                const clonedEdgeLabel = edgeLabel !== undefined ? labelMapper(edgeLabel) : undefined;
+                clonedEdgeLabelToEdgeDataMap.set(clonedEdgeLabel, clonedEdgeData);
+            });
+            return clonedEdgeLabelToEdgeDataMap;
+        });
+        return new MultiGraphAdapter<TClonedVertex, TClonedEdgeData, TClonedEdgeLabel>(() => g, this.edgeCount, this.mapConstructor);
+    }
+
+    map<TClonedVertex, TClonedEdgeData>(vertexMapper: TypedFunction<TVertex, TClonedVertex>, edgeDataMapper: TypedFunction<TEdgeData, TClonedEdgeData>): MultiGraphAdapter<TClonedVertex, TClonedEdgeData, TEdgeLabel> {
+        return this.mapLabeled(vertexMapper, edgeDataMapper, label => label);
+    }
+
+    clone(vertexCloner?: UnaryOperator<TVertex>, edgeDataCloner?: UnaryOperator<TEdgeData>, labelCloner?: UnaryOperator<TEdgeLabel>): MultiGraphAdapter<TVertex, TEdgeData, TEdgeLabel> {
+        const vCloner = vertexCloner !== undefined ? vertexCloner : (vertex: TVertex) => vertex;
+        const eCloner = edgeDataCloner !== undefined ? edgeDataCloner : (data: TEdgeData) => data;
+        const lCloner = labelCloner !== undefined ? labelCloner : (label: TEdgeLabel) => label;
+        return this.mapLabeled(vCloner, eCloner, lCloner);
     }
 
     /**
@@ -126,7 +184,7 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         }
         // First edge between these vertices.
         this.edgeCount += 1;
-        const newData: MultiGraphTargetData<TEdgeData, TEdgeLabel> = new Map();
+        const newData: MultiGraphEdgeData<TEdgeData, TEdgeLabel> = new Map();
         newData.set(label, data);
         return this.g.addEdge(from, to, newData);
     }
@@ -137,22 +195,22 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
 
     getEdgeDataTo(vertex: TVertex, label?: TEdgeLabel): Iterator<TEdgeData> {
         if (label === undefined) {
-            return createFilteredIterator(createFlatMappedIterator(this.g.getEdgeDataTo(vertex), data => data.values()), data => data !== undefined) as Iterator<TEdgeData>;
+            return createFilteredIterator(createFlatMappedIterator(this.g.getEdgeDataTo(vertex), data => data ? data.values() : EmptyIterator), data => data !== undefined) as Iterator<TEdgeData>;
         }
         return createMappedIterator(
                 createFilteredIterator(
-                    createFlatMappedIterator(this.g.getEdgeDataTo(vertex), data => data.entries()),
+                    createFlatMappedIterator(this.g.getEdgeDataTo(vertex), data => data ? data.entries() : EmptyIterator),
                 entry => entry[1] !== undefined && entry[0] === label),
             entry => entry[1]) as Iterator<TEdgeData>;
     }
 
     getEdgeDataFrom(vertex: TVertex, label?: TEdgeLabel): Iterator<TEdgeData> {
         if (label === undefined) {
-            return createFilteredIterator(createFlatMappedIterator(this.g.getEdgeDataFrom(vertex), data => data.values()), data => data !== undefined) as Iterator<TEdgeData>;
+            return createFilteredIterator(createFlatMappedIterator(this.g.getEdgeDataFrom(vertex), data => data ? data.values() : EmptyIterator), data => data !== undefined) as Iterator<TEdgeData>;
         }
         return createMappedIterator(
                 createFilteredIterator(
-                    createFlatMappedIterator(this.g.getEdgeDataFrom(vertex), data => data.entries()),
+                    createFlatMappedIterator(this.g.getEdgeDataFrom(vertex), data => data ? data.entries() : EmptyIterator),
                 entry => entry[1] !== undefined && entry[0] === label),
             entry => entry[1]) as Iterator<TEdgeData>;
     }
@@ -161,8 +219,8 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
      * This contracts two vertices, ie. all edges between the given vertices.
      * See {@link CommonAdapter}#contractEdge.
      */
-    contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<Maybe<TEdgeData>>): boolean {
-        return this.g.contractEdge(from, to, vertexMerger, createMerger(edgeMerger));
+    contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
+        return this.g.contractEdge(from, to, vertexMerger, createMerger(edgeMerger, this.mapConstructor));
     }
 
     canContractEdge(from: TVertex, to: TVertex): boolean {

@@ -1,4 +1,4 @@
-import { BinaryOperator, Omit, Pair } from "andross";
+import { BinaryOperator, Maybe, Omit, Pair, TypedFunction, UnaryOperator } from "andross";
 import { Graph, GraphOptions } from "graphlib";
 
 /**
@@ -34,6 +34,20 @@ export interface GenericGraphAdapterOptions<TVertex> {
      * const graph = new GenericGraphAdapter({mapConstructor: Map}):
      * ```
      */
+    mapConstructor: MapConstructor;
+}
+
+/** @see {@link MultiGraphAdapterOptions} */
+export type MultiGraphEdgeData<TEdgeData, TEdgeLabel> = Map<Maybe<TEdgeLabel>, Maybe<TEdgeData>>;
+
+/** @see {@link MultiGraphAdapterOptions} */
+export type GraphFactory<TVertex, TEdgeData, TEdgeLabel> = () => CommonAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>> & ClonableAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>>;
+
+/** Options that can be passed to {@link MultiGraphAdapter}. */
+export interface MultiGraphAdapterOptions<TVertex, TEdgeData, TEdgeLabel> {
+    /** For creating a graph data structure used as a base. Multiple edges are implemented as a special type of edge data. */
+    graphFactory: GraphFactory<TVertex, TEdgeData, TEdgeLabel>;
+    /** For creating a new `Map`. Defaults to the native `Map`. */
     mapConstructor: MapConstructor;
 }
 
@@ -85,16 +99,6 @@ export interface GraphAdapter<TVertex> {
  */
 export interface CycleDetector<TVertex> {
     /**
-     * Creates the vertex data the algorithm needs. This needs to be called
-     * exactly once for each vertex of the graph and must be the data returned
-     * by `GraphAdapter#getData`.
-     * @param g The graph data structure to be used.
-     * @param vertex New vertex that is about to be added or was just added.
-     * @return The data to be set on the vertex.
-     */
-    createVertexData(g: GraphAdapter<TVertex>, vertex: TVertex): VertexData;
-
-    /**
      * Checks whether adding the given edge creates a cycle. Must be called at least
      * once for each edge that was added for the algorithm to work correctly. It the
      * edge cannot be added, does not perform any modifications.
@@ -106,6 +110,24 @@ export interface CycleDetector<TVertex> {
     canAddEdge(g: GraphAdapter<TVertex>, from: TVertex, to: TVertex): boolean;
 
     /**
+     * Creates the vertex data the algorithm needs. This needs to be called
+     * exactly once for each vertex of the graph and must be the data returned
+     * by `GraphAdapter#getData`.
+     * @param g The graph data structure to be used.
+     * @param vertex New vertex that is about to be added or was just added.
+     * @return The data to be set on the vertex.
+     */
+    createVertexData(g: GraphAdapter<TVertex>, vertex: TVertex): VertexData;
+
+    /**
+     * Returns the topological order of the vertex, if supported.
+     * @param g The graph data structure to be used.
+     * @param vertex Vertex for which to determine its order.
+     * @return The topological order of the given vertex.
+     */
+    getOrder(g: GraphAdapter<TVertex>, vertex: TVertex): number;
+
+    /**
      * Checks whether the target vertex can be reached from the source vertex,
      * possibly with some algorithm-specific optimizations.
      * @param g The graph data structure to be used.
@@ -114,6 +136,14 @@ export interface CycleDetector<TVertex> {
      * @return `true` iff the target vertex can be reached from the source vertex, ie. iff there is a path from `source` to `target`.
      */
     isReachable(g: GraphAdapter<TVertex>, source: TVertex, target: TVertex): boolean;
+
+    /**
+     * @return A independent copy of this detector for a possibly different
+     * type of vertex. Changes to the state of this detector do not affect
+     * the state of the cloned detector and vice-versa.
+     * @typeparam TClonedVertex Type of the cloned vertices.
+     */
+    map<TClonedVertex>(vertexMapper: TypedFunction<TVertex, TClonedVertex>): CycleDetector<TClonedVertex>;
 
     /**
      * Must be called when a vertex is deleted. The graph adapter must behave as
@@ -127,14 +157,38 @@ export interface CycleDetector<TVertex> {
      * @return `true` iff this algorithm supports querying a vertex's topological order.
      */
     supportsOrder(): boolean;
+}
 
+export interface ClonableAdapter<TVertex, TEdgeData> {
     /**
-     * Returns the topological order of the vertex, if supported.
-     * @param g The graph data structure to be used.
-     * @param vertex Vertex for which to determine its order.
-     * @return The topological order of the given vertex.
+     * Creates an independent copy of this graph data structure. Further
+     * changes to this graph are not reflected in the returned copy, and
+     * vice-versa.
+     *
+     * All vertices and edges are copied as-is and are not cloned, so that
+     * changing the state of a vertex or edge also changes the state of the
+     * vertex or edge in the copied graph.
+     *
+     * Optionally you can also pass a function for cloning the vertices and edges.
+     *
+     * @param vertexCloner Clone function that takes a vertex and returns a copy of it.
+     * @param edgeDataCloner Clone function that takes an edge datum and returns a copy of it.
+     * @return A copy of this graph.
      */
-    getOrder(g: GraphAdapter<TVertex>, vertex: TVertex): number;
+    clone(vertexCloner?: UnaryOperator<TVertex>, edgeDataCloner?: UnaryOperator<TEdgeData>): CommonAdapter<TVertex, TEdgeData> & ClonableAdapter<TVertex, TEdgeData>;
+    /**
+     * Creates an independent copy of this graph data structure and maps
+     * each vertex and edge datum to a new vertex and edge datum. Further
+     * changes to this graph are not reflected in the returned copy, and
+     * vice-versa.
+     *
+     * @param vertexMapper Mapping function that takes a vertex and returns a mapped copy of it.
+     * @param edgeDataMapper Mapping function that takes an edge datum and returns a mapped copy of it.
+     * @return A mapped copy of this graph.
+     * @typeparam TClonedVertex Type of the mapped vertices.
+     * @typeparam TClonedEdgeData Type of the cloned edge data.
+     */
+    map<TClonedVertex, TClonedEdgeData>(vertexMapper: TypedFunction<TVertex, TClonedVertex>, edgeDataMapper: TypedFunction<TEdgeData, TClonedEdgeData>): CommonAdapter<TClonedVertex, TClonedEdgeData> & ClonableAdapter<TClonedVertex, TClonedEdgeData>;
 }
 
 /** Common methods implemented by the provided GraphAdapters. */
@@ -203,7 +257,7 @@ export interface CommonAdapter<TVertex, TEdgeData = any> {
      * @param to Target vertex of the edge.
      * @return The data associated with the given edge.
      */
-    getEdgeData(from: TVertex, to: TVertex): TEdgeData;
+    getEdgeData(from: TVertex, to: TVertex): Maybe<TEdgeData>;
     /**
      * Returns the edge data of all edges that point to (end at)
      * the given vertex.
@@ -271,7 +325,7 @@ export interface CommonAdapter<TVertex, TEdgeData = any> {
      * @param data The data to be associated with the given edge.
      * @return `true` iff the data was set, `false` iff the edge does not exist.
      */
-    setEdgeData(from: TVertex, to: TVertex, data: TEdgeData): boolean;
+    setEdgeData(from: TVertex, to: TVertex, data: Maybe<TEdgeData>): boolean;
     /**
      * @return `true` iff the algorithm in use supports querying a vertex's topological order.
      */

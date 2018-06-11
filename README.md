@@ -41,7 +41,7 @@ that makes the graph cyclic.
 
 ```javascript
 const { GenericGraphAdapter } = require("incremental-cycle-detect");
-const graph = new GenericGraphAdapter();
+const graph = GenericGraphAdapter.create();
 graph.addEdge(0, 1) // => true
 graph.addEdge(1, 2) // => true
 graph.addEdge(2, 3) // => true
@@ -67,7 +67,7 @@ Example for using the GraphlibAdapter:
 
 ```javascript
 const { Graph } = require("graphlib");
-const graph = new GraphlibAdapter({graphlib: Graph});
+const graph = GraphlibAdapter.create({graphlib: Graph});
 graph.addEdge(0, 1) // => true
 ```
 
@@ -100,7 +100,7 @@ Some parts need `Map`. You can either
 
 ```javascript
 import * as Map from "core-js/es6/map";
-const graph = new GenericGraphAdapter({mapConstructor: Map}):
+const graph = GenericGraphAdapter.create({mapConstructor: Map}):
 ```
 
 # Use your own graph data structure
@@ -140,6 +140,10 @@ I use the following keywords:
 - `Fixed` A bug or error that was fixed.
 
 From newest to oldest:
+
+# 0.3.0
+- Added a `clone` and `map` method for creating a copy of a graph.
+- Changed the graph adapter implementations so that instances are now created with the factory method `create` instead of the constructor. This was necessary for the `clone` method.
 
 # 0.2.2
 - Added two methods for accessing edge data of incoming / outgoing edges: `getEdgeDataFrom`, `getEdgeDataTo`

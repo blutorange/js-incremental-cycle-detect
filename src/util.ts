@@ -1,5 +1,5 @@
 import { BinaryOperator, Pair, Predicate, TypedFunction } from "andross";
-import { CommonAdapter } from "./Header";
+import { CommonAdapter, CycleDetector, GraphAdapter, VertexData } from "./Header";
 
 /**
  * @internal
@@ -313,3 +313,32 @@ function performEdgeContraction<TVertex, TEdgeData>(
 
     //  Now the edge is contracted.
 }
+
+const DummyVertexData = {order: 0, visited: false};
+
+/**
+ * @private
+ * @internal
+ */
+export const DummyDetector = new class implements CycleDetector<any> {
+    map<TAnotherClonedVertex>(vertexMapper: TypedFunction<any, TAnotherClonedVertex>): CycleDetector<TAnotherClonedVertex> {
+        throw new Error("Map not supported for internally used clone detector. This is likely a bug.");
+    }
+    createVertexData(g: GraphAdapter<any>, vertex: any): VertexData {
+        return DummyVertexData;
+    }
+    canAddEdge(g: GraphAdapter<any>, from: any, to: any): boolean {
+        return true;
+    }
+    isReachable(g: GraphAdapter<any>, source: any, target: any): boolean {
+        return false;
+    }
+    onVertexDeletion(g: GraphAdapter<any>, vertex: any): void {/***/}
+    supportsOrder(): boolean {
+        return false;
+    }
+    // and target, merging both vertices results in a cycle.
+    getOrder(g: GraphAdapter<any>, vertex: any): number {
+        return -1;
+    }
+}();

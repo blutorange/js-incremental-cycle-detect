@@ -1,3 +1,4 @@
+import { TypedFunction } from "andross";
 import { CycleDetector, GraphAdapter, VertexData } from "./Header";
 
 /**
@@ -73,6 +74,24 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
         this.deltaXyB = [];
         this.deltaXyF = [];
         this.freeStack = [];
+    }
+
+    map<TClonedVertex>(vertexMapper: TypedFunction<TVertex, TClonedVertex>): PearceKellyDetector<TClonedVertex> {
+        const clone = new PearceKellyDetector<TClonedVertex>();
+        clone.id = this.id;
+        for (const item of this.deltaXyB) {
+            clone.deltaXyB.push(vertexMapper(item));
+        }
+        for (const item of this.deltaXyF) {
+            clone.deltaXyF.push(vertexMapper(item));
+        }
+        for (const item of this.freeStack) {
+            clone.freeStack.push(item);
+        }
+        for (const item of this.stack) {
+            clone.stack.push(vertexMapper(item));
+        }
+        return clone;
     }
 
     isReachable(adapter: GraphAdapter<TVertex>, source: TVertex, target: TVertex): boolean {

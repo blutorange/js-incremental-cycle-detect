@@ -16,7 +16,7 @@ interface Vertex extends VertexData {
 @suite("Graph adapter - Graphlib")
 export class GraphlibAdapterTest {
     private make<TVertexData extends VertexData = VertexData>(): GraphlibAdapter<TVertexData> {
-        const adapter = new GraphlibAdapter({graphlib: Graph});
+        const adapter = GraphlibAdapter.create({graphlib: Graph});
         return adapter;
     }
 

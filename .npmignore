@@ -11,6 +11,7 @@ tslint.json
 /src
 /index.ts
 *.tgz
+*.zip
 sandbox.ts
 
 # ---> Linux

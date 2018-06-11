@@ -1,7 +1,7 @@
-import { BinaryOperator, Pair } from "andross";
-import { CommonAdapter, CycleDetector, GenericGraphAdapterOptions, GraphAdapter, VertexData } from "./Header";
+import { BinaryOperator, Pair, TypedFunction, UnaryOperator } from "andross";
+import { ClonableAdapter, CommonAdapter, CycleDetector, GenericGraphAdapterOptions, GraphAdapter, VertexData } from "./Header";
 import { PearceKellyDetector } from "./PearceKellyDetector";
-import { EmptyIterator, canContractEdge, contractEdge, createFilteredIterator, createFlatMappedIterator, createMappedIterator } from "./util";
+import { canContractEdge, contractEdge, createFilteredIterator, createFlatMappedIterator, createMappedIterator, DummyDetector, EmptyIterator } from "./util";
 
 /**
  * Generic graph data structure that supports all types of vertex objects by using
@@ -18,7 +18,7 @@ import { EmptyIterator, canContractEdge, contractEdge, createFilteredIterator, c
  * }
  *
  * // Create a new graph.
- * const graph = new GenericGraphAdapter<Vertex, string>();
+ * const graph = GenericGraphAdapter.create<Vertex, string>();
  *
  * // Add some vertices and edges.
  * const v1 = {id: 1, name: "foo"};
@@ -44,18 +44,30 @@ import { EmptyIterator, canContractEdge, contractEdge, createFilteredIterator, c
  * @typeparam TEdgeData Type of the data associated with edges.
  * @see {@link CommonAdapter}
  */
-export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements CommonAdapter<TVertex, TEdgeData | undefined> {
+export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements CommonAdapter<TVertex, TEdgeData>, ClonableAdapter<TVertex, TEdgeData> {
+    /**
+     * Creates a new graph adapter with the given options.
+     * @param options Options for configuring this instance.
+     * @see {@link GenericGraphAdapterOptions}
+     * @typeparam TVertex Type of the vertices of this graph.
+     * @typeparam TEdgeData Type of the data associated with edges.
+     */
+    static create<TVertex = any, TEdgeData = any>(options: Partial<GenericGraphAdapterOptions<TVertex>> = {}): GenericGraphAdapter<TVertex, TEdgeData> {
+        const mapConstructor = options.mapConstructor || Map;
+        const detector = options.cycleDetector || new PearceKellyDetector();
+        return new GenericGraphAdapter(mapConstructor, detector);
+    }
+
     private detector: CycleDetector<TVertex>;
     private adapter: GraphAdapter<TVertex>;
     private vertices: Map<TVertex, VertexData>;
     private forward: Map<TVertex, Map<TVertex, TEdgeData | undefined>>;
     private backward: Map<TVertex, Map<TVertex, TEdgeData | undefined>>;
-    private edgeCount: number;
     private mapConstructor: MapConstructor;
+    private edgeCount: number;
 
-    constructor(options: Partial<GenericGraphAdapterOptions<TVertex>> = {}) {
-        const mapConstructor = options.mapConstructor || Map;
-        this.detector = options.cycleDetector || new PearceKellyDetector();
+    private constructor(mapConstructor: MapConstructor, cycleDetector: CycleDetector<TVertex>) {
+        this.detector = cycleDetector;
         this.forward = new mapConstructor();
         this.backward = new mapConstructor();
         this.mapConstructor = mapConstructor;
@@ -69,11 +81,49 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         };
     }
 
+    map<TClonedVertex, TClonedEdgeData>(vertexMapper: TypedFunction<TVertex, TClonedVertex>, edgeDataMapper: TypedFunction<TEdgeData, TClonedEdgeData>): GenericGraphAdapter<TClonedVertex, TClonedEdgeData> {
+        // Create a new clone with a dummy detector we are going to replace later.
+        const clone = new GenericGraphAdapter<TClonedVertex, TClonedEdgeData>(this.mapConstructor, DummyDetector);
+        // Make sure we only call vertexMapper once for each vertex.
+        // Otherwise we might create new objects that do not compare
+        // equal when used in Maps.
+        const clonedVertexMap = new this.mapConstructor<TVertex, TClonedVertex>();
+        // Set the new vertex data.
+        this.vertices.forEach((vertexData, vertex) => {
+            const clonedVertex = vertexMapper(vertex);
+            clonedVertexMap.set(vertex, clonedVertex);
+            clone.vertices.set(clonedVertex, vertexData);
+        });
+        // Iterate over the edges and set them on the clone. Also clone edge data.
+        this.forward.forEach((map, from) => {
+            const clonedMap = new this.mapConstructor<TClonedVertex, TClonedEdgeData | undefined>();
+            const clonedFrom = clonedVertexMap.get(from) as TClonedVertex;
+            map.forEach((edgeData, to) => {
+                const clonedTo = clonedVertexMap.get(to) as TClonedVertex;
+                const clonedEdgeData = edgeData !== undefined ? edgeDataMapper(edgeData) : undefined;
+                clonedMap.set(clonedTo, clonedEdgeData);
+                clone.addToBackwardsMap(clonedFrom, clonedTo, clonedEdgeData);
+            });
+            clone.forward.set(clonedFrom, clonedMap);
+        });
+        // Copy the edge count.
+        clone.edgeCount = this.edgeCount;
+        // Finally, we replace the dummy detector with a clone of the real detector.
+        clone.detector = this.detector.map<TClonedVertex>(vertex => clonedVertexMap.get(vertex) as TClonedVertex);
+        return clone;
+    }
+
+    clone(vertexCloner?: UnaryOperator<TVertex>, edgeDataCloner?: UnaryOperator<TEdgeData>): GenericGraphAdapter<TVertex, TEdgeData> {
+        const vCloner = vertexCloner !== undefined ? vertexCloner : (vertex: TVertex) => vertex;
+        const eCloner = edgeDataCloner !== undefined ? edgeDataCloner : (data: TEdgeData) => data;
+        return this.map(vCloner, eCloner);
+    }
+
     canContractEdge(from: TVertex, to: TVertex): boolean {
         return canContractEdge(this, from, to);
     }
 
-    contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<TEdgeData | undefined>): boolean {
+    contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
         return contractEdge(this, from, to, vertexMerger, edgeMerger);
     }
 
@@ -265,6 +315,14 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         }
         this.vertices.delete(vertex);
         return true;
+    }
+
+    private addToBackwardsMap(from: TVertex, to: TVertex, edgeData: TEdgeData | undefined): void {
+        let map = this.backward.get(to);
+        if (map === undefined) {
+            this.backward.set(to, map = new this.mapConstructor());
+        }
+        map.set(from, edgeData);
     }
 
     private getData(key: TVertex): VertexData {

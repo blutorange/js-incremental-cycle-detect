@@ -1,9 +1,8 @@
-import { BinaryOperator, Pair, RemoveFrom } from "andross";
+import { BinaryOperator, Pair, PartialExcept, PartialFor, RemoveFrom, TypedFunction, UnaryOperator } from "andross";
 import { Graph } from "graphlib";
-import { CommonAdapter, CustomVertexData, CycleDetector, GraphAdapter, GraphlibAdapterOptions, VertexData } from "./Header";
-import { PartialExcept } from "./InternalHeader";
+import { CommonAdapter, CustomVertexData, CycleDetector, GraphAdapter, GraphlibAdapterOptions, GraphlibConstructor, VertexData } from "./Header";
 import { PearceKellyDetector } from "./PearceKellyDetector";
-import { EmptyIterator, assign, canContractEdge, contractEdge, createArrayIterator, createFilteredIterator, createMappedArrayIterator } from "./util";
+import { assign, canContractEdge, contractEdge, createArrayIterator, createFilteredIterator, createMappedArrayIterator, EmptyIterator } from "./util";
 
 /**
  * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency and
@@ -12,18 +11,83 @@ import { EmptyIterator, assign, canContractEdge, contractEdge, createArrayIterat
  * @see {@link CommonAdapter}
  */
 export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = any> implements CommonAdapter<string, TEdgeData> {
+    static create<TVertexData extends VertexData = any, TEdgeData = any>(options: PartialExcept<GraphlibAdapterOptions<string>, "graphlib">): GraphlibAdapter<TVertexData, TEdgeData> {
+        const g = new options.graphlib(assign(options.graphOptions || {}, {directed: true}));
+        const detector = options.cycleDetector || new PearceKellyDetector();
+        return new GraphlibAdapter(g, detector, options.graphlib);
+    }
+
     private g: Graph;
+    private graphlib: GraphlibConstructor;
     private detector: CycleDetector<string>;
     private adapter: GraphAdapter<string>;
 
-    constructor(options: PartialExcept<GraphlibAdapterOptions<string>, "graphlib">) {
-        this.g = new options.graphlib(assign({directed: true}, options.graphOptions));
-        this.detector = options.cycleDetector || new PearceKellyDetector();
+    private constructor(g: Graph, detector: CycleDetector<string>, graphlib: GraphlibConstructor) {
+        this.graphlib = graphlib;
+        this.g = g;
+        this.detector = detector;
         this.adapter = {
             getData: this.getData.bind(this),
             getPredecessorsOf: this.getPredecessorsOf.bind(this),
             getSuccessorsOf: this.getSuccessorsOf.bind(this),
         };
+    }
+
+    /**
+     * Creates an independent copy of this graph data structure and maps
+     * each vertex and edge datum to a new vertex and edge datum. Further
+     * changes to this graph are not reflected in the returned copy, and
+     * vice-versa.
+     *
+     * @param vertexMapper Mapping function that each vertex to a new vertex. May be called several times for each vertex.
+     * @param vertexDataMapper Mapping function that takes a vertex datum and returns a mapped copy of it.
+     * @param edgeDataMapper Mapping function that takes an edge datum and returns a mapped copy of it.
+     * @return A mapped copy of this graph.
+     * @typeparam TClonedVertexData Type of the mapped vertex data.
+     * @typeparam TClonedEdgeData Type of the cloned edge data.
+     */
+    map<TClonedVertexData extends VertexData, TClonedEdgeData>(vertexMapper: UnaryOperator<string>, vertexDataMapper: TypedFunction<TVertexData, PartialFor<TClonedVertexData, keyof VertexData>>, edgeDataMapper: TypedFunction<TEdgeData, TClonedEdgeData>): GraphlibAdapter<TClonedVertexData, TClonedEdgeData> {
+        // Clone the graphlib graph and map the vertices and edges.
+        const clonedG = new this.graphlib({
+            compound: this.g.isCompound(),
+            directed: this.g.isDirected(),
+            multigraph: this.g.isMultigraph(),
+        });
+        for (const node of this.g.nodes()) {
+            const vertexData = this.g.node(node) as TVertexData;
+            const partialVertexData: PartialFor<TClonedVertexData, keyof VertexData> = vertexDataMapper(vertexData);
+            partialVertexData.order = vertexData.order;
+            partialVertexData.visited = vertexData.visited;
+            clonedG.setNode(vertexMapper(node), partialVertexData);
+        }
+        for (const edge of this.g.edges()) {
+            const edgeData = this.g.edge(edge) as TEdgeData;
+            clonedG.setEdge(vertexMapper(edge.v), vertexMapper(edge.w), edgeData !== undefined ? edgeDataMapper(edgeData) : undefined, edge.name);
+        }
+        // Clone the detector.
+        const clonedDetector = this.detector.map(vertexMapper);
+        return new GraphlibAdapter<TClonedVertexData, TClonedEdgeData>(clonedG, clonedDetector, this.graphlib);
+    }
+
+    /**
+     * Creates an independent copy of this graph data structure. Further
+     * changes to this graph are not reflected in the returned copy, and
+     * vice-versa.
+     *
+     * All vertices and edges are copied as-is and are not cloned, so that
+     * changing the state of a vertex or edge also changes the state of the
+     * vertex or edge in the copied graph.
+     *
+     * Optionally you can also pass a function for cloning the vertices and edges.
+     *
+     * @param vertexDataCloner Clone function that takes a vertex and returns a copy of it.
+     * @param edgeDataCloner Clone function that takes an edge datum and returns a copy of it.
+     * @return A copy of this graph.
+     */
+    clone(vertexDataCloner?: UnaryOperator<TVertexData>, edgeDataCloner?: UnaryOperator<TEdgeData>): GraphlibAdapter<TVertexData, TEdgeData> {
+        const vCloner = vertexDataCloner !== undefined ? vertexDataCloner : (vertex: TVertexData) => vertex;
+        const eCloner = edgeDataCloner !== undefined ? edgeDataCloner : (data: TEdgeData) => data;
+        return this.map(v => v, vCloner, eCloner);
     }
 
     canContractEdge(from: string, to: string): boolean {

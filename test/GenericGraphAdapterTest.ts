@@ -15,7 +15,7 @@ interface Vertex {
 @suite("Graph adapter - Generic")
 export class GenericAdapterTest {
     private make<TVertex, TEdgeData = any, TTarget = any>(): GenericGraphAdapter<TVertex, TEdgeData> {
-        const adapter = new GenericGraphAdapter<TVertex, TEdgeData>();
+        const adapter = GenericGraphAdapter.create<TVertex, TEdgeData>();
         return adapter;
     }
 
