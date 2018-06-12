@@ -2,8 +2,7 @@ import { Pair } from "andross";
 import * as Benchmark from "benchmark";
 import { IStream, TypesafeStreamFactory } from "elbe";
 import { alg, Graph } from "graphlib";
-import { GenericGraphAdapter } from "../dist/main";
-import { GraphlibAdapter, MultiGraphAdapter } from "../index";
+import { GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../index";
 
 function log(...args: any[]): void {
 // tslint:disable-next-line:no-console
@@ -21,7 +20,7 @@ const BackwardSource = TypesafeStreamFactory.generate(random).map(i => [i + 1, i
 (global as any).source = [] as number[][];
 
 function mylib_insert(edges: number[][]) {
-    const g = new GenericGraphAdapter();
+    const g = GenericGraphAdapter.create();
     edges.forEach(([x, y]) => {
         if (x === y || g.hasEdge(x, y)) {
           return;
@@ -31,7 +30,7 @@ function mylib_insert(edges: number[][]) {
 }
 
 function mylib_insert_multi(edges: number[][]) {
-    const g = new MultiGraphAdapter();
+    const g = MultiGraphAdapter.create();
     edges.forEach(([x, y]) => {
         if (x === y || g.hasEdge(x, y)) {
           return;
@@ -40,7 +39,7 @@ function mylib_insert_multi(edges: number[][]) {
     });
 }
 function mylib_glib_insert(edges: number[][]) {
-    const g = new GraphlibAdapter({graphlib: Graph});
+    const g = GraphlibAdapter.create({graphlib: Graph});
     edges.forEach(([x, y]) => {
         if (x === y || g.hasEdge(String(x), String(y))) {
           return;

@@ -109,7 +109,7 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         // Copy the edge count.
         clone.edgeCount = this.edgeCount;
         // Finally, we replace the dummy detector with a clone of the real detector.
-        clone.detector = this.detector.map<TClonedVertex>(vertex => clonedVertexMap.get(vertex) as TClonedVertex);
+        clone.detector = this.detector.map<TClonedVertex>();
         return clone;
     }
 
@@ -281,7 +281,7 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         if (this.vertices.has(vertex)) {
             return false;
         }
-        this.vertices.set(vertex, this.detector.createVertexData(this.adapter, vertex));
+        this.vertices.set(vertex, this.detector.createVertexData(this.adapter));
         return true;
     }
 

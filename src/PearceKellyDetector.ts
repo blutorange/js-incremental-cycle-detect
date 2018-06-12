@@ -1,4 +1,3 @@
-import { TypedFunction } from "andross";
 import { CycleDetector, GraphAdapter, VertexData } from "./Header";
 
 /**
@@ -76,20 +75,13 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
         this.freeStack = [];
     }
 
-    map<TClonedVertex>(vertexMapper: TypedFunction<TVertex, TClonedVertex>): PearceKellyDetector<TClonedVertex> {
+    map<TClonedVertex>(): PearceKellyDetector<TClonedVertex> {
         const clone = new PearceKellyDetector<TClonedVertex>();
+        // deltaXyB, deltaXyF and stack are only used as temporary variables during method calls
+        // and thus do not need to be cloned.
         clone.id = this.id;
-        for (const item of this.deltaXyB) {
-            clone.deltaXyB.push(vertexMapper(item));
-        }
-        for (const item of this.deltaXyF) {
-            clone.deltaXyF.push(vertexMapper(item));
-        }
         for (const item of this.freeStack) {
             clone.freeStack.push(item);
-        }
-        for (const item of this.stack) {
-            clone.stack.push(vertexMapper(item));
         }
         return clone;
     }
@@ -113,7 +105,7 @@ export class PearceKellyDetector<TVertex> implements CycleDetector<TVertex> {
         return reachable;
     }
 
-    createVertexData(g: GraphAdapter<TVertex>, vertex: TVertex): VertexData {
+    createVertexData(g: GraphAdapter<TVertex>): VertexData {
         const id = this.freeStack.pop();
         return {
             order: id !== undefined ? id : this.id++,

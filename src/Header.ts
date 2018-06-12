@@ -2,13 +2,6 @@ import { BinaryOperator, Maybe, Omit, Pair, TypedFunction, UnaryOperator } from 
 import { Graph, GraphOptions } from "graphlib";
 
 /**
- * For the {@link GraphlibAdapter}. Must extends the {@link VertexData} required by
- * the cycle detection algorithm. This type omits all properties internal to the
- * algorithm.
- */
-export type CustomVertexData<TVertexData extends VertexData> = Omit<TVertexData, keyof VertexData>;
-
-/**
  * The data the algorithm needs to associate with each vertex.
  * @internal
  */
@@ -49,6 +42,11 @@ export interface MultiGraphAdapterOptions<TVertex, TEdgeData, TEdgeLabel> {
     graphFactory: GraphFactory<TVertex, TEdgeData, TEdgeLabel>;
     /** For creating a new `Map`. Defaults to the native `Map`. */
     mapConstructor: MapConstructor;
+}
+
+export interface GraphlibVertexData extends VertexData {
+    /** Used as the name for the vertex when adding it to graphlib. */
+    gid: string;
 }
 
 export type GraphlibConstructor = new (options?: GraphOptions) => Graph;
@@ -114,10 +112,9 @@ export interface CycleDetector<TVertex> {
      * exactly once for each vertex of the graph and must be the data returned
      * by `GraphAdapter#getData`.
      * @param g The graph data structure to be used.
-     * @param vertex New vertex that is about to be added or was just added.
      * @return The data to be set on the vertex.
      */
-    createVertexData(g: GraphAdapter<TVertex>, vertex: TVertex): VertexData;
+    createVertexData(g: GraphAdapter<TVertex>): VertexData;
 
     /**
      * Returns the topological order of the vertex, if supported.
@@ -143,7 +140,7 @@ export interface CycleDetector<TVertex> {
      * the state of the cloned detector and vice-versa.
      * @typeparam TClonedVertex Type of the cloned vertices.
      */
-    map<TClonedVertex>(vertexMapper: TypedFunction<TVertex, TClonedVertex>): CycleDetector<TClonedVertex>;
+    map<TClonedVertex>(): CycleDetector<TClonedVertex>;
 
     /**
      * Must be called when a vertex is deleted. The graph adapter must behave as
@@ -192,7 +189,7 @@ export interface ClonableAdapter<TVertex, TEdgeData> {
 }
 
 /** Common methods implemented by the provided GraphAdapters. */
-export interface CommonAdapter<TVertex, TEdgeData = any> {
+export interface CommonAdapter<TVertex = any, TEdgeData = any> {
     /**
      * Adds the given edge, if it does not exist, and it is allowed.
      * May not be allowed eg if adding the edge creates a cycle.

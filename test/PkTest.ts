@@ -5,7 +5,9 @@ import { expect } from "chai";
 import { alg, Graph } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
-import { CommonAdapter, GenericGraphAdapter, GraphlibAdapter, MultiGraphAdapter } from "../index";
+import { CommonAdapter, GraphlibAdapter } from "../index";
+import { GenericGraphAdapter } from '../src/GenericGraphAdapter';
+import { MultiGraphAdapter } from '../src/MultiGraphAdapter';
 import { assertOrder } from './util';
 
 const log = false;
@@ -24,17 +26,17 @@ export const hack: any[] = [];
     {
         clazz: GenericGraphAdapter,
         make: () => GenericGraphAdapter.create(),
-        convert: (vertex: number) => vertex
+        convert: (g: CommonAdapter, vertex: number) => vertex
     },
     {
         clazz: MultiGraphAdapter,
         make: () => MultiGraphAdapter.create(),
-        convert: (vertex: number) => vertex,
+        convert: (g: CommonAdapter, vertex: number) => vertex,
     },
     {
         clazz: GraphlibAdapter,
         make: () => GraphlibAdapter.create({graphlib: Graph}),
-        convert: (vertex: number) => String(vertex)
+        convert: (g: CommonAdapter, vertex: number) => (g as GraphlibAdapter).createVertex({gid: String(vertex)})
     },
 ].forEach((adapter) => {
     // For each ID, we only create the vertex once and store it for later use.
@@ -45,7 +47,7 @@ export const hack: any[] = [];
         if (!registry) throw new Error("no registry found");
         let v = registry.get(vertex);
         if (v === undefined && remove) throw new Error("vertex not found: " + vertex);
-        if (v === undefined) registry.set(vertex, v = adapter.convert(vertex));
+        if (v === undefined) registry.set(vertex, v = adapter.convert(g, vertex));
         if (remove) registry.delete(vertex);
         return v;
     }
@@ -260,10 +262,10 @@ export const hack: any[] = [];
         @test("should return the edge data from the vertex")
         edgeDataFrom() {
             const g = make();
-            g.addEdge(0, 1, "foo");
-            g.addEdge(0, 2, undefined);
-            g.addEdge(0, 3, "baz");
-            g.addEdge(1, 2, "bar");
+            addEdge(g, 0, 1, "foo");
+            addEdge(g, 0, 2, undefined);
+            addEdge(g, 0, 3, "baz");
+            addEdge(g, 1, 2, "bar");
             expectEdgesDataFromToEqual(g, 0, ["foo", "baz"]);
             expectEdgesDataFromToEqual(g, 1, ["bar"]);
             expectEdgesDataFromToEqual(g, 2, []);
@@ -273,10 +275,10 @@ export const hack: any[] = [];
         @test("should return the edge data to the vertex")
         edgeDataTo() {
             const g = make();
-            g.addEdge(1, 0, "foo");
-            g.addEdge(2, 0, undefined);
-            g.addEdge(3, 0, "baz");
-            g.addEdge(2, 1, "bar");
+            addEdge(g, 1, 0, "foo");
+            addEdge(g, 2, 0, undefined);
+            addEdge(g, 3, 0, "baz");
+            addEdge(g, 2, 1, "bar");
             expectEdgesDataToToEqual(g, 0, ["foo", "baz"]);
             expectEdgesDataToToEqual(g, 1, ["bar"]);
             expectEdgesDataToToEqual(g, 2, []);
@@ -286,9 +288,9 @@ export const hack: any[] = [];
         @test("should allow associating edge source/target data")
         edgeData() {
             const g = make();
-            g.addEdge(0, 1, "foo");
-            g.addEdge(0, 2, undefined);
-            g.addEdge(1, 2, "bar");
+            addEdge(g, 0, 1, "foo");
+            addEdge(g, 0, 2, undefined);
+            addEdge(g, 1, 2, "bar");
             expect(getEdgeData(g, 0, 1)).to.equal("foo");
             expect(getEdgeData(g, 0, 2)).to.be.undefined;
             expect(getEdgeData(g, 1, 2)).to.equal("bar");
@@ -677,18 +679,18 @@ export const hack: any[] = [];
         @test("should not modify the graph with canContractEdge")
         realWorld() {
             const g = make();
-            g.addEdge(1, 4)
-            g.addEdge(2, 4)
-            g.addEdge(3, 4)
-            g.addEdge(3, 5)
-            g.addEdge(2, 3)
-            g.addEdge(1, 2)
+            addEdge(g, 1, 4)
+            addEdge(g, 2, 4)
+            addEdge(g, 3, 4)
+            addEdge(g, 3, 5)
+            addEdge(g, 2, 3)
+            addEdge(g, 1, 2)
             for (let i = 10; i--> 0;) {
                 expect(g.getEdgeCount()).to.equal(6);
-                expect(g.canContractEdge(1, 4)).to.be.false;
-                expect(g.canContractEdge(2, 4)).to.be.false;
-                expect(g.canContractEdge(3, 4)).to.be.true;
-                expect(g.canContractEdge(3, 5)).to.be.true;
+                expect(canContractEdge(g, 1, 4)).to.be.false;
+                expect(canContractEdge(g, 2, 4)).to.be.false;
+                expect(canContractEdge(g, 3, 4)).to.be.true;
+                expect(canContractEdge(g, 3, 5)).to.be.true;
             }
         }    
 

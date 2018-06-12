@@ -1,8 +1,13 @@
 import { BinaryOperator, Pair, PartialExcept, PartialFor, RemoveFrom, TypedFunction, UnaryOperator } from "andross";
 import { Graph } from "graphlib";
-import { CommonAdapter, CustomVertexData, CycleDetector, GraphAdapter, GraphlibAdapterOptions, GraphlibConstructor, VertexData } from "./Header";
+import { CommonAdapter, CycleDetector, GraphAdapter, GraphlibAdapterOptions, GraphlibConstructor, GraphlibVertexData, VertexData } from "./Header";
 import { PearceKellyDetector } from "./PearceKellyDetector";
-import { assign, canContractEdge, contractEdge, createArrayIterator, createFilteredIterator, createMappedArrayIterator, EmptyIterator } from "./util";
+import { assign, canContractEdge, contractEdge, createFilteredIterator, createMappedArrayIterator, EmptyIterator } from "./util";
+
+// tslint:disable-next-line:ban-types
+function bind<T extends Function>(fn: T, context: any): T {
+    return fn.bind(context);
+}
 
 /**
  * Adapter for the npm `graphlib` module. You need to add `graphlib` as a dependency and
@@ -10,8 +15,8 @@ import { assign, canContractEdge, contractEdge, createArrayIterator, createFilte
  *
  * @see {@link CommonAdapter}
  */
-export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = any> implements CommonAdapter<string, TEdgeData> {
-    static create<TVertexData extends VertexData = any, TEdgeData = any>(options: PartialExcept<GraphlibAdapterOptions<string>, "graphlib">): GraphlibAdapter<TVertexData, TEdgeData> {
+export class GraphlibAdapter<TVertexData extends GraphlibVertexData = any, TEdgeData = any> implements CommonAdapter<TVertexData, TEdgeData> {
+    static create<TVertexData extends GraphlibVertexData = any, TEdgeData = any>(options: PartialExcept<GraphlibAdapterOptions<TVertexData>, "graphlib">): GraphlibAdapter<TVertexData, TEdgeData> {
         const g = new options.graphlib(assign(options.graphOptions || {}, {directed: true}));
         const detector = options.cycleDetector || new PearceKellyDetector();
         return new GraphlibAdapter(g, detector, options.graphlib);
@@ -19,34 +24,21 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
 
     private g: Graph;
     private graphlib: GraphlibConstructor;
-    private detector: CycleDetector<string>;
-    private adapter: GraphAdapter<string>;
+    private detector: CycleDetector<TVertexData>;
+    private adapter: GraphAdapter<TVertexData>;
 
-    private constructor(g: Graph, detector: CycleDetector<string>, graphlib: GraphlibConstructor) {
+    private constructor(g: Graph, detector: CycleDetector<TVertexData>, graphlib: GraphlibConstructor) {
         this.graphlib = graphlib;
         this.g = g;
         this.detector = detector;
         this.adapter = {
-            getData: this.getData.bind(this),
-            getPredecessorsOf: this.getPredecessorsOf.bind(this),
-            getSuccessorsOf: this.getSuccessorsOf.bind(this),
+            getData: bind(this.getData, this),
+            getPredecessorsOf: bind(this.getPredecessorsOf, this),
+            getSuccessorsOf: bind(this.getSuccessorsOf, this),
         };
     }
 
-    /**
-     * Creates an independent copy of this graph data structure and maps
-     * each vertex and edge datum to a new vertex and edge datum. Further
-     * changes to this graph are not reflected in the returned copy, and
-     * vice-versa.
-     *
-     * @param vertexMapper Mapping function that each vertex to a new vertex. May be called several times for each vertex.
-     * @param vertexDataMapper Mapping function that takes a vertex datum and returns a mapped copy of it.
-     * @param edgeDataMapper Mapping function that takes an edge datum and returns a mapped copy of it.
-     * @return A mapped copy of this graph.
-     * @typeparam TClonedVertexData Type of the mapped vertex data.
-     * @typeparam TClonedEdgeData Type of the cloned edge data.
-     */
-    map<TClonedVertexData extends VertexData, TClonedEdgeData>(vertexMapper: UnaryOperator<string>, vertexDataMapper: TypedFunction<TVertexData, PartialFor<TClonedVertexData, keyof VertexData>>, edgeDataMapper: TypedFunction<TEdgeData, TClonedEdgeData>): GraphlibAdapter<TClonedVertexData, TClonedEdgeData> {
+    map<TClonedVertexData extends TVertexData, TClonedEdgeData>(vertexDataMapper: TypedFunction<TVertexData, PartialFor<TClonedVertexData, keyof GraphlibVertexData>>, edgeDataMapper: TypedFunction<TEdgeData, TClonedEdgeData>): GraphlibAdapter<TClonedVertexData, TClonedEdgeData> {
         // Clone the graphlib graph and map the vertices and edges.
         const clonedG = new this.graphlib({
             compound: this.g.isCompound(),
@@ -55,17 +47,20 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
         });
         for (const node of this.g.nodes()) {
             const vertexData = this.g.node(node) as TVertexData;
-            const partialVertexData: PartialFor<TClonedVertexData, keyof VertexData> = vertexDataMapper(vertexData);
+            const partialVertexData: PartialFor<TClonedVertexData, keyof GraphlibVertexData> = vertexDataMapper(vertexData);
+            if (partialVertexData.gid === undefined) {
+                partialVertexData.gid = vertexData.gid;
+            }
             partialVertexData.order = vertexData.order;
             partialVertexData.visited = vertexData.visited;
-            clonedG.setNode(vertexMapper(node), partialVertexData);
+            clonedG.setNode(partialVertexData.gid, partialVertexData);
         }
         for (const edge of this.g.edges()) {
             const edgeData = this.g.edge(edge) as TEdgeData;
-            clonedG.setEdge(vertexMapper(edge.v), vertexMapper(edge.w), edgeData !== undefined ? edgeDataMapper(edgeData) : undefined, edge.name);
+            clonedG.setEdge(edge.v, edge.w, edgeData !== undefined ? edgeDataMapper(edgeData) : undefined, edge.name);
         }
         // Clone the detector.
-        const clonedDetector = this.detector.map(vertexMapper);
+        const clonedDetector = this.detector.map<TVertexData>();
         return new GraphlibAdapter<TClonedVertexData, TClonedEdgeData>(clonedG, clonedDetector, this.graphlib);
     }
 
@@ -87,43 +82,43 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
     clone(vertexDataCloner?: UnaryOperator<TVertexData>, edgeDataCloner?: UnaryOperator<TEdgeData>): GraphlibAdapter<TVertexData, TEdgeData> {
         const vCloner = vertexDataCloner !== undefined ? vertexDataCloner : (vertex: TVertexData) => vertex;
         const eCloner = edgeDataCloner !== undefined ? edgeDataCloner : (data: TEdgeData) => data;
-        return this.map(v => v, vCloner, eCloner);
+        return this.map(vCloner, eCloner);
     }
 
-    canContractEdge(from: string, to: string): boolean {
+    canContractEdge(from: TVertexData, to: TVertexData): boolean {
         return canContractEdge(this, from, to);
     }
 
-    contractEdge(from: string, to: string, vertexMerger?: BinaryOperator<string>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
+    contractEdge(from: TVertexData, to: TVertexData, vertexMerger?: BinaryOperator<TVertexData>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
         return contractEdge(this, from, to, vertexMerger, edgeMerger);
     }
 
-    isReachable(source: string, target: string): boolean {
+    isReachable(source: TVertexData, target: TVertexData): boolean {
         return this.detector.isReachable(this.adapter, source, target);
     }
 
-    getSuccessorsOf(vertex: string): Iterator<string> {
-        const edges = this.g.successors(vertex);
-        if (!edges) {
+    getSuccessorsOf(vertex: TVertexData): Iterator<TVertexData> {
+        const nodes = this.g.successors(vertex.gid);
+        if (!nodes) {
             return EmptyIterator;
         }
-        return createArrayIterator(edges);
+        return createMappedArrayIterator(nodes, node => this.g.node(node));
     }
 
-    getPredecessorsOf(vertex: string): Iterator<string> {
-        const edges = this.g.predecessors(vertex);
-        if (!edges) {
+    getPredecessorsOf(vertex: TVertexData): Iterator<TVertexData> {
+        const nodes = this.g.predecessors(vertex.gid);
+        if (!nodes) {
             return EmptyIterator;
         }
-        return createArrayIterator(edges);
+        return createMappedArrayIterator(nodes, node => this.g.node(node));
     }
 
-    hasEdge(from: string, to: string): boolean {
-        return this.g.hasEdge(from, to);
+    hasEdge(from: TVertexData, to: TVertexData): boolean {
+        return this.g.hasEdge(from.gid, to.gid);
     }
 
-    hasVertex(vertex: string): boolean {
-        return this.g.hasNode(vertex);
+    hasVertex(vertex: TVertexData): boolean {
+        return this.g.hasNode(vertex.gid);
     }
 
     getVertexCount(): number {
@@ -134,51 +129,47 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
         return this.g.edgeCount();
     }
 
-    getVertexData(vertex: string): RemoveFrom<TVertexData, VertexData> {
-        return this.g.node(vertex);
-    }
-
-    getEdgeDataFrom(vertex: string): Iterator<TEdgeData> {
-        const edges = this.g.outEdges(vertex);
+    getEdgeDataFrom(vertex: TVertexData): Iterator<TEdgeData> {
+        const edges = this.g.outEdges(vertex.gid);
         if (edges === undefined) {
             return EmptyIterator;
         }
-        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w)), data => data !== undefined);
+        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w) as TEdgeData), data => data !== undefined);
     }
 
-    getEdgeDataTo(vertex: string): Iterator<TEdgeData> {
-        const edges = this.g.inEdges(vertex);
+    getEdgeDataTo(vertex: TVertexData): Iterator<TEdgeData> {
+        const edges = this.g.inEdges(vertex.gid);
         if (edges === undefined) {
             return EmptyIterator;
         }
-        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w)), data => data !== undefined);
+        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w) as TEdgeData), data => data !== undefined);
     }
 
-    getEdgeData(from: string, to: string): TEdgeData {
-        return this.g.edge(from, to);
+    getEdgeData(from: TVertexData, to: TVertexData): TEdgeData {
+        return this.g.edge(from.gid, to.gid);
     }
 
-    setEdgeData(from: string, to: string, data: TEdgeData): boolean {
-        if (!this.g.hasEdge(from, to)) {
+    setEdgeData(from: TVertexData, to: TVertexData, data: TEdgeData): boolean {
+        if (!this.g.hasEdge(from.gid, to.gid)) {
             return false;
         }
-        this.g.setEdge(from, to, data);
+        this.g.setEdge(from.gid, to.gid, data);
         return true;
     }
 
-    getVertices(): Iterator<string> {
-        return createArrayIterator(this.g.nodes());
+    getVertices(): Iterator<TVertexData> {
+        return createMappedArrayIterator(this.g.nodes(), node => this.g.node(node) as TVertexData);
     }
 
-    getEdges(): Iterator<Pair<string>> {
-        return createMappedArrayIterator(this.g.edges(), edge => [edge.v, edge.w] as Pair<string>);
+    getEdges(): Iterator<Pair<TVertexData>> {
+        return createMappedArrayIterator(this.g.edges(), edge => [this.g.node(edge.v) as TVertexData, this.g.node(edge.w) as TVertexData] as Pair<TVertexData>);
     }
 
     supportsOrder(): boolean {
         return this.detector.supportsOrder();
     }
 
-    getOrder(vertex: string): number {
+    getOrder(vertex: TVertexData): number {
         return this.detector.getOrder(this.adapter, vertex);
     }
 
@@ -191,8 +182,8 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
         return this.g;
     }
 
-    canAddEdge(from: string, to: string): boolean {
-        if (this.g.hasEdge(from, to)) {
+    canAddEdge(from: TVertexData, to: TVertexData): boolean {
+        if (this.g.hasEdge(from.gid, to.gid)) {
             return false;
         }
         const didNotHaveFrom = this.addVertex(from);
@@ -211,9 +202,9 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
         return true;
     }
 
-    addEdge(from: string, to: string, data?: TEdgeData): boolean {
+    addEdge(from: TVertexData, to: TVertexData, data?: TEdgeData): boolean {
         // Check if edge exists already, if so, do nothing
-        if (this.g.hasEdge(from, to)) {
+        if (this.g.hasEdge(from.gid, to.gid)) {
             return false;
         }
         // Check if vertices exist, if not, add them
@@ -231,37 +222,41 @@ export class GraphlibAdapter<TVertexData extends VertexData = any, TEdgeData = a
             return false;
         }
         // Add the edge
-        this.g.setEdge(from, to, data);
+        this.g.setEdge(from.gid, to.gid, data);
         return true;
     }
 
-    addVertex(vertex: string, label?: CustomVertexData<TVertexData>): boolean {
-        if (this.hasVertex(vertex)) {
+    createVertex(data: RemoveFrom<TVertexData & GraphlibVertexData, VertexData>): TVertexData {
+        const vertexData = this.detector.createVertexData(this.adapter);
+        return assign(vertexData, data) as any as TVertexData;
+    }
+
+    addVertex(vertex: TVertexData): boolean {
+        if (this.hasVertex(vertex as any as TVertexData)) {
             return false;
         }
-        const vertexData = this.detector.createVertexData(this.adapter, vertex);
-        this.g.setNode(vertex, label !== undefined ? assign(vertexData, label) : vertexData);
+        this.g.setNode(vertex.gid, vertex);
         return true;
     }
 
-    deleteEdge(from: string, to: string, name?: string): boolean {
-        if (!this.g.hasEdge(from, to, name)) {
+    deleteEdge(from: TVertexData, to: TVertexData): boolean {
+        if (!this.g.hasEdge(from.gid, to.gid)) {
             return false;
         }
-        this.g.removeEdge(from, to);
+        this.g.removeEdge(from.gid, to.gid);
         return true;
     }
 
-    deleteVertex(vertex: string): boolean {
-        if (!this.g.hasNode(vertex)) {
+    deleteVertex(vertex: TVertexData): boolean {
+        if (!this.g.hasNode(vertex.gid)) {
             return false;
         }
         this.detector.onVertexDeletion(this.adapter, vertex);
-        this.g.removeNode(vertex);
+        this.g.removeNode(vertex.gid);
         return true;
     }
 
-    private getData(key: string): VertexData {
-        return this.g.node(key) as VertexData;
+    private getData(vertex: TVertexData): VertexData {
+        return this.g.node(vertex.gid);
     }
 }

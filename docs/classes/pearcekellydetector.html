@@ -963,14 +963,14 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-interface tsd-has-type-parameter">
 			<a href="../interfaces/graphlibadapteroptions.html" class="tsd-kind-icon">Graphlib<wbr>Adapter<wbr>Options</a>
 		</li>
+		<li class=" tsd-kind-interface">
+			<a href="../interfaces/graphlibvertexdata.html" class="tsd-kind-icon">Graphlib<wbr>Vertex<wbr>Data</a>
+		</li>
 		<li class=" tsd-kind-interface tsd-has-type-parameter">
 			<a href="../interfaces/multigraphadapteroptions.html" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Adapter<wbr>Options</a>
 		</li>
 		<li class=" tsd-kind-interface">
 			<a href="../interfaces/vertexdata.html" class="tsd-kind-icon">Vertex<wbr>Data</a>
-		</li>
-		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-			<a href="../globals.html#customvertexdata" class="tsd-kind-icon">Custom<wbr>Vertex<wbr>Data</a>
 		</li>
 		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 			<a href="../globals.html#graphfactory" class="tsd-kind-icon">Graph<wbr>Factory</a>
@@ -1103,7 +1103,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L69">PearceKellyDetector.ts:69</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L68">PearceKellyDetector.ts:68</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <a href="pearcekellydetector.html" class="tsd-signature-type">PearceKellyDetector</a></h4>
@@ -1124,7 +1124,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/cycledetector.html">CycleDetector</a>.<a href="../interfaces/cycledetector.html#canaddedge">canAddEdge</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L130">PearceKellyDetector.ts:130</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L122">PearceKellyDetector.ts:122</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1154,7 +1154,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/cycledetector.html">CycleDetector</a>.<a href="../interfaces/cycledetector.html#createvertexdata">createVertexData</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L116">PearceKellyDetector.ts:116</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L108">PearceKellyDetector.ts:108</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1181,7 +1181,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/cycledetector.html">CycleDetector</a>.<a href="../interfaces/cycledetector.html#getorder">getOrder</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L142">PearceKellyDetector.ts:142</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L134">PearceKellyDetector.ts:134</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1208,7 +1208,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/cycledetector.html">CycleDetector</a>.<a href="../interfaces/cycledetector.html#isreachable">isReachable</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L97">PearceKellyDetector.ts:97</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L89">PearceKellyDetector.ts:89</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1231,26 +1231,20 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 				<a name="map" class="tsd-anchor"></a>
 				<h3>map</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">map&lt;TClonedVertex&gt;<span class="tsd-signature-symbol">(</span>vertexMapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TClonedVertex</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="pearcekellydetector.html" class="tsd-signature-type">PearceKellyDetector</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertex</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">map&lt;TClonedVertex&gt;<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="pearcekellydetector.html" class="tsd-signature-type">PearceKellyDetector</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertex</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/cycledetector.html">CycleDetector</a>.<a href="../interfaces/cycledetector.html#map">map</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L79">PearceKellyDetector.ts:79</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L78">PearceKellyDetector.ts:78</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
 						<ul class="tsd-type-parameters">
 							<li>
 								<h4>TClonedVertex</h4>
-							</li>
-						</ul>
-						<h4 class="tsd-parameters-title">Parameters</h4>
-						<ul class="tsd-parameters">
-							<li>
-								<h5>vertexMapper: <span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TClonedVertex</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <a href="pearcekellydetector.html" class="tsd-signature-type">PearceKellyDetector</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertex</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1268,7 +1262,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/cycledetector.html">CycleDetector</a>.<a href="../interfaces/cycledetector.html#onvertexdeletion">onVertexDeletion</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L124">PearceKellyDetector.ts:124</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L116">PearceKellyDetector.ts:116</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1295,7 +1289,7 @@ A Dynamic Topological Sort Algorithm for Directed Acyclic Graphs
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/cycledetector.html">CycleDetector</a>.<a href="../interfaces/cycledetector.html#supportsorder">supportsOrder</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/6850ae7/src/PearceKellyDetector.ts#L138">PearceKellyDetector.ts:138</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/PearceKellyDetector.ts#L130">PearceKellyDetector.ts:130</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>

@@ -323,10 +323,10 @@ const DummyVertexData = {order: 0, visited: false};
  * @internal
  */
 export const DummyDetector = new class implements CycleDetector<any> {
-    map<TAnotherClonedVertex>(vertexMapper: TypedFunction<any, TAnotherClonedVertex>): CycleDetector<TAnotherClonedVertex> {
-        throw new Error("Map not supported for internally used clone detector. This is likely a bug.");
+    map<TAnotherClonedVertex>(): CycleDetector<TAnotherClonedVertex> {
+        return DummyDetector;
     }
-    createVertexData(g: GraphAdapter<any>, vertex: any): VertexData {
+    createVertexData(g: GraphAdapter<any>): VertexData {
         return DummyVertexData;
     }
     canAddEdge(g: GraphAdapter<any>, from: any, to: any): boolean {
