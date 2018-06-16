@@ -9,7 +9,7 @@ import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
 import { MultiGraphAdapter } from '../index';
 import { toArray } from '../src/util';
-import { assertOrder } from './util';
+import { assertOrder, edgeSorter2, edgeSorter3, edgeSorter4 } from './util';
 
 const log: "js" | "dot" | "glib" | boolean = false;
 
@@ -83,24 +83,6 @@ function randomDelete(mygraph: MultiGraphAdapter<any>, yourgraph: Graph, edges: 
     }
 
     assertOrder(mygraph);
-}
-
-function edgeSorter3(lhs: [any, any, any], rhs: [any,any,any]): number {
-    if (lhs[0] < rhs[0]) return -1;
-    if (lhs[0] > rhs[0]) return 1;
-    if (lhs[1] < rhs[1]) return -1;
-    if (lhs[1] > rhs[1]) return 1;
-    if (lhs[2] < rhs[2]) return -1;
-    if (lhs[2] > rhs[2]) return 1;
-    return 0;
-}
-
-function edgeSorter2(lhs: [any, any], rhs: [any, any]): number {
-    if (lhs[0] < rhs[0]) return -1;
-    if (lhs[0] > rhs[0]) return 1;
-    if (lhs[1] < rhs[1]) return -1;
-    if (lhs[1] > rhs[1]) return 1;
-    return 0;
 }
 
 @suite("Graph adapter - Multi")
@@ -348,6 +330,11 @@ export class MultiAdapterTest {
         g.deleteEdge(1, 2, "foo");
         expect(g.getLabeledEdgeCount()).to.equal(0);
         expect(toArray(g.getEdges()).length).to.equal(0);
+        g.addLabeledEdge(1, 2, "foo");
+        g.addLabeledEdge(1, 2, "bar");
+        expect(g.getLabeledEdgeCount()).to.equal(2);
+        g.deleteEdge(1, 2);
+        expect(g.getLabeledEdgeCount()).to.equal(0);
     }
 
     @test("should detect cycle as long as there is at least one edge between vertices")
@@ -389,6 +376,43 @@ export class MultiAdapterTest {
             [9, 4, "foobar"],
             [9, 4, "y"],
         ]);
+    }
+
+    @test("should return the data for the edge as well")
+    getEdgesWithData() {
+        const g = this.make();
+        expect(toArray(g.getLabeledEdgesWithData())).to.deep.equal([]);
+        g.addEdge(1, 2, "foo", "label12");
+        g.addEdge(1, 3, "bar", undefined);
+        g.addEdge(4, 5, undefined, "label45");
+
+        expect(toArray(g.getLabeledEdgesWithData()).sort(edgeSorter4)).to.deep.equal([
+            [1, 2, "foo", "label12"],
+            [1, 3, "bar", undefined],
+            [4, 5, undefined, "label45"]
+        ]);
+
+        g.deleteLabeledEdge(1, 3, undefined);
+
+        expect(toArray(g.getLabeledEdgesWithData()).sort(edgeSorter4)).to.deep.equal([
+            [1, 2, "foo", "label12"],
+            [4, 5, undefined, "label45"]
+        ]);
+
+        g.setEdgeData(1, 2, undefined, "label12");
+        g.setEdgeData(4, 5, "baz", "label45");
+        expect(toArray(g.getLabeledEdgesWithData()).sort(edgeSorter4)).to.deep.equal([
+            [1, 2, undefined, "label12"],
+            [4, 5, "baz", "label45"]
+        ]);
+        
+        g.deleteVertex(2);
+        expect(toArray(g.getLabeledEdgesWithData()).sort(edgeSorter4)).to.deep.equal([
+            [4, 5, "baz", "label45"]
+        ]);
+
+        g.deleteVertex(5);
+        expect(toArray(g.getLabeledEdgesWithData())).to.deep.equal([]);
     }
 
     @test("should pass random test")

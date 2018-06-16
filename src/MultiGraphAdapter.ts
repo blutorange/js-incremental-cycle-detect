@@ -1,4 +1,4 @@
-import { BinaryOperator, Maybe, Pair, Triple, TypedFunction, UnaryOperator } from "andross";
+import { BinaryOperator, Maybe, Pair, Quadruple, Triple, TypedFunction, UnaryOperator } from "andross";
 import { GenericGraphAdapter } from "./GenericGraphAdapter";
 import { ClonableAdapter, CommonAdapter, GraphFactory, MultiGraphAdapterOptions, MultiGraphEdgeData } from "./Header";
 import { createFilteredIterator, createFlatMappedIterator, createMappedIterator, EmptyIterator, takeFirst } from "./util";
@@ -228,14 +228,13 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
     }
 
     /**
-     * If no label is given, deletes all edges between the two given vertices.
-     * @see {@link CommonAdapter}#deleteEdge
+     * Deletes the edges with the given label, which may be `undefined`.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @param label Label of the edge.
+     * @return `true` iff an edge was deleted.
      */
-    deleteEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
-        if (label === undefined) {
-            this.edgeCount -= this.getEdgeCountBetween(from, to);
-            return this.g.deleteEdge(from, to);
-        }
+    deleteLabeledEdge(from: TVertex, to: TVertex, label: Maybe<TEdgeLabel>): boolean {
         const srcData = this.g.getEdgeData(from, to);
         if (srcData === undefined) {
             // No such edge.
@@ -250,6 +249,18 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
             this.g.deleteEdge(from, to);
         }
         return wasDeleted;
+    }
+
+    /**
+     * If label is `undefined`, deletes all edges between the two given vertices.
+     * @see {@link CommonAdapter}#deleteEdge
+     */
+    deleteEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
+        if (label === undefined) {
+            this.edgeCount -= this.getEdgeCountBetween(from, to);
+            return this.g.deleteEdge(from, to);
+        }
+        return this.deleteLabeledEdge(from, to, label);
     }
 
     deleteVertex(vertex: TVertex): boolean {
@@ -301,6 +312,25 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
 
     getEdges(): Iterator<Pair<TVertex>> {
         return this.g.getEdges();
+    }
+
+    getEdgesWithData(): Iterator<Triple<TVertex, TVertex, Maybe<TEdgeData>>> {
+        return createFlatMappedIterator(this.g.getEdgesWithData(), entry =>
+            createMappedIterator((entry[2] as MultiGraphEdgeData<TEdgeData, TEdgeLabel>).values(), data => [
+                entry[0],
+                entry[1],
+                data
+            ] as Triple<TVertex, TVertex, Maybe<TEdgeData>>));
+    }
+
+    getLabeledEdgesWithData(): Iterator<Quadruple<TVertex, TVertex, Maybe<TEdgeData>, Maybe<TEdgeLabel>>> {
+        return createFlatMappedIterator(this.g.getEdgesWithData(), entry =>
+            createMappedIterator((entry[2] as MultiGraphEdgeData<TEdgeData, TEdgeLabel>).entries(), subEntry => [
+                entry[0],
+                entry[1],
+                subEntry[1],
+                subEntry[0]
+            ] as Quadruple<TVertex, TVertex, Maybe<TEdgeData>, Maybe<TEdgeLabel>>));
     }
 
     /**

@@ -941,6 +941,9 @@ img { max-width: 100%; }
 					<a href="multigraphadapter.html#deleteedge" class="tsd-kind-icon">delete<wbr>Edge</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="multigraphadapter.html#deletelabelededge" class="tsd-kind-icon">delete<wbr>Labeled<wbr>Edge</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="multigraphadapter.html#deletevertex" class="tsd-kind-icon">delete<wbr>Vertex</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -965,10 +968,16 @@ img { max-width: 100%; }
 					<a href="multigraphadapter.html#getedges" class="tsd-kind-icon">get<wbr>Edges</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="multigraphadapter.html#getedgeswithdata" class="tsd-kind-icon">get<wbr>Edges<wbr>With<wbr>Data</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="multigraphadapter.html#getlabelededgecount" class="tsd-kind-icon">get<wbr>Labeled<wbr>Edge<wbr>Count</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="multigraphadapter.html#getlabelededges" class="tsd-kind-icon">get<wbr>Labeled<wbr>Edges</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="multigraphadapter.html#getlabelededgeswithdata" class="tsd-kind-icon">get<wbr>Labeled<wbr>Edges<wbr>With<wbr>Data</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="multigraphadapter.html#getorder" class="tsd-kind-icon">get<wbr>Order</a>
@@ -1213,6 +1222,7 @@ graph.addEdge(v3, v1) // true;
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#clone" class="tsd-kind-icon">clone</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#deleteedge" class="tsd-kind-icon">delete<wbr>Edge</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#deletelabelededge" class="tsd-kind-icon">delete<wbr>Labeled<wbr>Edge</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#deletevertex" class="tsd-kind-icon">delete<wbr>Vertex</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getedgecount" class="tsd-kind-icon">get<wbr>Edge<wbr>Count</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getedgecountbetween" class="tsd-kind-icon">get<wbr>Edge<wbr>Count<wbr>Between</a></li>
@@ -1221,8 +1231,10 @@ graph.addEdge(v3, v1) // true;
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getedgedatato" class="tsd-kind-icon">get<wbr>Edge<wbr>Data<wbr>To</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getedgelabels" class="tsd-kind-icon">get<wbr>Edge<wbr>Labels</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getedges" class="tsd-kind-icon">get<wbr>Edges</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getedgeswithdata" class="tsd-kind-icon">get<wbr>Edges<wbr>With<wbr>Data</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getlabelededgecount" class="tsd-kind-icon">get<wbr>Labeled<wbr>Edge<wbr>Count</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getlabelededges" class="tsd-kind-icon">get<wbr>Labeled<wbr>Edges</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getlabelededgeswithdata" class="tsd-kind-icon">get<wbr>Labeled<wbr>Edges<wbr>With<wbr>Data</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getorder" class="tsd-kind-icon">get<wbr>Order</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getpredecessorsof" class="tsd-kind-icon">get<wbr>Predecessors<wbr>Of</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="multigraphadapter.html#getsuccessorsof" class="tsd-kind-icon">get<wbr>Successors<wbr>Of</a></li>
@@ -1254,7 +1266,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L173">MultiGraphAdapter.ts:173</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L173">MultiGraphAdapter.ts:173</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1296,7 +1308,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L154">MultiGraphAdapter.ts:154</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L154">MultiGraphAdapter.ts:154</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1340,7 +1352,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#addvertex">addVertex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L192">MultiGraphAdapter.ts:192</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L192">MultiGraphAdapter.ts:192</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1363,7 +1375,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L158">MultiGraphAdapter.ts:158</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L158">MultiGraphAdapter.ts:158</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1393,7 +1405,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#cancontractedge">canContractEdge</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L226">MultiGraphAdapter.ts:226</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L226">MultiGraphAdapter.ts:226</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1419,7 +1431,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L142">MultiGraphAdapter.ts:142</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L142">MultiGraphAdapter.ts:142</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1449,7 +1461,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#contractedge">contractEdge</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L222">MultiGraphAdapter.ts:222</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L222">MultiGraphAdapter.ts:222</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1487,12 +1499,12 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L234">MultiGraphAdapter.ts:234</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L258">MultiGraphAdapter.ts:258</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
 							<div class="lead">
-								<p>If no label is given, deletes all edges between the two given vertices.</p>
+								<p>If label is <code>undefined</code>, deletes all edges between the two given vertices.</p>
 							</div>
 							<dl class="tsd-comment-tags">
 								<dt>see</dt>
@@ -1517,6 +1529,50 @@ graph.addEdge(v3, v1) // true;
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="deletelabelededge" class="tsd-anchor"></a>
+				<h3>delete<wbr>Labeled<wbr>Edge</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">delete<wbr>Labeled<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, label<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeLabel</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L237">MultiGraphAdapter.ts:237</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<div class="lead">
+								<p>Deletes the edges with the given label, which may be <code>undefined</code>.</p>
+							</div>
+						</div>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Source vertex of the edge.</p>
+								</div>
+							</li>
+							<li>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Target vertex of the edge.</p>
+								</div>
+							</li>
+							<li>
+								<h5>label: <span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeLabel</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<div class="tsd-comment tsd-typography">
+									<p>Label of the edge.</p>
+								</div>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						<p><code>true</code> iff an edge was deleted.</p>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="deletevertex" class="tsd-anchor"></a>
 				<h3>delete<wbr>Vertex</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1527,7 +1583,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#deletevertex">deleteVertex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L255">MultiGraphAdapter.ts:255</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L266">MultiGraphAdapter.ts:266</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1551,7 +1607,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedgecount">getEdgeCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L273">MultiGraphAdapter.ts:273</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L284">MultiGraphAdapter.ts:284</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1577,7 +1633,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L311">MultiGraphAdapter.ts:311</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L341">MultiGraphAdapter.ts:341</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1612,7 +1668,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L281">MultiGraphAdapter.ts:281</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L292">MultiGraphAdapter.ts:292</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1654,7 +1710,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L207">MultiGraphAdapter.ts:207</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L207">MultiGraphAdapter.ts:207</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1680,7 +1736,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L196">MultiGraphAdapter.ts:196</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L196">MultiGraphAdapter.ts:196</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1706,7 +1762,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L319">MultiGraphAdapter.ts:319</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L349">MultiGraphAdapter.ts:349</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1733,10 +1789,28 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedges">getEdges</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L302">MultiGraphAdapter.ts:302</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L313">MultiGraphAdapter.ts:313</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pair</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="getedgeswithdata" class="tsd-anchor"></a>
+				<h3>get<wbr>Edges<wbr>With<wbr>Data</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Edges<wbr>With<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Triple</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedgeswithdata">getEdgesWithData</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L317">MultiGraphAdapter.ts:317</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Triple</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1750,7 +1824,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L264">MultiGraphAdapter.ts:264</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L275">MultiGraphAdapter.ts:275</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1774,7 +1848,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L333">MultiGraphAdapter.ts:333</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L363">MultiGraphAdapter.ts:363</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1790,6 +1864,23 @@ graph.addEdge(v3, v1) // true;
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="getlabelededgeswithdata" class="tsd-anchor"></a>
+				<h3>get<wbr>Labeled<wbr>Edges<wbr>With<wbr>Data</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Labeled<wbr>Edges<wbr>With<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Quadruple</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeLabel</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L326">MultiGraphAdapter.ts:326</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Quadruple</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeLabel</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 				<a name="getorder" class="tsd-anchor"></a>
 				<h3>get<wbr>Order</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -1800,7 +1891,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getorder">getOrder</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L374">MultiGraphAdapter.ts:374</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L404">MultiGraphAdapter.ts:404</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1823,7 +1914,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L349">MultiGraphAdapter.ts:349</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L379">MultiGraphAdapter.ts:379</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1860,7 +1951,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L364">MultiGraphAdapter.ts:364</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L394">MultiGraphAdapter.ts:394</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1898,7 +1989,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertexcount">getVertexCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L382">MultiGraphAdapter.ts:382</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L412">MultiGraphAdapter.ts:412</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1916,7 +2007,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertices">getVertices</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L386">MultiGraphAdapter.ts:386</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L416">MultiGraphAdapter.ts:416</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1933,7 +2024,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L396">MultiGraphAdapter.ts:396</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L426">MultiGraphAdapter.ts:426</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1974,7 +2065,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L410">MultiGraphAdapter.ts:410</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L440">MultiGraphAdapter.ts:440</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2020,7 +2111,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#hasvertex">hasVertex</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L416">MultiGraphAdapter.ts:416</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L446">MultiGraphAdapter.ts:446</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2044,7 +2135,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#isreachable">isReachable</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L420">MultiGraphAdapter.ts:420</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L450">MultiGraphAdapter.ts:450</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2071,7 +2162,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/clonableadapter.html">ClonableAdapter</a>.<a href="../interfaces/clonableadapter.html#map">map</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L138">MultiGraphAdapter.ts:138</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L138">MultiGraphAdapter.ts:138</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -2106,7 +2197,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L124">MultiGraphAdapter.ts:124</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L124">MultiGraphAdapter.ts:124</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2174,7 +2265,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L293">MultiGraphAdapter.ts:293</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L304">MultiGraphAdapter.ts:304</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -2217,7 +2308,7 @@ graph.addEdge(v3, v1) // true;
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#supportsorder">supportsOrder</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L378">MultiGraphAdapter.ts:378</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L408">MultiGraphAdapter.ts:408</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -2234,7 +2325,7 @@ graph.addEdge(v3, v1) // true;
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/MultiGraphAdapter.ts#L94">MultiGraphAdapter.ts:94</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/MultiGraphAdapter.ts#L94">MultiGraphAdapter.ts:94</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">

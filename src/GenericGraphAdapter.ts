@@ -1,4 +1,4 @@
-import { BinaryOperator, Pair, TypedFunction, UnaryOperator } from "andross";
+import { BinaryOperator, Maybe, Pair, Triple, TypedFunction, UnaryOperator } from "andross";
 import { ClonableAdapter, CommonAdapter, CycleDetector, GenericGraphAdapterOptions, GraphAdapter, VertexData } from "./Header";
 import { PearceKellyDetector } from "./PearceKellyDetector";
 import { canContractEdge, contractEdge, createFilteredIterator, createFlatMappedIterator, createMappedIterator, DummyDetector, EmptyIterator } from "./util";
@@ -189,6 +189,12 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
     getEdges(): Iterator<Pair<TVertex>> {
         return createFlatMappedIterator(this.forward.entries(), entry =>
             createMappedIterator(entry[1].keys(), key => [entry[0], key] as Pair<TVertex>));
+    }
+
+    getEdgesWithData(): Iterator<Triple<TVertex, TVertex, Maybe<TEdgeData>>> {
+        return createFlatMappedIterator(this.forward.entries(), entry =>
+            createMappedIterator(entry[1].entries(), subEntry =>
+                [entry[0], subEntry[0], subEntry[1]] as Triple<TVertex, TVertex, Maybe<TEdgeData>>));
     }
 
     getEdgeCount(): number {

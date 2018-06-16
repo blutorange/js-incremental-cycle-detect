@@ -959,6 +959,9 @@ img { max-width: 100%; }
 					<a href="graphlibadapter.html#getedges" class="tsd-kind-icon">get<wbr>Edges</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
+					<a href="graphlibadapter.html#getedgeswithdata" class="tsd-kind-icon">get<wbr>Edges<wbr>With<wbr>Data</a>
+				</li>
+				<li class=" tsd-kind-method tsd-parent-kind-class">
 					<a href="graphlibadapter.html#getorder" class="tsd-kind-icon">get<wbr>Order</a>
 				</li>
 				<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -1098,7 +1101,7 @@ img { max-width: 100%; }
 			<h3>Type parameters</h3>
 			<ul class="tsd-type-parameters">
 				<li>
-					<h4>TVertexData<span class="tsd-signature-symbol">: </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a></h4>
+					<h4>TVertex<span class="tsd-signature-symbol">: </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a></h4>
 				</li>
 				<li>
 					<h4>TEdgeData</h4>
@@ -1116,7 +1119,7 @@ img { max-width: 100%; }
 		<section class="tsd-panel">
 			<h3>Implements</h3>
 			<ul class="tsd-hierarchy">
-				<li><a href="../interfaces/commonadapter.html" class="tsd-signature-type">CommonAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<li><a href="../interfaces/commonadapter.html" class="tsd-signature-type">CommonAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
 			</ul>
 		</section>
 		<section class="tsd-panel-group tsd-index-group">
@@ -1146,6 +1149,7 @@ img { max-width: 100%; }
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#getedgedatafrom" class="tsd-kind-icon">get<wbr>Edge<wbr>Data<wbr>From</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#getedgedatato" class="tsd-kind-icon">get<wbr>Edge<wbr>Data<wbr>To</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#getedges" class="tsd-kind-icon">get<wbr>Edges</a></li>
+							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#getedgeswithdata" class="tsd-kind-icon">get<wbr>Edges<wbr>With<wbr>Data</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#getorder" class="tsd-kind-icon">get<wbr>Order</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#getpredecessorsof" class="tsd-kind-icon">get<wbr>Predecessors<wbr>Of</a></li>
 							<li class="tsd-kind-method tsd-parent-kind-class"><a href="graphlibadapter.html#getsuccessorsof" class="tsd-kind-icon">get<wbr>Successors<wbr>Of</a></li>
@@ -1171,7 +1175,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">graph<span class="tsd-signature-symbol">:</span> </div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L176">GraphlibAdapter.ts:176</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L191">GraphlibAdapter.ts:191</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1189,22 +1193,22 @@ img { max-width: 100%; }
 				<a name="addedge" class="tsd-anchor"></a>
 				<h3>add<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, data<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TEdgeData</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, data<span class="tsd-signature-symbol">?: </span><a href="" class="tsd-signature-type">TEdgeData</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L200">GraphlibAdapter.ts:200</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L215">GraphlibAdapter.ts:215</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <a href="" class="tsd-signature-type">TEdgeData</a></h5>
@@ -1218,19 +1222,19 @@ img { max-width: 100%; }
 				<a name="addvertex" class="tsd-anchor"></a>
 				<h3>add<wbr>Vertex</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">add<wbr>Vertex<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">add<wbr>Vertex<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L229">GraphlibAdapter.ts:229</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L244">GraphlibAdapter.ts:244</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1241,22 +1245,22 @@ img { max-width: 100%; }
 				<a name="canaddedge" class="tsd-anchor"></a>
 				<h3>can<wbr>Add<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">can<wbr>Add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">can<wbr>Add<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L180">GraphlibAdapter.ts:180</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L195">GraphlibAdapter.ts:195</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1267,22 +1271,22 @@ img { max-width: 100%; }
 				<a name="cancontractedge" class="tsd-anchor"></a>
 				<h3>can<wbr>Contract<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">can<wbr>Contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">can<wbr>Contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L83">GraphlibAdapter.ts:83</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L88">GraphlibAdapter.ts:88</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1293,13 +1297,13 @@ img { max-width: 100%; }
 				<a name="clone" class="tsd-anchor"></a>
 				<h3>clone</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">clone<span class="tsd-signature-symbol">(</span>vertexDataCloner<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">UnaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span>, edgeDataCloner<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">UnaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">clone<span class="tsd-signature-symbol">(</span>vertexDataCloner<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">UnaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span>, edgeDataCloner<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">UnaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L77">GraphlibAdapter.ts:77</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L82">GraphlibAdapter.ts:82</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1316,7 +1320,7 @@ img { max-width: 100%; }
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> vertexDataCloner: <span class="tsd-signature-type">UnaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> vertexDataCloner: <span class="tsd-signature-type">UnaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								<div class="tsd-comment tsd-typography">
 									<p>Clone function that takes a vertex and returns a copy of it.</p>
 								</div>
@@ -1328,7 +1332,7 @@ img { max-width: 100%; }
 								</div>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						<p>A copy of this graph.</p>
 					</li>
 				</ul>
@@ -1337,25 +1341,25 @@ img { max-width: 100%; }
 				<a name="contractedge" class="tsd-anchor"></a>
 				<h3>contract<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, vertexMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span>, edgeMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">contract<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, vertexMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span>, edgeMerger<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L87">GraphlibAdapter.ts:87</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L92">GraphlibAdapter.ts:92</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5><span class="tsd-flag ts-flagOptional">Optional</span> vertexMerger: <span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5><span class="tsd-flag ts-flagOptional">Optional</span> vertexMerger: <span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li>
 								<h5><span class="tsd-flag ts-flagOptional">Optional</span> edgeMerger: <span class="tsd-signature-type">BinaryOperator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h5>
@@ -1369,22 +1373,22 @@ img { max-width: 100%; }
 				<a name="createvertex" class="tsd-anchor"></a>
 				<h3>create<wbr>Vertex</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">create<wbr>Vertex<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RemoveFrom</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/vertexdata.html" class="tsd-signature-type">VertexData</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span></li>
+					<li class="tsd-signature tsd-kind-icon">create<wbr>Vertex<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">RemoveFrom</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/vertexdata.html" class="tsd-signature-type">VertexData</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L224">GraphlibAdapter.ts:224</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L239">GraphlibAdapter.ts:239</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>data: <span class="tsd-signature-type">RemoveFrom</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/vertexdata.html" class="tsd-signature-type">VertexData</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>data: <span class="tsd-signature-type">RemoveFrom</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol"> &amp; </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/vertexdata.html" class="tsd-signature-type">VertexData</a><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TVertexData</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TVertex</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1392,22 +1396,22 @@ img { max-width: 100%; }
 				<a name="deleteedge" class="tsd-anchor"></a>
 				<h3>delete<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">delete<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">delete<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L237">GraphlibAdapter.ts:237</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L252">GraphlibAdapter.ts:252</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1418,19 +1422,19 @@ img { max-width: 100%; }
 				<a name="deletevertex" class="tsd-anchor"></a>
 				<h3>delete<wbr>Vertex</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">delete<wbr>Vertex<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">delete<wbr>Vertex<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L245">GraphlibAdapter.ts:245</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L260">GraphlibAdapter.ts:260</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1448,7 +1452,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedgecount">getEdgeCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L123">GraphlibAdapter.ts:123</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L128">GraphlibAdapter.ts:128</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1459,22 +1463,22 @@ img { max-width: 100%; }
 				<a name="getedgedata" class="tsd-anchor"></a>
 				<h3>get<wbr>Edge<wbr>Data</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeData</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeData</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L143">GraphlibAdapter.ts:143</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L148">GraphlibAdapter.ts:148</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TEdgeData</span></h4>
@@ -1485,19 +1489,19 @@ img { max-width: 100%; }
 				<a name="getedgedatafrom" class="tsd-anchor"></a>
 				<h3>get<wbr>Edge<wbr>Data<wbr>From</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Data<wbr>From<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Data<wbr>From<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L127">GraphlibAdapter.ts:127</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L132">GraphlibAdapter.ts:132</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1508,19 +1512,19 @@ img { max-width: 100%; }
 				<a name="getedgedatato" class="tsd-anchor"></a>
 				<h3>get<wbr>Edge<wbr>Data<wbr>To</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Data<wbr>To<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Edge<wbr>Data<wbr>To<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L135">GraphlibAdapter.ts:135</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L140">GraphlibAdapter.ts:140</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1531,17 +1535,35 @@ img { max-width: 100%; }
 				<a name="getedges" class="tsd-anchor"></a>
 				<h3>get<wbr>Edges</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Edges<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pair</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Edges<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pair</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedges">getEdges</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L159">GraphlibAdapter.ts:159</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L164">GraphlibAdapter.ts:164</a></li>
 							</ul>
 						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pair</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Pair</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+				<a name="getedgeswithdata" class="tsd-anchor"></a>
+				<h3>get<wbr>Edges<wbr>With<wbr>Data</h3>
+				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Edges<wbr>With<wbr>Data<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Triple</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getedgeswithdata">getEdgesWithData</a></p>
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L169">GraphlibAdapter.ts:169</a></li>
+							</ul>
+						</aside>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Triple</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1549,19 +1571,19 @@ img { max-width: 100%; }
 				<a name="getorder" class="tsd-anchor"></a>
 				<h3>get<wbr>Order</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Order<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Order<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L167">GraphlibAdapter.ts:167</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L182">GraphlibAdapter.ts:182</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1572,22 +1594,22 @@ img { max-width: 100%; }
 				<a name="getpredecessorsof" class="tsd-anchor"></a>
 				<h3>get<wbr>Predecessors<wbr>Of</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Predecessors<wbr>Of<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Predecessors<wbr>Of<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L103">GraphlibAdapter.ts:103</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L108">GraphlibAdapter.ts:108</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1595,22 +1617,22 @@ img { max-width: 100%; }
 				<a name="getsuccessorsof" class="tsd-anchor"></a>
 				<h3>get<wbr>Successors<wbr>Of</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Successors<wbr>Of<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Successors<wbr>Of<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L95">GraphlibAdapter.ts:95</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L100">GraphlibAdapter.ts:100</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1625,7 +1647,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertexcount">getVertexCount</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L119">GraphlibAdapter.ts:119</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L124">GraphlibAdapter.ts:124</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -1636,17 +1658,17 @@ img { max-width: 100%; }
 				<a name="getvertices" class="tsd-anchor"></a>
 				<h3>get<wbr>Vertices</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">get<wbr>Vertices<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">get<wbr>Vertices<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#getvertices">getVertices</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L155">GraphlibAdapter.ts:155</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L160">GraphlibAdapter.ts:160</a></li>
 							</ul>
 						</aside>
-						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -1654,22 +1676,22 @@ img { max-width: 100%; }
 				<a name="hasedge" class="tsd-anchor"></a>
 				<h3>has<wbr>Edge</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">has<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">has<wbr>Edge<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L111">GraphlibAdapter.ts:111</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L116">GraphlibAdapter.ts:116</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1680,19 +1702,19 @@ img { max-width: 100%; }
 				<a name="hasvertex" class="tsd-anchor"></a>
 				<h3>has<wbr>Vertex</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">has<wbr>Vertex<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">has<wbr>Vertex<span class="tsd-signature-symbol">(</span>vertex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L115">GraphlibAdapter.ts:115</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L120">GraphlibAdapter.ts:120</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertex: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>vertex: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1703,22 +1725,22 @@ img { max-width: 100%; }
 				<a name="isreachable" class="tsd-anchor"></a>
 				<h3>is<wbr>Reachable</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">is<wbr>Reachable<span class="tsd-signature-symbol">(</span>source<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">is<wbr>Reachable<span class="tsd-signature-symbol">(</span>source<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L91">GraphlibAdapter.ts:91</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L96">GraphlibAdapter.ts:96</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>source: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>source: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>target: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>target: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 						</ul>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1729,19 +1751,19 @@ img { max-width: 100%; }
 				<a name="map" class="tsd-anchor"></a>
 				<h3>map</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-					<li class="tsd-signature tsd-kind-icon">map&lt;TClonedVertexData, TClonedEdgeData&gt;<span class="tsd-signature-symbol">(</span>vertexDataMapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PartialFor</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">keyof GraphlibVertexData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, edgeDataMapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TClonedEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TClonedEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">map&lt;TClonedVertexData, TClonedEdgeData&gt;<span class="tsd-signature-symbol">(</span>vertexDataMapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PartialFor</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">keyof GraphlibVertexData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, edgeDataMapper<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TClonedEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TClonedEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L36">GraphlibAdapter.ts:36</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L41">GraphlibAdapter.ts:41</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
 						<ul class="tsd-type-parameters">
 							<li>
-								<h4>TClonedVertexData<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span></h4>
+								<h4>TClonedVertexData<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span></h4>
 							</li>
 							<li>
 								<h4>TClonedEdgeData</h4>
@@ -1750,7 +1772,7 @@ img { max-width: 100%; }
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>vertexDataMapper: <span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PartialFor</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">keyof GraphlibVertexData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>vertexDataMapper: <span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">PartialFor</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TClonedVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">keyof GraphlibVertexData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 							<li>
 								<h5>edgeDataMapper: <span class="tsd-signature-type">TypedFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TClonedEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h5>
@@ -1764,22 +1786,22 @@ img { max-width: 100%; }
 				<a name="setedgedata" class="tsd-anchor"></a>
 				<h3>set<wbr>Edge<wbr>Data</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-					<li class="tsd-signature tsd-kind-icon">set<wbr>Edge<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertexData</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					<li class="tsd-signature tsd-kind-icon">set<wbr>Edge<wbr>Data<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TVertex</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L147">GraphlibAdapter.ts:147</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L152">GraphlibAdapter.ts:152</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>from: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>from: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
-								<h5>to: <span class="tsd-signature-type">TVertexData</span></h5>
+								<h5>to: <span class="tsd-signature-type">TVertex</span></h5>
 							</li>
 							<li>
 								<h5>data: <span class="tsd-signature-type">TEdgeData</span></h5>
@@ -1800,7 +1822,7 @@ img { max-width: 100%; }
 						<aside class="tsd-sources">
 							<p>Implementation of <a href="../interfaces/commonadapter.html">CommonAdapter</a>.<a href="../interfaces/commonadapter.html#supportsorder">supportsOrder</a></p>
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L163">GraphlibAdapter.ts:163</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L178">GraphlibAdapter.ts:178</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -1811,19 +1833,19 @@ img { max-width: 100%; }
 				<a name="create" class="tsd-anchor"></a>
 				<h3><span class="tsd-flag ts-flagStatic">Static</span> create</h3>
 				<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-static">
-					<li class="tsd-signature tsd-kind-icon">create&lt;TVertexData, TEdgeData&gt;<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PartialExcept</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/graphlibadapteroptions.html" class="tsd-signature-type">GraphlibAdapterOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">"graphlib"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">create&lt;TVertex, TEdgeData&gt;<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">PartialExcept</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/graphlibadapteroptions.html" class="tsd-signature-type">GraphlibAdapterOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">"graphlib"</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/799e4aa/src/GraphlibAdapter.ts#L14">GraphlibAdapter.ts:14</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/GraphlibAdapter.ts#L19">GraphlibAdapter.ts:19</a></li>
 							</ul>
 						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
 						<ul class="tsd-type-parameters">
 							<li>
-								<h4>TVertexData<span class="tsd-signature-symbol">: </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a></h4>
+								<h4>TVertex<span class="tsd-signature-symbol">: </span><a href="../interfaces/graphlibvertexdata.html" class="tsd-signature-type">GraphlibVertexData</a></h4>
 							</li>
 							<li>
 								<h4>TEdgeData</h4>
@@ -1832,10 +1854,10 @@ img { max-width: 100%; }
 						<h4 class="tsd-parameters-title">Parameters</h4>
 						<ul class="tsd-parameters">
 							<li>
-								<h5>options: <span class="tsd-signature-type">PartialExcept</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/graphlibadapteroptions.html" class="tsd-signature-type">GraphlibAdapterOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">"graphlib"</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								<h5>options: <span class="tsd-signature-type">PartialExcept</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/graphlibadapteroptions.html" class="tsd-signature-type">GraphlibAdapterOptions</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">"graphlib"</span><span class="tsd-signature-symbol">&gt;</span></h5>
 							</li>
 						</ul>
-						<h4 class="tsd-returns-title">Returns <a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertexData</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						<h4 class="tsd-returns-title">Returns <a href="graphlibadapter.html" class="tsd-signature-type">GraphlibAdapter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>

@@ -1,5 +1,6 @@
+/* tslint:disable */
 import { expect } from "chai";
-import { CommonAdapter } from "../src/Header";
+import { ClonableAdapter, CommonAdapter } from "../src/Header";
 
 export function assertOrder(mygraph: CommonAdapter<any>) {
     /*
@@ -29,4 +30,38 @@ export function assertOrder(mygraph: CommonAdapter<any>) {
         expect(mygraph.getVertexCount()).to.equal(0);
     }
     */
+}
+
+export function edgeSorter4(lhs: [any, any, any, any], rhs: [any, any, any, any]): number {
+    if (lhs[0] < rhs[0]) return -1;
+    if (lhs[0] > rhs[0]) return 1;
+    if (lhs[1] < rhs[1]) return -1;
+    if (lhs[1] > rhs[1]) return 1;
+    if (lhs[2] < rhs[2]) return -1;
+    if (lhs[2] > rhs[2]) return 1;
+    if (lhs[3] < rhs[3]) return -1;
+    if (lhs[3] > rhs[3]) return 1;
+    return 0;
+}
+
+export function edgeSorter3(lhs: [any, any, any], rhs: [any,any,any]): number {
+    if (lhs[0] < rhs[0]) return -1;
+    if (lhs[0] > rhs[0]) return 1;
+    if (lhs[1] < rhs[1]) return -1;
+    if (lhs[1] > rhs[1]) return 1;
+    if (lhs[2] < rhs[2]) return -1;
+    if (lhs[2] > rhs[2]) return 1;
+    return 0;
+}
+
+export function edgeSorter2(lhs: [any, any], rhs: [any, any]): number {
+    if (lhs[0] < rhs[0]) return -1;
+    if (lhs[0] > rhs[0]) return 1;
+    if (lhs[1] < rhs[1]) return -1;
+    if (lhs[1] > rhs[1]) return 1;
+    return 0;
+}
+
+export function isClonable(g: any): g is ClonableAdapter<any, any> {
+    return "clone" in g;
 }

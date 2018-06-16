@@ -1,14 +1,16 @@
 /* tslint:disable */
 
-import { BinaryOperator, Pair } from 'andross';
+import { BinaryOperator, Pair, Triple, TypedFunction } from 'andross';
 import { expect } from "chai";
 import { alg, Graph } from "graphlib";
 import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
-import { CommonAdapter, GraphlibAdapter } from "../index";
+import { CommonAdapter } from "../index";
 import { GenericGraphAdapter } from '../src/GenericGraphAdapter';
+import { GraphlibAdapter } from '../src/GraphlibAdapter';
+import { ClonableAdapter, VertexData } from '../src/Header';
 import { MultiGraphAdapter } from '../src/MultiGraphAdapter';
-import { assertOrder } from './util';
+import { assertOrder, edgeSorter2, edgeSorter3, isClonable } from './util';
 
 const log = false;
 
@@ -24,17 +26,26 @@ export const hack: any[] = [];
 
 [
     {
+        enabled: true,
         clazz: GenericGraphAdapter,
+        clonable: true,
+        vertexCloner: (v: any) => v,
         make: () => GenericGraphAdapter.create(),
         convert: (g: CommonAdapter, vertex: number) => vertex
     },
     {
+        enabled: true,
         clazz: MultiGraphAdapter,
+        clonable: true,
+        vertexCloner: (v: any) => v,
         make: () => MultiGraphAdapter.create(),
         convert: (g: CommonAdapter, vertex: number) => vertex,
     },
     {
+        enabled: true,
         clazz: GraphlibAdapter,
+        clonable: true,
+        vertexCloner: (v: VertexData) => ({...v}),
         make: () => GraphlibAdapter.create({graphlib: Graph}),
         convert: (g: CommonAdapter, vertex: number) => (g as GraphlibAdapter).createVertex({gid: String(vertex)})
     },
@@ -59,11 +70,6 @@ export const hack: any[] = [];
         return v !== undefined;
     }
 
-    function edgeSorter(lhs: number[], rhs: number[]): number {
-        if (lhs[0] === rhs[0]) return lhs[1] - rhs[1];
-        return lhs[0] - rhs[0];
-    }
-
     function vertexIdentifier(v: any): any {
         if (typeof v === "object") {
             if (v.__id === undefined) v.__id = id++;
@@ -74,10 +80,19 @@ export const hack: any[] = [];
 
     function expectEdgesToEqual(g: CommonAdapter<any>, should: Pair<number>[]) {
         const is = toArray(g.getEdges());
-        const ismapped = is.map(v => [vertexIdentifier(v[0]), vertexIdentifier(v[1])]);
-        const shouldmapped = should.map(v => [vertexIdentifier(get(g, v[0])), vertexIdentifier(get(g, v[1]))]);
-        ismapped.sort(edgeSorter);
-        shouldmapped.sort(edgeSorter);
+        const ismapped = is.map(v => [vertexIdentifier(v[0]), vertexIdentifier(v[1])] as Pair<any>);
+        const shouldmapped = should.map(v => [vertexIdentifier(get(g, v[0])), vertexIdentifier(get(g, v[1]))] as Pair<any>);
+        ismapped.sort(edgeSorter2);
+        shouldmapped.sort(edgeSorter2);
+        expect(ismapped).to.deep.equal(shouldmapped);
+    }
+
+    function expectEdgesWithDataToEqual(g: CommonAdapter<any>, should: Triple<number, number, any>[]) {
+        const is = toArray(g.getEdgesWithData());
+        const ismapped = is.map(v => [vertexIdentifier(v[0]), vertexIdentifier(v[1]), v[2]] as Triple<any>);
+        const shouldmapped = should.map(v => [vertexIdentifier(get(g, v[0])), vertexIdentifier(get(g, v[1])), v[2]] as Triple<any>);
+        ismapped.sort(edgeSorter3);
+        shouldmapped.sort(edgeSorter3);
         expect(ismapped).to.deep.equal(shouldmapped);
     }
 
@@ -134,7 +149,6 @@ export const hack: any[] = [];
         expect(is).to.deep.equal(should);
     }
 
-
     function addVertex(g: CommonAdapter<any>, vertex: number): boolean {
         const v = get(g, vertex);
         return g.addVertex(v);
@@ -189,11 +203,36 @@ export const hack: any[] = [];
         return g.isReachable(get(g, from), get(g, to));
     }
 
-    function make<TVertex = any>(): CommonAdapter<any> {
+    function make<TVertex = any>(): CommonAdapter<TVertex> {
         const g = adapter.make();
         r.set(g, new Map<number, any>());
         return g;
     }
+
+    function clone(g: CommonAdapter<any, any> & ClonableAdapter<any, any>): CommonAdapter<any, any> & ClonableAdapter<any, any> {
+        toArray(g.getVertices()).forEach(v => vertexIdentifier(v));
+        const clone = g.clone(adapter.vertexCloner);
+        let map = r.get(g);
+        if (map === undefined) r.set(g, map = new Map<number, any>());
+        const clonedMap = new Map<number, any>();
+        map.forEach((value, key) => clonedMap.set(key, value));
+        r.set(clone, clonedMap);
+        return clone;
+    }
+
+    function map(
+            g: CommonAdapter<any, any> & ClonableAdapter<any, any>,
+            edgeDataMapper: TypedFunction<any, any>,
+        ): CommonAdapter<any, any> & ClonableAdapter<any, any> {
+        toArray(g.getVertices()).forEach(v => vertexIdentifier(v));
+        const clone = g.map(adapter.vertexCloner, edgeDataMapper);
+        let map = r.get(g);
+        if (map === undefined) r.set(g, map = new Map<number, any>());
+        const clonedMap = new Map<number, any>();
+        map.forEach((value, key) => clonedMap.set(key, value));
+        r.set(clone, clonedMap);
+        return clone;
+        }
 
     function getEdgeData(g: CommonAdapter<any>, from: number, to: number): any {
         return g.getEdgeData(get(g, from), get(g, to));
@@ -249,14 +288,78 @@ export const hack: any[] = [];
         assertOrder(mygraph);
     }
 
+    @suite("EnabledCheck with adapter " + (adapter.clazz ? adapter.clazz.name : "none"))
+    class EnabledCheck {
+        @test("should have the test enabled")
+        enabled() {
+            expect(adapter.enabled).to.be.true;
+        }
+    }
+
+    if (!adapter.enabled) return;
+
     @suite("PkTest with adapter " + (adapter.clazz ? adapter.clazz.name : "none"))
     class PkTest {
-
         @test("should have created the instance")
         basic() {
             if (adapter.clazz) {
                 expect(make()).to.be.an.instanceof(adapter.clazz);
             }
+        }
+
+        @test("should clone the entire graph")
+        clone() {
+            const g = make();
+            expect(isClonable(g)).to.equal(adapter.clonable);
+            if (!isClonable(g)) return;
+            const data23 = {foo: 23};
+            const data45 = {bar: 45};
+            addVertex(g, 1);
+            addVertex(g, 2);
+            addEdge(g, 2, 3, data23);
+            addEdge(g, 4, 5, data45);
+            const c = clone(g);
+            expectVerticesToEqual(c, [1,2,3,4,5]);
+            expectEdgesWithDataToEqual(c, [
+                [2, 3, data23],
+                [4, 5, data45],
+            ]);
+            data23.foo = 42;
+            data45.bar = 42;
+            expectEdgesWithDataToEqual(c, [
+                [2, 3, data23],
+                [4, 5, data45],
+            ]);
+        }
+
+        @test("should map-clone the entire graph")
+        map() {
+            const g = make();
+            expect(isClonable(g)).to.equal(adapter.clonable);
+            if (!isClonable(g)) return;
+            const data23 = {foo: 23};
+            const data45 = {foo: 45};
+            addVertex(g, 1);
+            addVertex(g, 2);
+            addEdge(g, 2, 3, data23);
+            addEdge(g, 4, 5, data45);
+            const c = map(g, e => {
+                return {
+                    foo: e.foo * 2,
+                    bar: e.foo,
+                };
+            });
+            expectVerticesToEqual(c, [1,2,3,4,5]);
+            expectEdgesWithDataToEqual(c, [
+                [2, 3, {foo: 46, bar: 23}],
+                [4, 5, {foo: 90, bar: 45}],
+            ]);
+            data23.foo = 42;
+            data45.foo = 42;
+            expectEdgesWithDataToEqual(c, [
+                [2, 3, {foo: 46, bar: 23}],
+                [4, 5, {foo: 90, bar: 45}],
+            ]);
         }
 
         @test("should return the edge data from the vertex")
@@ -472,6 +575,25 @@ export const hack: any[] = [];
             expect(hasEdge(g, 3, 4)).to.be.false;
             expect(hasEdge(g, 3, 6)).to.be.true;
             expect(hasEdge(g, 5, 6)).to.be.true;
+        }
+
+        @test("should return the data for the edge as well")
+        getEdgesWithData() {
+            const g = make();
+            expectEdgesWithDataToEqual(g, []);
+            addEdge(g, 1, 2, "foo");
+            addEdge(g, 1, 3, "bar");
+            addEdge(g, 4, 5);
+            expectEdgesWithDataToEqual(g, [[1, 2, "foo"], [1, 3, "bar"], [4, 5, undefined]]);
+            deleteEdge(g, 1, 3);
+            expectEdgesWithDataToEqual(g, [[1, 2, "foo"], [4, 5, undefined]]);
+            setEdgeData(g, 4, 5, "baz");
+            setEdgeData(g, 1, 2, undefined);
+            expectEdgesWithDataToEqual(g, [[1, 2, undefined], [4, 5, "baz"]]);
+            deleteVertex(g, 2);
+            expectEdgesWithDataToEqual(g, [[4, 5, "baz"]]);
+            deleteVertex(g, 5);
+            expectEdgesWithDataToEqual(g, []);
         }
 
         @test("should detect cycles when inserting edges in increasing order")
@@ -922,5 +1044,5 @@ export const hack: any[] = [];
         }
     }
 
-    hack.push(PkTest);
+    hack.push(PkTest, EnabledCheck);
 });

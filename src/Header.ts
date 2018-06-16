@@ -1,4 +1,4 @@
-import { BinaryOperator, Maybe, Omit, Pair, TypedFunction, UnaryOperator } from "andross";
+import { BinaryOperator, Maybe, Omit, Pair, Triple, TypedFunction, UnaryOperator } from "andross";
 import { Graph, GraphOptions } from "graphlib";
 
 /**
@@ -272,7 +272,11 @@ export interface CommonAdapter<TVertex = any, TEdgeData = any> {
     /**
      * @return All edges in this graph.
      */
-    getEdges(): Iterator<Pair<TVertex, TVertex>>;
+    getEdges(): Iterator<Pair<TVertex>>;
+    /**
+     * @return All edges with their data in this graph.
+     */
+    getEdgesWithData(): Iterator<Triple<TVertex, TVertex, Maybe<TEdgeData>>>;
     /**
      * Returns the topological order of the vertex, if supported.
      * @param g The graph data structure to be used.
