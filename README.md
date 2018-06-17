@@ -142,7 +142,8 @@ I use the following keywords:
 From newest to oldest:
 
 # 0.3.0
-- Added a `getEdgesWithData` method when both the edge and its data are needed.
+- Added `Algorithm#findWeaklyConnectedComponents`.
+- Added a `getEdgesWithData`, `getEdgesWithDataFrom`, `getEdgesWithDataTo` method when both the edge and its data are needed.
 - Added a `clone` and `map` method for creating a copy of a graph.
 - Changed the graph adapter implementations so that instances are now created with the factory method `create` instead of the constructor. This was necessary for the `clone` method.
 

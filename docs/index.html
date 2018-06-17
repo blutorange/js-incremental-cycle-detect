@@ -907,6 +907,9 @@ img { max-width: 100%; }
 </header>
 <nav class="tsd-navigation secondary">
 	<ul>
+		<li class=" tsd-kind-class">
+			<a href="classes/algorithm.html" class="tsd-kind-icon">Algorithm</a>
+		</li>
 		<li class=" tsd-kind-class tsd-has-type-parameter">
 			<a href="classes/genericgraphadapter.html" class="tsd-kind-icon">Generic<wbr>Graph<wbr>Adapter</a>
 		</li>
@@ -946,6 +949,9 @@ img { max-width: 100%; }
 		<li class=" tsd-kind-interface">
 			<a href="interfaces/vertexdata.html" class="tsd-kind-icon">Vertex<wbr>Data</a>
 		</li>
+		<li class=" tsd-kind-interface tsd-has-type-parameter">
+			<a href="interfaces/weaklyconnectedcomponent.html" class="tsd-kind-icon">Weakly<wbr>Connected<wbr>Component</a>
+		</li>
 		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 			<a href="globals.html#graphfactory" class="tsd-kind-icon">Graph<wbr>Factory</a>
 		</li>
@@ -969,6 +975,9 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="globals.html#createarrayiterator" class="tsd-kind-icon">create<wbr>Array<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
+			<a href="globals.html#createchainediterator" class="tsd-kind-icon">create<wbr>Chained<wbr>Iterator</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a>
@@ -1100,7 +1109,8 @@ npm run <span class="hljs-built_in">test</span>
 			<p>From newest to oldest:</p>
 			<h1 id="0-3-0">0.3.0</h1>
 			<ul>
-				<li>Added a <code>getEdgesWithData</code> method when both the edge and its data are needed.</li>
+				<li>Added <code>Algorithm#findWeaklyConnectedComponents</code>.</li>
+				<li>Added a <code>getEdgesWithData</code>, <code>getEdgesWithDataFrom</code>, <code>getEdgesWithDataTo</code> method when both the edge and its data are needed.</li>
 				<li>Added a <code>clone</code> and <code>map</code> method for creating a copy of a graph.</li>
 				<li>Changed the graph adapter implementations so that instances are now created with the factory method <code>create</code> instead of the constructor. This was necessary for the <code>clone</code> method.</li>
 			</ul>
@@ -1137,6 +1147,7 @@ npm run <span class="hljs-built_in">test</span>
 					<section class="tsd-index-section ">
 						<h3>Classes</h3>
 						<ul class="tsd-index-list">
+							<li class="tsd-kind-class"><a href="classes/algorithm.html" class="tsd-kind-icon">Algorithm</a></li>
 							<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/genericgraphadapter.html" class="tsd-kind-icon">Generic<wbr>Graph<wbr>Adapter</a></li>
 							<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/graphlibadapter.html" class="tsd-kind-icon">Graphlib<wbr>Adapter</a></li>
 							<li class="tsd-kind-class tsd-has-type-parameter"><a href="classes/multigraphadapter.html" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Adapter</a></li>
@@ -1155,6 +1166,7 @@ npm run <span class="hljs-built_in">test</span>
 							<li class="tsd-kind-interface"><a href="interfaces/graphlibvertexdata.html" class="tsd-kind-icon">Graphlib<wbr>Vertex<wbr>Data</a></li>
 							<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/multigraphadapteroptions.html" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Adapter<wbr>Options</a></li>
 							<li class="tsd-kind-interface"><a href="interfaces/vertexdata.html" class="tsd-kind-icon">Vertex<wbr>Data</a></li>
+							<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/weaklyconnectedcomponent.html" class="tsd-kind-icon">Weakly<wbr>Connected<wbr>Component</a></li>
 						</ul>
 					</section>
 					<section class="tsd-index-section ">
@@ -1178,6 +1190,7 @@ npm run <span class="hljs-built_in">test</span>
 							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a></li>
 							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a></li>
 							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createarrayiterator" class="tsd-kind-icon">create<wbr>Array<wbr>Iterator</a></li>
+							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createchainediterator" class="tsd-kind-icon">create<wbr>Chained<wbr>Iterator</a></li>
 							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createfilterediterator" class="tsd-kind-icon">create<wbr>Filtered<wbr>Iterator</a></li>
 							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createflatmappediterator" class="tsd-kind-icon">create<wbr>Flat<wbr>Mapped<wbr>Iterator</a></li>
 							<li class="tsd-kind-function tsd-has-type-parameter tsd-is-private"><a href="globals.html#createmappedarrayiterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Array<wbr>Iterator</a></li>
@@ -1204,7 +1217,7 @@ npm run <span class="hljs-built_in">test</span>
 				<div class="tsd-signature tsd-kind-icon">Graph<wbr>Factory<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">function</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/Header.ts#L37">Header.ts:37</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/Header.ts#L37">Header.ts:37</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1239,7 +1252,7 @@ npm run <span class="hljs-built_in">test</span>
 				<div class="tsd-signature tsd-kind-icon">Graphlib<wbr>Constructor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/Header.ts#L52">Header.ts:52</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/Header.ts#L52">Header.ts:52</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-type-declaration">
@@ -1254,7 +1267,7 @@ npm run <span class="hljs-built_in">test</span>
 				<div class="tsd-signature tsd-kind-icon">Multi<wbr>Graph<wbr>Edge<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeLabel</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEdgeData</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/Header.ts#L34">Header.ts:34</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/Header.ts#L34">Header.ts:34</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1274,7 +1287,7 @@ npm run <span class="hljs-built_in">test</span>
 				<div class="tsd-signature tsd-kind-icon">Dummy<wbr>Detector<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">(Anonymous class)</span><span class="tsd-signature-symbol"> =&nbsp;new class implements CycleDetector&lt;any&gt; {map&lt;TAnotherClonedVertex&gt;(): CycleDetector&lt;TAnotherClonedVertex&gt; {return DummyDetector;}createVertexData(g: GraphAdapter&lt;any&gt;): VertexData {return DummyVertexData;}canAddEdge(g: GraphAdapter&lt;any&gt;, from: any, to: any): boolean {return true;}isReachable(g: GraphAdapter&lt;any&gt;, source: any, target: any): boolean {return false;}onVertexDeletion(g: GraphAdapter&lt;any&gt;, vertex: any): void {/***/}supportsOrder(): boolean {return false;}// and target, merging both vertices results in a cycle.getOrder(g: GraphAdapter&lt;any&gt;, vertex: any): number {return -1;}}()</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L325">util.ts:325</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L357">util.ts:357</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1297,7 +1310,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L41">util.ts:41</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L45">util.ts:45</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1341,7 +1354,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L177">util.ts:177</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L209">util.ts:209</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1385,7 +1398,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L201">util.ts:201</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L233">util.ts:233</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1435,7 +1448,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L132">util.ts:132</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L164">util.ts:164</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1464,16 +1477,16 @@ npm run <span class="hljs-built_in">test</span>
 				</ul>
 			</section>
 			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
-				<a name="createfilterediterator" class="tsd-anchor"></a>
-				<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Filtered<wbr>Iterator</h3>
+				<a name="createchainediterator" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Chained<wbr>Iterator</h3>
 				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
-					<li class="tsd-signature tsd-kind-icon">create<wbr>Filtered<wbr>Iterator&lt;T&gt;<span class="tsd-signature-symbol">(</span>it<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, filter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">create<wbr>Chained<wbr>Iterator&lt;T&gt;<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>its<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 				<ul class="tsd-descriptions">
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L85">util.ts:85</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L107">util.ts:107</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1482,6 +1495,62 @@ npm run <span class="hljs-built_in">test</span>
 								<dd></dd>
 							</dl>
 						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>T</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>its: <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter tsd-is-private">
+				<a name="createfilterediterator" class="tsd-anchor"></a>
+				<h3><span class="tsd-flag ts-flagPrivate">Private</span> create<wbr>Filtered<wbr>Iterator</h3>
+				<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter tsd-is-private">
+					<li class="tsd-signature tsd-kind-icon">create<wbr>Filtered<wbr>Iterator&lt;T&gt;<span class="tsd-signature-symbol">(</span>it<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+					<li class="tsd-signature tsd-kind-icon">create<wbr>Filtered<wbr>Iterator&lt;T&gt;<span class="tsd-signature-symbol">(</span>it<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>, filter<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L89">util.ts:89</a></li>
+							</ul>
+						</aside>
+						<div class="tsd-comment tsd-typography">
+							<dl class="tsd-comment-tags">
+								<dt>internal</dt>
+								<dd></dd>
+							</dl>
+						</div>
+						<h4 class="tsd-type-parameters-title">Type parameters</h4>
+						<ul class="tsd-type-parameters">
+							<li>
+								<h4>T</h4>
+							</li>
+						</ul>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>it: <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Maybe</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+							</li>
+						</ul>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h4>
+					</li>
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L90">util.ts:90</a></li>
+							</ul>
+						</aside>
 						<h4 class="tsd-type-parameters-title">Type parameters</h4>
 						<ul class="tsd-type-parameters">
 							<li>
@@ -1511,7 +1580,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L105">util.ts:105</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L137">util.ts:137</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1562,7 +1631,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L155">util.ts:155</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L187">util.ts:187</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1603,7 +1672,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L66">util.ts:66</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L70">util.ts:70</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1644,7 +1713,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L8">util.ts:8</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L12">util.ts:12</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1682,7 +1751,7 @@ npm run <span class="hljs-built_in">test</span>
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L54">util.ts:54</a></li>
+								<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L58">util.ts:58</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -1716,7 +1785,7 @@ npm run <span class="hljs-built_in">test</span>
 				<div class="tsd-signature tsd-kind-icon">Done<wbr>Iterator<wbr>Result<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L16">util.ts:16</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L20">util.ts:20</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1731,7 +1800,7 @@ npm run <span class="hljs-built_in">test</span>
 					<div class="tsd-signature tsd-kind-icon">done<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L17">util.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L21">util.ts:21</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -1741,7 +1810,7 @@ npm run <span class="hljs-built_in">test</span>
 					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> =&nbsp;undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L18">util.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L22">util.ts:22</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -1752,7 +1821,7 @@ npm run <span class="hljs-built_in">test</span>
 				<div class="tsd-signature tsd-kind-icon">Empty<wbr>Iterator<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L25">util.ts:25</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L29">util.ts:29</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1771,7 +1840,7 @@ npm run <span class="hljs-built_in">test</span>
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/c70e739/src/util.ts#L26">util.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/08de510/src/util.ts#L30">util.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">IteratorResult</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>

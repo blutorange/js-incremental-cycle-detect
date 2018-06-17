@@ -1,6 +1,10 @@
 import { BinaryOperator, Maybe, Pair, Predicate, TypedFunction } from "andross";
 import { CommonAdapter, CycleDetector, GraphAdapter, VertexData } from "./Header";
 
+function filterUndefined<T>(value: Maybe<T>): boolean {
+    return value !== undefined;
+}
+
 /**
  * @internal
  * @private
@@ -82,7 +86,9 @@ export function createMappedIterator<T, V>(it: Iterator<T>, mapper: TypedFunctio
  * @internal
  * @private
  */
-export function createFilteredIterator<T>(it: Iterator<T>, filter: Predicate<T>): Iterator<T> {
+export function createFilteredIterator<T>(it: Iterator<Maybe<T>>): Iterator<T>;
+export function createFilteredIterator<T>(it: Iterator<T>, filter: Predicate<T>): Iterator<T>;
+export function createFilteredIterator<T>(it: Iterator<T>, filter: Predicate<T> = filterUndefined): Iterator<T> {
     return {
         next(): IteratorResult<T> {
             let res = it.next();
@@ -90,6 +96,32 @@ export function createFilteredIterator<T>(it: Iterator<T>, filter: Predicate<T>)
                 res = it.next();
             }
             return res;
+        }
+    };
+}
+
+/**
+ * @internal
+ * @private
+ */
+export function createChainedIterator<T>(...its: Iterator<T>[]): Iterator<T> {
+    let i = -1;
+    let currentIterator: Iterator<T> = EmptyIterator;
+    return {
+        next(): IteratorResult<T> {
+            let currentNext = currentIterator.next();
+            while (currentNext.done) {
+                const it = its[++i];
+                if (it === undefined) {
+                    return DoneIteratorResult;
+                }
+                currentIterator = it;
+                currentNext = currentIterator.next();
+            }
+            return {
+                done: false,
+                value: currentNext.value,
+            };
         }
     };
 }

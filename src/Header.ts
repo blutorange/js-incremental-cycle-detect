@@ -270,6 +270,20 @@ export interface CommonAdapter<TVertex = any, TEdgeData = any> {
      */
     getEdgeDataFrom(vertex: TVertex): Iterator<TEdgeData>;
     /**
+     * Returns the successors with the edge data of all edges that point to (end at)
+     * the given vertex.
+     * @param vertex Vertex where the edge ends.
+     * @return Successors and edge data for the edges (*, vertex)
+     */
+    getEdgesWithDataTo(vertex: TVertex): Iterator<Pair<TVertex, Maybe<TEdgeData>>>;
+    /**
+     * Returns the predecessor with the edge data of all edges that point from (start at)
+     * the given vertex.
+     * @param vertex Vertex where the edge starts.
+     * @return Predecessors and edge data for the edges (vertex, *)
+     */
+    getEdgesWithDataFrom(vertex: TVertex): Iterator<Pair<TVertex, Maybe<TEdgeData>>>;
+    /**
      * @return All edges in this graph.
      */
     getEdges(): Iterator<Pair<TVertex>>;
@@ -331,4 +345,16 @@ export interface CommonAdapter<TVertex = any, TEdgeData = any> {
      * @return `true` iff the algorithm in use supports querying a vertex's topological order.
      */
     supportsOrder(): boolean;
+}
+
+/**
+ * Interface for the result of finding weakly connected components.
+ * @typeparam TVertex Type of the vertices.
+ * @typeparam TEdgeData Type of the data associated with the edges.
+ */
+export interface WeaklyConnectedComponent<TVertex, TEdgeData> {
+    /** All edges of the weakly connected component. */
+    edges: Triple<TVertex, TVertex, Maybe<TEdgeData>>[];
+    /** All vertices of the weakly connected component. */
+    vertices: TVertex[];
 }

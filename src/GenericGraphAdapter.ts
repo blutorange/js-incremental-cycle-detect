@@ -159,12 +159,28 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         return map.get(to);
     }
 
+    getEdgesWithDataTo(vertex: TVertex): Iterator<Pair<TVertex, Maybe<TEdgeData>>> {
+        const b = this.backward.get(vertex);
+        if (b === undefined) {
+            return EmptyIterator;
+        }
+        return b.entries();
+    }
+
     getEdgeDataTo(vertex: TVertex): Iterator<TEdgeData> {
         const b = this.backward.get(vertex);
         if (b === undefined) {
             return EmptyIterator;
         }
-        return createFilteredIterator(b.values(), data => data !== undefined) as Iterator<TEdgeData>;
+        return createFilteredIterator(b.values());
+    }
+
+    getEdgesWithDataFrom(vertex: TVertex): Iterator<Pair<TVertex, Maybe<TEdgeData>>> {
+        const f = this.forward.get(vertex);
+        if (f === undefined) {
+            return EmptyIterator;
+        }
+        return f.entries();
     }
 
     getEdgeDataFrom(vertex: TVertex): Iterator<TEdgeData> {
@@ -172,7 +188,7 @@ export class GenericGraphAdapter<TVertex = any, TEdgeData = any> implements Comm
         if (f === undefined) {
             return EmptyIterator;
         }
-        return createFilteredIterator(f.values(), data => data !== undefined) as Iterator<TEdgeData>;
+        return createFilteredIterator(f.values());
     }
 
     setEdgeData(from: TVertex, to: TVertex, data: TEdgeData | undefined): boolean {

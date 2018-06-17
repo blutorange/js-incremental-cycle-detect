@@ -129,12 +129,34 @@ export class GraphlibAdapter<TVertex extends GraphlibVertexData = any, TEdgeData
         return this.g.edgeCount();
     }
 
+    getEdgesWithDataFrom(vertex: TVertex): Iterator<Pair<TVertex, Maybe<TEdgeData>>> {
+        const edges = this.g.outEdges(vertex.gid);
+        if (edges === undefined) {
+            return EmptyIterator;
+        }
+        return createMappedArrayIterator(edges, edge => [
+            this.g.node(edge.w) as TVertex,
+            this.g.edge(edge.v, edge.w) as Maybe<TEdgeData>
+        ] as Pair<TVertex, Maybe<TEdgeData>>);
+    }
+
     getEdgeDataFrom(vertex: TVertex): Iterator<TEdgeData> {
         const edges = this.g.outEdges(vertex.gid);
         if (edges === undefined) {
             return EmptyIterator;
         }
-        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w) as TEdgeData), data => data !== undefined);
+        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w) as Maybe<TEdgeData>));
+    }
+
+    getEdgesWithDataTo(vertex: TVertex): Iterator<Pair<TVertex, Maybe<TEdgeData>>> {
+        const edges = this.g.inEdges(vertex.gid);
+        if (edges === undefined) {
+            return EmptyIterator;
+        }
+        return createMappedArrayIterator(edges, edge => [
+            this.g.node(edge.v) as TVertex,
+            this.g.edge(edge.v, edge.w) as Maybe<TEdgeData>
+        ] as Pair<TVertex, Maybe<TEdgeData>>);
     }
 
     getEdgeDataTo(vertex: TVertex): Iterator<TEdgeData> {
@@ -142,7 +164,7 @@ export class GraphlibAdapter<TVertex extends GraphlibVertexData = any, TEdgeData
         if (edges === undefined) {
             return EmptyIterator;
         }
-        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w) as TEdgeData), data => data !== undefined);
+        return createFilteredIterator(createMappedArrayIterator(edges, edge => this.g.edge(edge.v, edge.w) as Maybe<TEdgeData>));
     }
 
     getEdgeData(from: TVertex, to: TVertex): TEdgeData {
