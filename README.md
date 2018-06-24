@@ -82,13 +82,17 @@ Tests done with [benchmark](https://www.npmjs.com/package/benchmark). Compared w
 sort with `graphlib` (via `alg.isAcyclic(graph)`) each time a vertex is added. Measured time is the time that
 was needed for creating a new graph and adding `n` vertices, checking for a cycle after each edge insertion.
 
-> **incremental-cycle-detection**(insert 15000, RandomSource) x **36.43** ops/sec ±0.79% (58 runs sampled)
+> **incremental-cycle-detection**(insert 15000, RandomSource) x **38.21** ops/sec ±1.78% (47 runs sampled)
 >
-> **incremental-cycle-detection-multi**(insert 15000, RandomSource) x **25.71** ops/sec ±10.12% (45 runs sampled)
+> **incremental-cycle-detection-multi**(insert 15000, RandomSource) x **31.58** ops/sec ±2.77% (52 runs sampled)
 >
-> **graphlib**(insert15000, RandomSource) x **0.17** ops/sec ±1.63% (5 runs sampled)
+> **graphlib**(insert15000, RandomSource) x **0.19** ops/sec ±1.83% (5 runs sampled)
 
-(200 vertices, 15000 random (same for each algorithm) edges added)
+(node v8.9.4, graph with 200 vertices, 15000 random -- same for each algorithm -- edges added)
+
+Also, even inserting into graphlib without checking for cycles seems to be slower:
+
+> **graphlib-no-cycle-check** (insert 15000, RandomSource) x **21.59** ops/sec ±6.63% (37 runs sampled)
 
 # JavaScript environment
 

@@ -1,6 +1,6 @@
 {
   "name": "incremental-cycle-detect",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Keeps a directed acyclic graph topologically sorted each time you add an edge or vertex to check for cycles.",
   "main": "dist/index.js",
   "scripts": {

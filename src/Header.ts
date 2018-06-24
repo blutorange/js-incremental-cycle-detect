@@ -179,6 +179,11 @@ export interface ClonableAdapter<TVertex, TEdgeData> {
      * changes to this graph are not reflected in the returned copy, and
      * vice-versa.
      *
+     * __The given mapper functions must be reversible, ie. they must map
+     * each vertex/edge datum to another one, and each mapped vertex/edge datum
+     * may occur only at most once. It is an error to map two different vertices
+     * to the same vertex.__
+     *
      * @param vertexMapper Mapping function that takes a vertex and returns a mapped copy of it.
      * @param edgeDataMapper Mapping function that takes an edge datum and returns a mapped copy of it.
      * @return A mapped copy of this graph.

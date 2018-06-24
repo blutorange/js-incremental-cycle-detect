@@ -96,6 +96,24 @@ export const hack: any[] = [];
         expect(ismapped).to.deep.equal(shouldmapped);
     }
 
+    function expectEdgesWithDataFromToEqual(g: CommonAdapter<any>, vertex: number, should: Pair<number, any>[]) {
+        const is = toArray(g.getEdgesWithDataFrom(get(g, vertex)));
+        const ismapped = is.map(v => [vertexIdentifier(v[0]), v[1]] as Pair<any>);
+        const shouldmapped = should.map(v => [vertexIdentifier(get(g, v[0])), v[1]] as Pair<any>);
+        ismapped.sort(edgeSorter2);
+        shouldmapped.sort(edgeSorter2);
+        expect(ismapped).to.deep.equal(shouldmapped);
+    }
+
+    function expectEdgesWithDataToToEqual(g: CommonAdapter<any>, vertex: number, should: Pair<number, any>[]) {
+        const is = toArray(g.getEdgesWithDataTo(get(g, vertex)));
+        const ismapped = is.map(v => [vertexIdentifier(v[0]), v[1]] as Pair<any>);
+        const shouldmapped = should.map(v => [vertexIdentifier(get(g, v[0])), v[1]] as Pair<any>);
+        ismapped.sort(edgeSorter2);
+        shouldmapped.sort(edgeSorter2);
+        expect(ismapped).to.deep.equal(shouldmapped);
+    }
+
     function expectVerticesToEqual(g: CommonAdapter<any>, should: number[]) {
         const is = toArray(g.getVertices());
         const ismapped = is.map(v => vertexIdentifier(v));
@@ -596,23 +614,76 @@ export const hack: any[] = [];
             expectEdgesWithDataToEqual(g, []);
         }
 
+        @test("should return edges with data starting at a certain vertex")
+        getEdgesWithDataFrom() {
+            const g = make();
+            expectEdgesWithDataFromToEqual(g, 0, []);
+            addEdge(g, 1, 2, "foo");
+            addEdge(g, 1, 3, "bar");
+            addEdge(g, 4, 5);
+            expectEdgesWithDataFromToEqual(g, 1, [[2, "foo"], [3, "bar"]]);
+            expectEdgesWithDataFromToEqual(g, 4, [[5, undefined]]);
+            deleteEdge(g, 1, 3);
+            expectEdgesWithDataFromToEqual(g, 1, [[2, "foo"]]);
+            expectEdgesWithDataFromToEqual(g, 4, [[5, undefined]]);
+            setEdgeData(g, 4, 5, "baz");
+            setEdgeData(g, 1, 2, undefined);
+            expectEdgesWithDataFromToEqual(g, 1, [[2, undefined]]);
+            expectEdgesWithDataFromToEqual(g, 4, [[5, "baz"]]);
+            deleteVertex(g, 2);
+            expectEdgesWithDataFromToEqual(g, 1, []);
+            expectEdgesWithDataFromToEqual(g, 4, [[5, "baz"]]);
+            deleteVertex(g, 5);
+            expectEdgesWithDataFromToEqual(g, 1, []);
+            expectEdgesWithDataFromToEqual(g, 4, []);
+        }
+
+        @test("should return edges with data ending at a certain vertex")
+        getEdgesWithDataTo() {
+            const g = make();
+            expectEdgesWithDataToToEqual(g, 0, []);
+            addEdge(g, 2, 1, "foo");
+            addEdge(g, 3, 1, "bar");
+            addEdge(g, 5, 4);
+            expectEdgesWithDataToToEqual(g, 1, [[2, "foo"], [3, "bar"]]);
+            expectEdgesWithDataToToEqual(g, 4, [[5, undefined]]);
+            deleteEdge(g, 3, 1);
+            expectEdgesWithDataToToEqual(g, 1, [[2, "foo"]]);
+            expectEdgesWithDataToToEqual(g, 4, [[5, undefined]]);
+            setEdgeData(g, 5, 4, "baz");
+            setEdgeData(g, 2, 1, undefined);
+            expectEdgesWithDataToToEqual(g, 1, [[2, undefined]]);
+            expectEdgesWithDataToToEqual(g, 4, [[5, "baz"]]);
+            deleteVertex(g, 2);
+            expectEdgesWithDataToToEqual(g, 1, []);
+            expectEdgesWithDataToToEqual(g, 4, [[5, "baz"]]);
+            deleteVertex(g, 5);
+            expectEdgesWithDataToToEqual(g, 1, []);
+            expectEdgesWithDataToToEqual(g, 4, []);
+        }
+
         @test("should detect cycles when inserting edges in increasing order")
         detectCycleIncreasingInsert() {
             const g = make();
             expect(canAddEdge(g, 0, 1)).to.be.true;
             expect(addEdge(g, 0, 1)).to.be.true;
+            expect(canAddEdge(g, 0, 1)).to.be.false;
 
             expect(canAddEdge(g, 1, 2)).to.be.true;
             expect(addEdge(g, 1, 2)).to.be.true;
+            expect(canAddEdge(g, 1, 2)).to.be.false;
 
             expect(canAddEdge(g, 2, 3)).to.be.true;
             expect(addEdge(g, 2, 3)).to.be.true;
+            expect(canAddEdge(g, 2, 3)).to.be.false;
 
             expect(canAddEdge(g, 3, 4)).to.be.true;
             expect(addEdge(g, 3, 4)).to.be.true;
+            expect(canAddEdge(g, 3, 4)).to.be.false;
 
             expect(canAddEdge(g, 4, 5)).to.be.true;
             expect(addEdge(g, 4, 5)).to.be.true;
+            expect(canAddEdge(g, 4, 5)).to.be.false;
 
             expect(canAddEdge(g, 5, 4)).to.be.false;
             expect(addEdge(g, 5, 4)).to.be.false;

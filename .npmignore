@@ -6,10 +6,11 @@ test
 perf
 coverage
 
-tsconfig.json
-tslint.json
 /src
 /index.ts
+.babelrc
+tsconfig.json
+tslint.json
 *.tgz
 *.zip
 sandbox.ts

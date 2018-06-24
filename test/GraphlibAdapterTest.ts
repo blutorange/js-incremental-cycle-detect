@@ -5,8 +5,7 @@
 import { expect } from "chai";
 import { Graph } from 'graphlib';
 import { suite, test } from "mocha-typescript";
-import { GraphlibAdapter } from '../index';
-import { GraphlibVertexData } from '../src/Header';
+import { GraphlibAdapter, GraphlibVertexData } from '../index';
 
 /*
 interface Vertex extends GraphlibVertexData {
