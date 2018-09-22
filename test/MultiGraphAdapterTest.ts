@@ -9,7 +9,7 @@ import { suite, test, timeout } from "mocha-typescript";
 import * as Random from "random-js";
 import { MultiGraphAdapter } from '../index';
 import { toArray } from '../src/util';
-import { assertOrder, edgeSorter2, edgeSorter3, edgeSorter4 } from './util';
+import { assertOrder, edgeSorter2, edgeSorter3, edgeSorter4, iteratorLength } from './util';
 
 const log: "js" | "dot" | "glib" | boolean = false;
 
@@ -135,13 +135,51 @@ export class MultiAdapterTest {
 
     @test("cannot contract edge if it results in a self cycle")
     contractEdgeSelfCycle() {
+        // With two vertices
+        const g1 = this.make();
+        g1.addEdge(1, 2, "foo");
+        expect(g1.canContractEdge(1 ,2)).to.be.true;
+        g1.addEdge(1, 2, "bar");
+        expect(g1.canContractEdge(1 ,2)).to.be.false;
+  
+        // With three vertices
+        const g = this.make();
+        g.addEdge(1, 2, undefined, "12");
+        g.addEdge(2, 3, undefined, "23");
+        g.addEdge(1, 3, undefined, "13");
+        expect(g.canContractEdge(2, 3)).to.be.true;
+        g.contractEdge(2, 3);
+        expect(g.hasVertex(1)).to.be.true;
+        expect(g.hasVertex(2)).to.be.true;
+        expect(g.hasVertex(3)).to.be.false;
+        expect(g.canContractEdge(1, 2)).to.be.false;
+    }
+
+    @test("contracting an edge removes it from the graph")
+    contractingEdgeRemovesIt() {
         const g = this.make();
         g.addEdge(1, 2);
         g.addEdge(2, 3);
         g.addEdge(1, 3);
-        expect(g.canContractEdge(2 ,3)).to.be.true;
-        g.contractEdge(2, 3);
-        expect(g.canContractEdge(1 ,2)).to.be.false;
+        expect(g.getLabeledEdgeCount()).to.equal(3);
+        g.contractEdge(1, 3);
+        expect(g.getLabeledEdgeCount()).to.equal(2);
+        expect(iteratorLength(g.getLabeledEdges())).to.equal(2);
+    }
+
+    @test("deleting a vertex decreases the labelled edge count")
+    deletingVertexDecreasesLabelledEdgeCount() {
+        const g = this.make();
+        g.addEdge(1, 2, 12, "12");
+        g.addEdge(2, 3, 23, "23");
+        g.addEdge(1, 3, 13, "13");
+        expect(g.getEdgeCount()).to.equal(3);        
+        expect(g.getLabeledEdgeCount()).to.equal(3);
+        expect(iteratorLength(g.getLabeledEdges())).to.equal(3);
+        g.deleteVertex(1);
+        expect(g.getEdgeCount()).to.equal(1);
+        expect(g.getLabeledEdgeCount()).to.equal(1);
+        expect(iteratorLength(g.getLabeledEdges())).to.equal(1);
     }
 
     @test("should support order")
