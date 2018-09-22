@@ -32,6 +32,14 @@ export function assertOrder(mygraph: CommonAdapter<any>) {
     */
 }
 
+export function iteratorLength(iterator: Iterator<unknown>): number {
+    let length = 0;
+    for (let next = iterator.next(); !next.done; next = iterator.next()) {
+        ++length;
+    }
+    return length;
+}
+
 export function edgeSorter4(lhs: [any, any, any, any], rhs: [any, any, any, any]): number {
     if (lhs[0] < rhs[0]) return -1;
     if (lhs[0] > rhs[0]) return 1;

@@ -94,7 +94,7 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
     static create<TVertex = any, TEdgeData = any, TEdgeLabel = any>(options: Partial<MultiGraphAdapterOptions<TVertex, TEdgeData, TEdgeLabel>> = {}): MultiGraphAdapter<TVertex, TEdgeData, TEdgeLabel> {
         const graphFactory = options.graphFactory || GenericGraphAdapter.create;
         const mapConstructor = options.mapConstructor || Map;
-        return new MultiGraphAdapter(graphFactory, 0, mapConstructor);
+        return new MultiGraphAdapter<TVertex, TEdgeData, TEdgeLabel>(graphFactory, 0, mapConstructor);
     }
 
     private g: CommonAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>> & ClonableAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>>;
