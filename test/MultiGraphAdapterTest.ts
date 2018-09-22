@@ -166,7 +166,7 @@ export class MultiAdapterTest {
         // With two vertices
         const g1 = this.make();
         g1.addEdge(1, 2, undefined, "foo");
-        expect(g1.canContractLabeledEdge(1 ,2)).to.be.true;
+        expect(g1.canContractLabeledEdge(1 ,2, "foo")).to.be.true;
         g1.addEdge(1, 2, undefined, "bar");
         expect(g1.getLabeledEdgeCount()).to.equal(2);
         expect(g1.canContractLabeledEdge(1 ,2, "foo")).to.be.false;

@@ -298,8 +298,10 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
      */
     contractLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
         // Cannot contract edge if there is no edge or more than one edge between the given vertices.
-        const data = this.g.getEdgeData(from, to);
-        if (data === undefined || data.size !== 1) {
+        if (this.getEdgeCountBetween(from, to) !== 1) {
+            return false;
+        }
+        if (!this.hasLabeledEdge(from, to, label)) {
             return false;
         }
         // Only one edge betweem the given vertices, do a normal edge contraction.
@@ -316,7 +318,25 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
      * @return `true` iff the edge can be contracted, `false` otherwise.
      */
     canContractLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
-        if (label !== undefined && this.getEdgeCountBetween(from, to) !== 1) {
+        if (this.getEdgeCountBetween(from, to) !== 1) {
+            return false;
+        }
+        if (!this.hasLabeledEdge(from, to, label)) {
+            return false;
+        }
+        return this.canContractEdge(from, to);
+    }
+
+    /**
+     * This check if a single labeled edge between the given vertices can be contracted. Note that cycles are not
+     * allowed, so if there exists more than one edge between the given vertices, the contraction cannot be
+     * performed as that would create a cycle.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @return `true` iff the edge can be contracted, `false` otherwise.
+     */
+    canContractOneEdge(from: TVertex, to: TVertex): boolean {
+        if (this.getEdgeCountBetween(from, to) !== 1) {
             return false;
         }
         return this.canContractEdge(from, to);
