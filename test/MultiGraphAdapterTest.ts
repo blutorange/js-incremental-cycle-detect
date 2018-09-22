@@ -133,6 +133,17 @@ export class MultiAdapterTest {
         expect(g.getLabeledEdgeCount()).to.equal(2);
     }
 
+    @test("cannot contract edge if it results in a self cycle")
+    contractEdgeSelfCycle() {
+        const g = this.make();
+        g.addEdge(1, 2);
+        g.addEdge(2, 3);
+        g.addEdge(1, 3);
+        expect(g.canContractEdge(2 ,3)).to.be.true;
+        g.contractEdge(2, 3);
+        expect(g.canContractEdge(1 ,2)).to.be.false;
+    }
+
     @test("should support order")
     supportsOrder() {
         const g = this.make();
