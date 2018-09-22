@@ -145,6 +145,11 @@ I use the following keywords:
 
 From newest to oldest:
 
+# 0.4.0
+- Fixed bug with `MultiGraphAdapter`: `#getLabelledEdge()` updated incorrectly.
+- Added an additional method `#contractLabeledEdge`, While `#contractEdge` contract all edges (irrespective of their label) between two vertices, `#contractEdge` contracts just one particular edge with a specific label. Note that since cycle are forbidden, a certain labeled edge between two vertices can only be contracted if it is the only edge between those two vertices. `#contractLabeled` refuses two contract in such a case, while `#contractVertices` contract all edges. You can check with `#canContractEdge` and `#canContractLabeledEdge`.
+- Removed deprecated `MultiGraphAdapter#addLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel, data?: TEdgeData): boolean`
+
 # 0.3.0
 - Added `Algorithm#findWeaklyConnectedComponents`.
 - Added a `getEdgesWithData`, `getEdgesWithDataFrom`, `getEdgesWithDataTo` method when both the edge and its data are needed.

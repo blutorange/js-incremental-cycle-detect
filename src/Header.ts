@@ -1,5 +1,7 @@
-import { BinaryOperator, Maybe, Omit, Pair, Triple, TypedFunction, UnaryOperator } from "andross";
+import { BinaryOperator, Maybe, Omit, Pair, Triple, TypedFunction, TypedTriFunction, UnaryOperator } from "andross";
 import { Graph, GraphOptions } from "graphlib";
+
+export type LabelGenerator<TVertex, TEdgeData, TEdgeLabel> = TypedTriFunction<TVertex, TVertex, TEdgeData, Maybe<TEdgeLabel>>;
 
 /**
  * The data the algorithm needs to associate with each vertex.

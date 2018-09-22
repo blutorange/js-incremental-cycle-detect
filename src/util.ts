@@ -1,4 +1,4 @@
-import { BinaryOperator, Maybe, Pair, Predicate, TypedFunction } from "andross";
+import { BinaryOperator, Consumer, Maybe, Pair, Predicate, TypedFunction } from "andross";
 import { CommonAdapter, CycleDetector, GraphAdapter, VertexData } from "./Header";
 
 function filterUndefined<T>(value: Maybe<T>): boolean {
@@ -61,6 +61,40 @@ export function toArray<T>(it: Iterator<T>) {
         arr.push(res.value);
     }
     return arr;
+}
+
+export function forEach<T>(callback: Consumer<T>, ...iterators: Iterator<T>[]): void {
+    for (let i = 0, j = iterators.length; i < j; ++i) {
+        for (let it = iterators[i], next = it.next(); !next.done; next = it.next()) {
+            callback(next.value);
+        }
+    }
+}
+
+export function combineIterators<T>(...iterators: Iterator<T>[]): Iterator<T> {
+    let iteratorIndex = 0;
+    return {
+        next(): IteratorResult<T> {
+            if (iteratorIndex >= iterators.length) {
+                return DoneIteratorResult;
+            }
+            let res = iterators[iteratorIndex].next();
+            if (res.done) {
+                iteratorIndex += 1;
+                if (iteratorIndex >= iterators.length) {
+                    return DoneIteratorResult;
+                }
+                res = iterators[iteratorIndex].next();
+            }
+            if (res.done) {
+                return DoneIteratorResult;
+            }
+            return {
+                done: false,
+                value: res.value,
+            };
+        }
+    };
 }
 
 /**

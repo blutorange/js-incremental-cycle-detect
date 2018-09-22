@@ -967,6 +967,9 @@ img { max-width: 100%; }
 			<a href="../globals.html#graphlibconstructor" class="tsd-kind-icon">Graphlib<wbr>Constructor</a>
 		</li>
 		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+			<a href="../globals.html#labelgenerator" class="tsd-kind-icon">Label<wbr>Generator</a>
+		</li>
+		<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 			<a href="../globals.html#multigraphedgedata" class="tsd-kind-icon">Multi<wbr>Graph<wbr>Edge<wbr>Data</a>
 		</li>
 		<li class=" tsd-kind-variable tsd-is-private">
@@ -977,6 +980,9 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#cancontractedge" class="tsd-kind-icon">can<wbr>Contract<wbr>Edge</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter">
+			<a href="../globals.html#combineiterators" class="tsd-kind-icon">combine<wbr>Iterators</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#contractedge" class="tsd-kind-icon">contract<wbr>Edge</a>
@@ -998,6 +1004,9 @@ img { max-width: 100%; }
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#createmappediterator" class="tsd-kind-icon">create<wbr>Mapped<wbr>Iterator</a>
+		</li>
+		<li class=" tsd-kind-function tsd-has-type-parameter">
+			<a href="../globals.html#foreach" class="tsd-kind-icon">for<wbr>Each</a>
 		</li>
 		<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-private">
 			<a href="../globals.html#takefirst" class="tsd-kind-icon">take<wbr>First</a>
@@ -1060,7 +1069,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">cycle<wbr>Detector<span class="tsd-signature-symbol">:</span> <a href="cycledetector.html" class="tsd-signature-type">CycleDetector</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TVertex</span><span class="tsd-signature-symbol">&gt;</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/3f1c472/src/Header.ts#L18">Header.ts:18</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/8fc44a3/src/Header.ts#L20">Header.ts:20</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1075,7 +1084,7 @@ img { max-width: 100%; }
 				<div class="tsd-signature tsd-kind-icon">map<wbr>Constructor<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">MapConstructor</span></div>
 				<aside class="tsd-sources">
 					<ul>
-						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/3f1c472/src/Header.ts#L30">Header.ts:30</a></li>
+						<li>Defined in <a href="https://github.com/blutorange/js-incremental-cycle-detect/blob/8fc44a3/src/Header.ts#L32">Header.ts:32</a></li>
 					</ul>
 				</aside>
 				<div class="tsd-comment tsd-typography">
@@ -1085,9 +1094,8 @@ img { max-width: 100%; }
 							and don&#39;t want to use a global polyfill, pass the <code>Map</code> object with this
 						options:</p>
 					</div>
-					<pre><code class="lang-javascript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span> <span class="hljs-keyword">from</span> <span class="hljs-string">"core-js/es6/map"</span>;
-<span class="hljs-keyword">const</span> graph = <span class="hljs-keyword">new</span> GenericGraphAdapter({<span class="hljs-attr">mapConstructor</span>: <span class="hljs-built_in">Map</span>}):
-</code></pre>
+					<pre><code class="language-javascript"><span class="hljs-keyword">import</span> * <span class="hljs-keyword">as</span> <span class="hljs-built_in">Map</span> <span class="hljs-keyword">from</span> <span class="hljs-string">"core-js/es6/map"</span>;
+<span class="hljs-keyword">const</span> graph = <span class="hljs-keyword">new</span> GenericGraphAdapter({<span class="hljs-attr">mapConstructor</span>: <span class="hljs-built_in">Map</span>}):</code></pre>
 				</div>
 			</section>
 		</section>

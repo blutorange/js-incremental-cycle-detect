@@ -1,7 +1,7 @@
 import { BinaryOperator, Maybe, Pair, Quadruple, Triple, TypedFunction, UnaryOperator } from "andross";
 import { GenericGraphAdapter } from "./GenericGraphAdapter";
 import { ClonableAdapter, CommonAdapter, GraphFactory, MultiGraphAdapterOptions, MultiGraphEdgeData } from "./Header";
-import { createFilteredIterator, createFlatMappedIterator, createMappedIterator, EmptyIterator, takeFirst } from "./util";
+import { createFilteredIterator, createFlatMappedIterator, createMappedIterator, EmptyIterator, forEach, takeFirst } from "./util";
 
 // When contracting an edge, we may need to combine the edge data, ie. the map
 // between the edge labels and the actual edge data.
@@ -97,9 +97,9 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return new MultiGraphAdapter<TVertex, TEdgeData, TEdgeLabel>(graphFactory, 0, mapConstructor);
     }
 
-    private g: CommonAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>> & ClonableAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>>;
     private edgeCount: number;
-    private mapConstructor: MapConstructor;
+    private readonly g: CommonAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>> & ClonableAdapter<TVertex, MultiGraphEdgeData<TEdgeData, TEdgeLabel>>;
+    private readonly mapConstructor: MapConstructor;
 
     private constructor(graphFactory: GraphFactory<TVertex, TEdgeData, TEdgeLabel>, edgeCount: number, mapConstructor: MapConstructor) {
         this.g = graphFactory();
@@ -151,10 +151,7 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
      * reversed for convenience.
      * @see {@link MultiGraphAdapter}#addEdge
      */
-    addLabeledEdge(from: TVertex, to: TVertex, label: Maybe<TEdgeLabel>, data?: TEdgeData): boolean;
-    /** @deprecated Specify a label, even if it is `undefined`. Otherwise, use `addEdge`. */
-    addLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel, data?: TEdgeData): boolean;
-    addLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel, data?: TEdgeData) {
+    addLabeledEdge(from: TVertex, to: TVertex, label: Maybe<TEdgeLabel>, data?: TEdgeData): boolean {
         return this.addEdge(from, to, data, label);
     }
 
@@ -265,10 +262,64 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
 
     /**
      * This contracts two vertices, ie. all edges between the given vertices.
-     * See {@link CommonAdapter}#contractEdge.
+     * @see {@link MultiGraphAdapter}#contractLabeledEdge
      */
     contractEdge(from: TVertex, to: TVertex, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
-        return this.g.contractEdge(from, to, vertexMerger, createMerger(edgeMerger, this.mapConstructor));
+        // Check how many labeled edges would be deleted.
+        let deletionCount = 0;
+        const data = this.g.getEdgeData(from, to);
+        if (data !== undefined) {
+            deletionCount = data.size;
+        }
+        // Perform the contraction
+        const wasContracted = this.g.contractEdge(from, to, vertexMerger, createMerger(edgeMerger, this.mapConstructor));
+        // Update the labeled edge count iff the edge could be contracted.
+        if (wasContracted) {
+            this.edgeCount -= deletionCount;
+        }
+        // Return the result
+        return wasContracted;
+    }
+
+    /**
+     * This contract a specific labeled edge between the given vertices. Note that cycles are not allowed, so
+     * if there exists more than one edge between the given vertices, the contraction cannot be performed as
+     * that would create a cycle.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @param label Label of the edge to be deleted.
+     * @param vertexMerger The vertex that replaces the two old vertices. If not given, defaults to `from`.
+     * @param dataMerger Another vertex may be connected two both of the vertices that are to be contracted.
+     * In this case, their edge data needs to be merged. If not given, defaults to taking the edge data from
+     * one edge.
+     * @return `true` iff the edge was contracted.
+     * @throws If vertex merger returns a vertex that is already contained in the graph.
+     * @see {@link MultiGraphAdapter}#contractEdge
+     */
+    contractLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel, vertexMerger?: BinaryOperator<TVertex>, edgeMerger?: BinaryOperator<TEdgeData>): boolean {
+        // Cannot contract edge if there is no edge or more than one edge between the given vertices.
+        const data = this.g.getEdgeData(from, to);
+        if (data === undefined || data.size !== 1) {
+            return false;
+        }
+        // Only one edge betweem the given vertices, do a normal edge contraction.
+        return this.contractEdge(from, to, vertexMerger, edgeMerger);
+    }
+
+    /**
+     * This check if a specific labeled edge between the given vertices can be contracted. Note that cycles are not
+     * allowed, so if there exists more than one edge between the given vertices, the contraction cannot be
+     * performed as that would create a cycle.
+     * @param from Source vertex of the edge.
+     * @param to Target vertex of the edge.
+     * @param label Label of the edge to be deleted.
+     * @return `true` iff the edge can be contracted, `false` otherwise.
+     */
+    canContractLabeledEdge(from: TVertex, to: TVertex, label?: TEdgeLabel): boolean {
+        if (label !== undefined && this.getEdgeCountBetween(from, to) !== 1) {
+            return false;
+        }
+        return this.canContractEdge(from, to);
     }
 
     canContractEdge(from: TVertex, to: TVertex): boolean {
@@ -311,7 +362,20 @@ export class MultiGraphAdapter<TVertex = any, TEdgeData = any, TEdgeLabel = any>
         return this.deleteLabeledEdge(from, to, label);
     }
 
+    /**
+     * Deletes a vertex from the graph; and all incident egdes.
+     * @param vertex Vertex to be deleted.
+     * @return Whether the vertex was deleted. That is, it returns `false` in case the given vertex was not contained in this graph.
+     */
     deleteVertex(vertex: TVertex): boolean {
+        // Update labeled edge count
+        forEach(data => {
+            const edges = data[1];
+            if (edges !== undefined) {
+                this.edgeCount -= edges.size;
+            }
+        }, this.g.getEdgesWithDataFrom(vertex), this.g.getEdgesWithDataTo(vertex));
+        // Delete the vertex
         return this.g.deleteVertex(vertex);
     }
 

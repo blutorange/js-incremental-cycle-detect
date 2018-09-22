@@ -133,36 +133,82 @@ export class MultiAdapterTest {
         expect(g.getLabeledEdgeCount()).to.equal(2);
     }
 
-    @test("cannot contract edge if it results in a self cycle")
-    contractEdgeSelfCycle() {
+    @test("contractEdge contracts all edges between two vertices")
+    contractEdgesContractsAllEdges() {
         // With two vertices
         const g1 = this.make();
-        g1.addEdge(1, 2, "foo");
+        g1.addEdge(1, 2, undefined, "foo");
         expect(g1.canContractEdge(1 ,2)).to.be.true;
-        g1.addEdge(1, 2, "bar");
-        expect(g1.canContractEdge(1 ,2)).to.be.false;
+        g1.addEdge(1, 2, undefined, "bar");
+        expect(g1.getLabeledEdgeCount()).to.equal(2);
+        expect(g1.canContractEdge(1 ,2)).to.be.true;
+        expect(g1.contractEdge(1, 2)).to.be.true;
+        expect(g1.getLabeledEdgeCount()).to.equal(0);
   
         // With three vertices
-        const g = this.make();
-        g.addEdge(1, 2, undefined, "12");
-        g.addEdge(2, 3, undefined, "23");
-        g.addEdge(1, 3, undefined, "13");
-        expect(g.canContractEdge(2, 3)).to.be.true;
-        g.contractEdge(2, 3);
-        expect(g.hasVertex(1)).to.be.true;
-        expect(g.hasVertex(2)).to.be.true;
-        expect(g.hasVertex(3)).to.be.false;
-        expect(g.canContractEdge(1, 2)).to.be.false;
+        const g2 = this.make();
+        g2.addEdge(1, 2, undefined, "12");
+        g2.addEdge(2, 3, undefined, "23");
+        g2.addEdge(1, 3, undefined, "13");
+        expect(g2.getLabeledEdgeCount()).to.equal(3);
+        expect(g2.canContractEdge(2, 3)).to.be.true;
+        expect(g2.contractEdge(2, 3)).to.be.true;
+        expect(g2.hasVertex(1)).to.be.true;
+        expect(g2.hasVertex(2)).to.be.true;
+        expect(g2.hasVertex(3)).to.be.false;
+        expect(g2.canContractEdge(1, 2)).to.be.true;
+        expect(g2.contractEdge(1, 2)).to.be.true;
+        expect(g2.getLabeledEdgeCount()).to.equal(0);
+    }
+
+    @test("contractLabeledEdge only contracts the given labeled edge")
+    contractLabeledEdgesContractsOneEdge() {
+        // With two vertices
+        const g1 = this.make();
+        g1.addEdge(1, 2, undefined, "foo");
+        expect(g1.canContractLabeledEdge(1 ,2)).to.be.true;
+        g1.addEdge(1, 2, undefined, "bar");
+        expect(g1.getLabeledEdgeCount()).to.equal(2);
+        expect(g1.canContractLabeledEdge(1 ,2, "foo")).to.be.false;
+        expect(g1.canContractLabeledEdge(1 ,2, "bar")).to.be.false;
+        expect(g1.contractLabeledEdge(1, 2, "foo")).to.be.false;
+        expect(g1.contractLabeledEdge(1, 2, "bar")).to.be.false;
+        expect(g1.getLabeledEdgeCount()).to.equal(2);
+  
+        // With three vertices
+        const g2 = this.make();
+        g2.addEdge(1, 2, undefined, "12");
+        g2.addEdge(2, 3, undefined, "23");
+        g2.addEdge(1, 3, undefined, "13");
+        expect(g2.getLabeledEdgeCount()).to.equal(3);
+        expect(g2.canContractLabeledEdge(2, 3, "23")).to.be.true;
+        expect(g2.contractLabeledEdge(2, 3, "23")).to.be.true;
+        expect(g2.hasVertex(1)).to.be.true;
+        expect(g2.hasVertex(2)).to.be.true;
+        expect(g2.hasVertex(3)).to.be.false;
+        expect(g2.canContractLabeledEdge(1, 2, "12")).to.be.false;
+        expect(g2.contractLabeledEdge(1, 2, "12")).to.be.false;
+        expect(g2.getLabeledEdgeCount()).to.equal(2);
     }
 
     @test("contracting an edge removes it from the graph")
     contractingEdgeRemovesIt() {
         const g = this.make();
-        g.addEdge(1, 2);
-        g.addEdge(2, 3);
-        g.addEdge(1, 3);
+        g.addEdge(1, 2, undefined, "12");
+        g.addEdge(2, 3, undefined, "23");
+        g.addEdge(1, 3, undefined, "13");
+
+        expect(g.getEdgeCount()).to.equal(3);
         expect(g.getLabeledEdgeCount()).to.equal(3);
-        g.contractEdge(1, 3);
+        expect(iteratorLength(g.getLabeledEdges())).to.equal(3);
+
+        g.contractEdge(2, 3);
+
+        expect(g.hasVertex(1)).to.be.true;
+        expect(g.hasVertex(1)).to.be.true;
+        expect(g.hasVertex(3)).to.be.false;
+
+        expect(g.getEdgeCount()).to.equal(1);
         expect(g.getLabeledEdgeCount()).to.equal(2);
         expect(iteratorLength(g.getLabeledEdges())).to.equal(2);
     }
@@ -291,7 +337,25 @@ export class MultiAdapterTest {
         expect(toArray(g.getEdgeDataTo(3, undefined)).sort()).to.deep.equal([4, 5]);
     }
 
-    @test("should return the labeled successors")
+    @test("can add multiple edges with different label")
+    canAddMultipleEdgesWithDifferentLabel() {
+        const g = this.make();
+        expect(g.getLabeledEdgeCount()).to.equal(0);
+
+        expect(g.canAddEdge(0, 1, "foo")).to.be.true;        
+        g.addLabeledEdge(0, 1, "foo");
+        expect(g.getLabeledEdgeCount()).to.equal(1);
+
+        expect(g.canAddEdge(0, 1, "bar")).to.be.true;
+        g.addLabeledEdge(0, 1, "bar");
+        expect(g.getLabeledEdgeCount()).to.equal(2);
+
+        expect(g.canAddEdge(0, 1, "foobar")).to.be.true;
+        g.addLabeledEdge(0, 1, "foobar");
+        expect(g.getLabeledEdgeCount()).to.equal(3);
+    }
+
+    @test("can add edge if no edge with the same label exists")
     canAddEdge() {
         const g = this.make();
         g.addLabeledEdge(0, 1, "foo");
@@ -393,13 +457,13 @@ export class MultiAdapterTest {
         expect(g.addLabeledEdge(2, 3, "bar")).to.be.true;
         expect(g.addLabeledEdge(3, 4, "baz")).to.be.true;
         expect(g.addLabeledEdge(4, 1, "foo")).to.be.false;
-        expect(g.addLabeledEdge(4, 1)).to.be.false;
+        expect(g.addLabeledEdge(4, 1, undefined)).to.be.false;
         expect(g.addLabeledEdge(1, 2, "foo2")).to.be.true;
-        expect(g.addLabeledEdge(4, 1)).to.be.false;
+        expect(g.addLabeledEdge(4, 1, undefined)).to.be.false;
         expect(g.deleteEdge(1, 2, "foo")).to.be.true;
-        expect(g.addLabeledEdge(4, 1)).to.be.false;
+        expect(g.addLabeledEdge(4, 1, undefined)).to.be.false;
         expect(g.deleteEdge(1, 2, "foo2")).to.be.true;
-        expect(g.addLabeledEdge(4, 1)).to.be.true;
+        expect(g.addLabeledEdge(4, 1, undefined)).to.be.true;
     }
 
     @test("should keep all edges when contracting")
